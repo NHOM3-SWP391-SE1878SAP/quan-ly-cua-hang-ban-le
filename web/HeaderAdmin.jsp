@@ -277,7 +277,7 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="">
+            <a href="ProductManagement.jsp">
               <i class="bi bi-circle"></i><span>Danh mục</span>
             </a>
           </li>
@@ -306,7 +306,7 @@
             </a>
           </li>
           <li>
-            <a href="OrdersManagement.jsp">
+            <a href="OrderManagement.jsp">
               <i class="bi bi-circle"></i><span>Hóa đơn</span>
             </a>
           </li>
@@ -344,12 +344,12 @@
         </a>
         <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="">
+            <a href="customer-groups.jsp">
               <i class="bi bi-circle"></i><span>Khách hàng</span>
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="manage-supplier.jsp">
               <i class="bi bi-circle"></i><span>Nhà cung cấp</span>
             </a>
           </li>
@@ -362,7 +362,7 @@
         </a>
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="">
+            <a href="EmployeeManagement.jsp">
               <i class="bi bi-circle"></i><span>Nhân viên</span>
             </a>
           </li>

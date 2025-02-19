@@ -1,4 +1,4 @@
-create database slim
+﻿create database slim
 use slim
 
 -- T?o b?ng Role
@@ -33,7 +33,7 @@ CREATE TABLE Employees (
     Salary INT NOT NULL,
     CCCD NVARCHAR(20) NOT NULL,
     AccountsID INT FOREIGN KEY REFERENCES Accounts(ID),
-    IsAvailable BIT NOT NULL DEFAULT 1 -- 1: C�n l�m vi?c, 0: Ngh? vi?c
+    IsAvailable BIT NOT NULL DEFAULT 1 -- 1: Còn làm việc, 0: Nghỉ việc
 );
 
 
@@ -81,6 +81,7 @@ CREATE TABLE Products (
     UnitPrice INT NOT NULL,
     StockQuantity INT NOT NULL,
     IsAvailable BIT NOT NULL,
+	imageURL NVARCHAR(255) NOT NULL,
     CategoryID INT FOREIGN KEY REFERENCES Categories(ID)
 );
 
@@ -102,7 +103,7 @@ CREATE TABLE Vouchers (
     EndDate DATE NOT NULL
 );
 
--- T?o b?ng Orders (Quan h? 1-1 v?i Payments v� Vouchers)
+-- T?o b?ng Orders (Quan h? 1-1 v?i Payments và Vouchers)
 CREATE TABLE Orders (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     OrderDate DATE NOT NULL,
@@ -114,7 +115,7 @@ CREATE TABLE Orders (
     VouchersID INT UNIQUE  -- Quan h? 1-1 v?i Vouchers
 );
 
--- Thi?t l?p kh�a ngo?i cho Orders ?? ??m b?o quan h? 1-1
+-- Thi?t l?p khóa ngo?i cho Orders ?? ??m b?o quan h? 1-1
 ALTER TABLE Orders
 ADD CONSTRAINT FK_Orders_Payments FOREIGN KEY (PaymentsID) REFERENCES Payments(ID) ON DELETE SET NULL;
 

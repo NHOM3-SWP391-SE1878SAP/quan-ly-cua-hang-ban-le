@@ -27,14 +27,15 @@ CREATE TABLE Customer (
     Points INT
 );
 
--- T?o b?ng Employees
 CREATE TABLE Employees (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     EmployeeName NVARCHAR(255) NOT NULL,
     Salary INT NOT NULL,
     CCCD NVARCHAR(20) NOT NULL,
-    AccountsID INT FOREIGN KEY REFERENCES Accounts(ID)
+    AccountsID INT FOREIGN KEY REFERENCES Accounts(ID),
+    IsAvailable BIT NOT NULL DEFAULT 1 -- 1: Còn làm vi?c, 0: Ngh? vi?c
 );
+
 
 -- T?o b?ng WorkSchedule
 CREATE TABLE WorkSchedule (

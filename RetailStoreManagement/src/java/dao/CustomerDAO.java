@@ -7,36 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDAO {
-    private DatabaseConnection dbConnection = new DatabaseConnection(); // Tạo kết nối
+    private DatabaseConnection dbConnection = new DatabaseConnection();
 
-    public void addCustomer(Customer customer) {
-        String sql = "INSERT INTO Customer (CustomerName, Phone, Address, Points) VALUES (?, ?, ?, ?)";
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, customer.getCustomerName());
-            stmt.setString(2, customer.getPhone());
-
-            // Xử lý Address null
-            if (customer.getAddress() == null || customer.getAddress().trim().isEmpty()) {
-                stmt.setNull(3, java.sql.Types.NVARCHAR);
-            } else {
-                stmt.setString(3, customer.getAddress());
-            }
-
-            // Xử lý Points null
-            if (customer.getPoints() == null) {
-                stmt.setNull(4, java.sql.Types.INTEGER);
-            } else {
-                stmt.setInt(4, customer.getPoints());
-            }
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    // Lấy danh sách tất cả khách hàng
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customer";
@@ -45,7 +18,6 @@ public class CustomerDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                System.out.println("📌 Lấy khách hàng: " + rs.getString("CustomerName"));
                 customers.add(new Customer(
                         rs.getInt("ID"),
                         rs.getString("CustomerName"),
@@ -54,16 +26,92 @@ public class CustomerDAO {
                         rs.getObject("Points") != null ? rs.getInt("Points") : null
                 ));
             }
-
-            System.out.println("✅ Tổng số khách hàng lấy được: " + customers.size());
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return customers;
     }
 
+    // Lấy khách hàng theo ID
+    public Customer getCustomerById(int id) {
+        String sql = "SELECT * FROM Customer WHERE ID=?";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Customer(
+                        rs.getInt("ID"),
+                        rs.getString("CustomerName"),
+                        rs.getString("Phone"),
+                        rs.getString("Address"),
+                        rs.getObject("Points") != null ? rs.getInt("Points") : null
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Tìm kiếm khách hàng theo tên
+    public List<Customer> searchCustomers(String keyword) {
+        List<Customer> customers = new ArrayList<>();
+        String sql = "SELECT * FROM Customer WHERE CustomerName LIKE ?";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + keyword + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                customers.add(new Customer(
+                        rs.getInt("ID"),
+                        rs.getString("CustomerName"),
+                        rs.getString("Phone"),
+                        rs.getString("Address"),
+                        rs.getObject("Points") != null ? rs.getInt("Points") : null
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
+    // Thêm khách hàng
+    public void addCustomer(Customer customer) {
+        String sql = "INSERT INTO Customer (CustomerName, Phone, Address, Points) VALUES (?, ?, ?, ?)";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, customer.getCustomerName());
+            stmt.setString(2, customer.getPhone());
+            stmt.setString(3, customer.getAddress());
+            stmt.setObject(4, customer.getPoints());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Cập nhật khách hàng
+    public void updateCustomer(Customer customer) {
+        String sql = "UPDATE Customer SET CustomerName=?, Phone=?, Address=?, Points=? WHERE ID=?";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, customer.getCustomerName());
+            stmt.setString(2, customer.getPhone());
+            stmt.setString(3, customer.getAddress());
+            stmt.setObject(4, customer.getPoints());
+            stmt.setInt(5, customer.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Xóa khách hàng
     public void deleteCustomer(int id) {
-        String sql = "DELETE FROM Customer WHERE ID = ?";
+        String sql = "DELETE FROM Customer WHERE ID=?";
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);

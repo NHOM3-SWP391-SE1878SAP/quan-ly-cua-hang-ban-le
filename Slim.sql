@@ -1,200 +1,180 @@
-﻿create database slim
-use slim
+CREATE DATABASE slimDB;
+GO
+USE slimDB;
 
--- T?o b?ng Role
-CREATE TABLE Role (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    RoleName NVARCHAR(255) NOT NULL
+CREATE TABLE Roles (
+                       ID INT PRIMARY KEY,
+                       RoleName VARCHAR(255) NOT NULL
 );
 
--- T?o b?ng Accounts
 CREATE TABLE Accounts (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    UserName NVARCHAR(255) NOT NULL,
-    Password NVARCHAR(255) NOT NULL,
-    Email NVARCHAR(255) NOT NULL,
-    Phone NVARCHAR(20) NOT NULL,
-    Address NVARCHAR(255) NOT NULL,
-    RoleID INT FOREIGN KEY REFERENCES Role(ID)
-);
-
--- T?o b?ng Customer
-CREATE TABLE Customer (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerName NVARCHAR(255) NOT NULL,
-    Phone NVARCHAR(20) NOT NULL,
-    Address NVARCHAR(255),
-    Points INT
+                          ID INT PRIMARY KEY,
+                          UserName VARCHAR(255) NOT NULL,
+                          Password VARCHAR(255) NOT NULL,
+                          Email VARCHAR(255) NOT NULL,
+                          Phone INT NOT NULL,
+                          Address VARCHAR(255) NOT NULL,
+                          RoleID INT,
+                          FOREIGN KEY (RoleID) REFERENCES Roles(ID)
 );
 
 CREATE TABLE Employees (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    EmployeeName NVARCHAR(255) NOT NULL,
-	Avatar NVARCHAR(255) NOT NULL,
-	DoB DATE NOT NULL,
-	Gender NVARCHAR(255) NOT NULL,
-    Salary INT NOT NULL,
-    CCCD NVARCHAR(20) NOT NULL,
-    AccountsID INT FOREIGN KEY REFERENCES Accounts(ID),
-    IsAvailable BIT NOT NULL DEFAULT 1 -- 1: Còn làm việc, 0: Nghỉ việc
+                           ID INT PRIMARY KEY,
+                           EmployeeName VARCHAR(255) NOT NULL,
+                           Salary INT,
+                           CCD INT,
+                           Avatar VARCHAR(255),
+                           AccountsID INT,
+                           FOREIGN KEY (AccountsID) REFERENCES Accounts(ID)
 );
 
-
--- T?o b?ng WorkSchedule
 CREATE TABLE WorkSchedule (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    WorkDate DATE NOT NULL,
-    StartTime TIME NOT NULL,
-    EndTime TIME NOT NULL,
-    CheckIn TIME,
-    CheckOut TIME,
-    EmployeesID INT FOREIGN KEY REFERENCES Employees(ID)
+                              ID INT PRIMARY KEY,
+                              WorkDate DATE,
+                              StartTime TIME,
+                              EndTime TIME,
+                              CheckIn DATETIME,
+                              CheckOut DATETIME,
+                              EmployeesID INT,
+                              FOREIGN KEY (EmployeesID) REFERENCES Employees(ID)
 );
 
--- T?o b?ng Payroll
-CREATE TABLE Payroll (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    MonthYear NVARCHAR(255) NOT NULL,
-    StartDate DATE NOT NULL,
-    EndDate DATE NOT NULL
+CREATE TABLE Customer (
+                          ID INT PRIMARY KEY,
+                          CustomerName VARCHAR(255) NOT NULL,
+                          Phone INT NOT NULL,
+                          Address VARCHAR(255) NOT NULL,
+                          Points INT NOT NULL
 );
 
--- T?o b?ng Employees_Payroll
-CREATE TABLE Employees_Payroll (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    EmployeesID INT FOREIGN KEY REFERENCES Employees(ID),
-    PayrollID INT FOREIGN KEY REFERENCES Payroll(ID),
-    WorkDays INT NOT NULL,
-    PayDate DATE NOT NULL
-);
-
--- T?o b?ng Categories
-CREATE TABLE Categories (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryName NVARCHAR(255) NOT NULL,
-    Description NVARCHAR(255),
-    Image NVARCHAR(255)
-);
-
--- T?o b?ng Products
-CREATE TABLE Products (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    ProductName NVARCHAR(255) NOT NULL,
-    ProductCode NVARCHAR(50) NOT NULL,
-    UnitPrice INT NOT NULL,
-    StockQuantity INT NOT NULL,
-    IsAvailable BIT NOT NULL,
-	imageURL NVARCHAR(255) NOT NULL,
-    CategoryID INT FOREIGN KEY REFERENCES Categories(ID)
-);
-
--- T?o b?ng Payments
-CREATE TABLE Payments (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    PaymentDate DATE NOT NULL,
-    PaymentMethods NVARCHAR(255) NOT NULL
-);
-
--- T?o b?ng Vouchers
 CREATE TABLE Vouchers (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Code NVARCHAR(50) NOT NULL,
-    MinOrder INT NOT NULL,
-    DiscountRate INT NOT NULL,
-    MaxValue INT NOT NULL,
-    StartDate DATE NOT NULL,
-    EndDate DATE NOT NULL
+                          ID INT PRIMARY KEY,
+                          Code INT,
+                          MinOrder INT,
+                          DiscountRate INT,
+                          MaxValue INT,
+                          StartDate DATE,
+                          EndDate DATE
 );
 
--- T?o b?ng Orders (Quan h? 1-1 v?i Payments và Vouchers)
 CREATE TABLE Orders (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    OrderDate DATE NOT NULL,
-    TotalAmount INT NOT NULL,
-    Paid BIT NOT NULL,
-    CustomerID INT FOREIGN KEY REFERENCES Customer(ID),
-    EmployeeID INT FOREIGN KEY REFERENCES Employees(ID),
-    PaymentsID INT UNIQUE, -- Quan h? 1-1 v?i Payments
-    VouchersID INT UNIQUE  -- Quan h? 1-1 v?i Vouchers
+                        ID INT PRIMARY KEY,
+                        OrderDate DATE,
+                        TotalAmount INT,
+                        Paid INT,
+                        CustomerID INT,
+                        EmployeesID INT,
+                        PaymentsID INT,
+                        VouchersID INT,
+                        FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
+                        FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
+                        FOREIGN KEY (PaymentsID) REFERENCES Payments(ID),
+                        FOREIGN KEY (VouchersID) REFERENCES Vouchers(ID)
 );
 
--- Thi?t l?p khóa ngo?i cho Orders ?? ??m b?o quan h? 1-1
-ALTER TABLE Orders
-ADD CONSTRAINT FK_Orders_Payments FOREIGN KEY (PaymentsID) REFERENCES Payments(ID) ON DELETE SET NULL;
+CREATE TABLE Payments (
+                          ID INT PRIMARY KEY,
+                          PaymentDate DATE,
+                          PaymentMethods VARCHAR(255) NOT NULL
+);
 
-ALTER TABLE Orders
-ADD CONSTRAINT FK_Orders_Vouchers FOREIGN KEY (VouchersID) REFERENCES Vouchers(ID) ON DELETE SET NULL;
-
--- T?o b?ng OrderDetails
 CREATE TABLE OrderDetails (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Quantity INT NOT NULL,
-    UnitPrice INT NOT NULL,
-    OrdersID INT FOREIGN KEY REFERENCES Orders(ID),
-    ProductsID INT FOREIGN KEY REFERENCES Products(ID)
+                              ID INT PRIMARY KEY,
+                              Quantity INT,
+                              OrdersID INT,
+                              ProductsID INT,
+                              FOREIGN KEY (OrdersID) REFERENCES Orders(ID),
+                              FOREIGN KEY (ProductsID) REFERENCES Products(ID)
 );
 
--- T?o b?ng Discount
-CREATE TABLE Discount (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    MinQuantity INT NOT NULL,
-    DiscountRate INT NOT NULL,
-    MaxValue INT NOT NULL,
-    ProductsID INT FOREIGN KEY REFERENCES Products(ID)
-);
-
--- T?o b?ng Returns
 CREATE TABLE Returns (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Quantity INT NOT NULL,
-    Reason NVARCHAR(255) NOT NULL,
-    ReturnDate DATE NOT NULL,
-    OrdersID INT FOREIGN KEY REFERENCES Orders(ID),
-    EmployeesID INT FOREIGN KEY REFERENCES Employees(ID)
+                         ID INT PRIMARY KEY,
+                         Quantity INT,
+                         Reason VARCHAR(255),
+                         ReturnDate DATE,
+                         OrdersID INT,
+                         EmployeesID INT,
+                         FOREIGN KEY (OrdersID) REFERENCES Orders(ID),
+                         FOREIGN KEY (EmployeesID) REFERENCES Employees(ID)
 );
 
--- T?o b?ng Suppliers
+CREATE TABLE Products (
+                          ID INT PRIMARY KEY,
+                          ProductName VARCHAR(255) NOT NULL,
+                          ProductCode VARCHAR(255),
+                          Price INT,
+                          StockQuantity INT,
+                          IsAvailable BIT,
+                          ImageURL VARCHAR(255),
+                          CategoryID INT,
+                          FOREIGN KEY (CategoryID) REFERENCES Categories(ID)
+);
+
+CREATE TABLE Categories (
+                            ID INT PRIMARY KEY,
+                            CategoryName VARCHAR(255) NOT NULL,
+                            Description VARCHAR(255),
+                            Image VARCHAR(255)
+);
+
 CREATE TABLE Suppliers (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    SupplierName NVARCHAR(255) NOT NULL,
-    Phone NVARCHAR(20) NOT NULL,
-    Address NVARCHAR(255) NOT NULL,
-    Email NVARCHAR(255) NOT NULL
+                           ID INT PRIMARY KEY,
+                           SupplierName VARCHAR(255),
+                           Phone INT,
+                           Address VARCHAR(255),
+                           Email VARCHAR(255)
 );
 
--- T?o b?ng SupplierDebt
-CREATE TABLE SupplierDebt (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    TotalDebt INT NOT NULL,
-    LastUpdate DATE NOT NULL,
-    SuppliersID INT FOREIGN KEY REFERENCES Suppliers(ID)
-);
-
--- T?o b?ng SupplierPayments
-CREATE TABLE SupplierPayments (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    AmountPaid INT NOT NULL,
-    PaymentDate DATE NOT NULL,
-    PaymentMethod NVARCHAR(255) NOT NULL,
-    Notes NVARCHAR(255),
-    SupplierDebtID INT FOREIGN KEY REFERENCES SupplierDebt(ID)
-);
-
--- T?o b?ng GoodsReceipt
-CREATE TABLE GoodsReceipt (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    ReceivedDate DATE NOT NULL,
-    TotalCost INT NOT NULL,
-    SuppliersID INT FOREIGN KEY REFERENCES Suppliers(ID)
-);
-
--- T?o b?ng GoodReceiptDetails
 CREATE TABLE GoodReceiptDetails (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    BatchNumber NVARCHAR(50) NOT NULL,
-    QuantityReceived INT NOT NULL,
-    UnitCost INT NOT NULL,
-    ExpirationDate DATE NOT NULL,
-    GoodsReceiptID INT FOREIGN KEY REFERENCES GoodsReceipt(ID),
-    ProductsID INT FOREIGN KEY REFERENCES Products(ID)
+                                    ID INT PRIMARY KEY,
+                                    BatchNumber VARCHAR(255),
+                                    QuantityReceived INT,
+                                    UnitCost INT,
+                                    ExpirationDate DATE,
+                                    GoodsReceiptID INT,
+                                    ProductsID INT,
+                                    FOREIGN KEY (ProductsID) REFERENCES Products(ID)
+);
+
+CREATE TABLE GoodsReceipt (
+                              ID INT PRIMARY KEY,
+                              ReceivedDate DATE,
+                              TotalCost INT,
+                              SuppliersID INT,
+                              FOREIGN KEY (SuppliersID) REFERENCES Suppliers(ID)
+);
+
+CREATE TABLE SupplierPayments (
+                                  ID INT PRIMARY KEY,
+                                  AmountPaid INT,
+                                  PaymentDate DATE,
+                                  PaymentMethod VARCHAR(255),
+                                  Notes VARCHAR(255),
+                                  SupplierID INT,
+                                  FOREIGN KEY (SupplierID) REFERENCES Suppliers(ID)
+);
+
+CREATE TABLE SupplierDebt (
+                              ID INT PRIMARY KEY,
+                              TotalDebt INT,
+                              LastUpdate DATE,
+                              GoodsReceiptID INT,
+                              FOREIGN KEY (GoodsReceiptID) REFERENCES GoodsReceipt(ID)
+);
+
+CREATE TABLE EmployeesPayroll (
+                                  ID INT PRIMARY KEY,
+                                  EmployeesID INT,
+                                  PayRollID INT,
+                                  WorkDays INT,
+                                  PayDate DATE,
+                                  FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
+                                  FOREIGN KEY (PayRollID) REFERENCES Payroll(ID)
+);
+
+CREATE TABLE Payroll (
+                         ID INT PRIMARY KEY,
+                         MonthYear VARCHAR(255),
+                         StartDate DATE,
+                         EndDate DATE
 );

@@ -3,15 +3,17 @@ package entity;
 public class OrderDetail {
     private int orderDetailID;
     private int quantity;
+    private int price;
     private Order order;
     private Product product;
 
     public OrderDetail() {
     }
 
-    public OrderDetail(int orderDetailID, int quantity, Order order, Product product) {
+    public OrderDetail(int orderDetailID, int quantity, int price, Order order, Product product) {
         this.orderDetailID = orderDetailID;
         this.quantity = quantity;
+        this.price = price;
         this.order = order;
         this.product = product;
     }
@@ -32,6 +34,14 @@ public class OrderDetail {
         this.quantity = quantity;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     public Order getOrder() {
         return order;
     }
@@ -47,4 +57,6 @@ public class OrderDetail {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    
 }

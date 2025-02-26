@@ -6,7 +6,6 @@ public class Order {
     private int orderID;
     private Date orderDate;
     private int totalAmount;
-    private int paid;
     private Customer customer;
     private Employee employee;
     private Payment payment;
@@ -15,11 +14,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(int orderID, Date orderDate, int totalAmount, int paid, Customer customer, Employee employee, Payment payment, Voucher voucher) {
+    public Order(int orderID, Date orderDate, int totalAmount, Customer customer, Employee employee, Payment payment, Voucher voucher) {
         this.orderID = orderID;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
-        this.paid = paid;
         this.customer = customer;
         this.employee = employee;
         this.payment = payment;
@@ -48,14 +46,6 @@ public class Order {
 
     public void setTotalAmount(int totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    public int getPaid() {
-        return paid;
-    }
-
-    public void setPaid(int paid) {
-        this.paid = paid;
     }
 
     public Customer getCustomer() {

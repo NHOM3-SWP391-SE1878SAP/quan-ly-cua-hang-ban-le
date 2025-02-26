@@ -1,6 +1,6 @@
-﻿CREATE DATABASE SlimDB1;
+﻿CREATE DATABASE SlimDB4;
 GO
-USE SlimDB1;
+USE SlimDB4;
 
 -- Bảng 1: Roles
 CREATE TABLE Roles (
@@ -24,9 +24,12 @@ CREATE TABLE Accounts (
 CREATE TABLE Employees (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     EmployeeName VARCHAR(255) NOT NULL,
+	DoB Date,
+	Gender VARCHAR(255),
     Salary INT,
-    CCD INT,
+    CCCD INT,
     Avatar VARCHAR(255),
+	IsAvailable BIT,
     AccountsID INT,
     FOREIGN KEY (AccountsID) REFERENCES Accounts(ID)
 );

@@ -75,7 +75,6 @@ CREATE TABLE Orders (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     OrderDate DATE,
     TotalAmount INT,
-    Paid INT,
     CustomerID INT,
     EmployeesID INT,
     PaymentsID INT,
@@ -111,6 +110,7 @@ CREATE TABLE Products (
 CREATE TABLE OrderDetails (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     Quantity INT,
+	Price INT,
     OrdersID INT,
     ProductsID INT,
     FOREIGN KEY (OrdersID) REFERENCES Orders(ID),

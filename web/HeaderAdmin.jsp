@@ -362,7 +362,7 @@
         </a>
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="">
+            <a href="EmployeeControllerURL?service=getAllEmployees">
               <i class="bi bi-circle"></i><span>Nhân viên</span>
             </a>
           </li>

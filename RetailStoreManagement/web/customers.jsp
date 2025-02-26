@@ -4,18 +4,19 @@
 <%@ page import="java.util.ArrayList" %>
 
 <%
+    // 🔍 Lấy danh sách khách hàng từ session hoặc request
     List<Customer> customers = (List<Customer>) request.getAttribute("customers");
-     if (customers == null) {  
-        customers = (List<Customer>) session.getAttribute("customers");
+      if (customers == null) {
+        customers = (List<Customer>) session.getAttribute("customers"); // Lấy từ session nếu cần
         if (customers == null) {
             customers = new ArrayList<>();
         }
-    } 
+    }
 
-    // Lấy thông báo từ session
+    // 📌 Lấy thông báo từ session
     String message = (String) session.getAttribute("message");
     if (message != null) {
-        session.removeAttribute("message"); // Xóa thông báo sau khi hiển thị
+        session.removeAttribute("message"); // Xóa sau khi hiển thị để tránh hiển thị lại
     }
 %>
 
@@ -61,22 +62,24 @@
                     <div class="card-body">
                         <h5 class="card-title">Customer List</h5>
 
-                        <!-- Hiển thị thông báo -->
+                        <!-- 🛠 Hiển thị thông báo từ session -->
                         <% if (message != null) { %>
                         <div class="alert alert-info"><%= message %></div>
                         <% } %>
 
-                        <!-- Search Form -->
+                        <!-- 🔍 Search Form -->
+                        <!-- 🔍 Form tìm kiếm -->
                         <form action="CustomerServlet" method="get" class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" name="search" class="form-control" placeholder="Search by name or phone">
+                                <input type="text" name="search" class="form-control" placeholder="Search by name or phone" value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
                             </div>
                             <div class="col-md-2">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </div>
                         </form>
 
-                        <!-- Customer Table -->
+
+                        <!-- 📋 Bảng danh sách khách hàng -->
                         <table class="table table-bordered mt-3">
                             <thead>
                                 <tr>
@@ -88,21 +91,22 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
+                            <% if (customers != null && !customers.isEmpty()) { %>
                             <tbody>
-                                <% if (customers.isEmpty()) { %>
-                                <tr>
-                                    <td colspan="6" class="text-center">No customers found.</td>
-                                </tr>
-                                <% } else {
-                            for (Customer c : customers) { %>
+                                <% for (Customer c : customers) { %>
                                 <tr>
                                     <td><%= c.getId() %></td>
                                     <td><%= c.getCustomerName() %></td>
                                     <td><%= c.getPhone() %></td>
                                     <td><%= c.getAddress() %></td>
-                                    <td><%= c.getPoints() != null ? c.getPoints() : "N/A" %></td>
+                                    <td><%= c.getPoints() != null ? c.getPoints() : "" %></td>
                                     <td>
-                                        <a href="UpdateCustomerServlet?id=<%= c.getId() %>" class="btn btn-warning btn-sm">Edit</a>
+                                        <button type="button" class="btn btn-warning btn-sm" 
+                                                onclick="openEditModal('<%= c.getId() %>', '<%= c.getCustomerName() %>', '<%= c.getPhone() %>', '<%= c.getAddress() != null ? c.getAddress() : "" %>', '<%= c.getPoints() != null ? c.getPoints() : 0 %>')">
+                                            Edit
+                                        </button>
+
+
                                         <form action="CustomerServlet" method="post" class="d-inline">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="id" value="<%= c.getId() %>">
@@ -110,12 +114,16 @@
                                         </form>
                                     </td>
                                 </tr>
-                                <% }
-                        } %>
+                                <% } %>
                             </tbody>
+                            <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center">No customers found.</td>
+                            </tr>
+                            <% } %>
                         </table>
 
-                        <!-- Add Customer Form -->
+                        <!-- 🛠 Form thêm khách hàng -->
                         <h5 class="mt-4">Add New Customer</h5>
                         <form action="CustomerServlet" method="post">
                             <input type="hidden" name="action" value="add">
@@ -137,11 +145,81 @@
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </section>
         </main>
 
+        <!-- 🔵 MODAL CHỈNH SỬA -->
+        <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Customer</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="updateForm" action="CustomerServlet" method="post">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="id" id="editId">
+
+                            <label>Name:</label>
+                            <input type="text" name="customerName" id="editName" class="form-control" required>
+
+                            <label>Phone:</label>
+                            <input type="text" name="phone" id="editPhone" class="form-control" required>
+
+                            <label>Address:</label>
+                            <input type="text" name="address" id="editAddress" class="form-control">
+
+                            <label>Points:</label>
+                            <input type="number" name="points" id="editPoints" class="form-control">
+
+                            <button type="submit" class="btn btn-primary mt-3">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.querySelector("#updateForm").addEventListener("submit", function (event) {
+                let id = document.getElementById('editId').value;
+                let name = document.getElementById('editName').value;
+                let phone = document.getElementById('editPhone').value;
+                let address = document.getElementById('editAddress').value;
+                let points = document.getElementById('editPoints').value;
+
+                console.log("🔹 Submitting Update - ID:", id, "Name:", name, "Phone:", phone, "Address:", address, "Points:", points);
+
+                if (!id || id.trim() === "") {
+                    alert("⚠️ Error: Missing customer ID!");
+                    event.preventDefault(); // Chặn submit nếu thiếu ID
+                }
+            });
+
+            function openEditModal(id, name, phone, address, points) {
+                console.log("Editing Customer ID:", id);
+                console.log("Received Data - Name:", name, "Phone:", phone, "Address:", address, "Points:", points);
+                if (!id || id == "undefined") {
+                    alert("⚠️ Error: Missing customer ID!");
+                    return;
+                }
+
+                document.getElementById('editId').value = id;
+                document.getElementById('editName').value = name;
+                document.getElementById('editPhone').value = phone;
+                document.getElementById('editAddress').value = address;
+                document.getElementById('editPoints').value = points ? points : 0;
+                new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+            }
+
+
+        </script>
+        <<script>
+
+        </script>
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     </body>

@@ -16,6 +16,10 @@
         <servlet-name>AddCustomerServlet</servlet-name>
         <servlet-class>controller.AddCustomerServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GenerateVoucherCodeServlet</servlet-name>
+        <servlet-class>controller.GenerateVoucherCodeServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VoucherServlet</servlet-name>
         <url-pattern>/VoucherServlet</url-pattern>
@@ -31,5 +35,9 @@
     <servlet-mapping>
         <servlet-name>AddCustomerServlet</servlet-name>
         <url-pattern>/AddCustomerServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GenerateVoucherCodeServlet</servlet-name>
+        <url-pattern>/GenerateVoucherCodeServlet</url-pattern>
     </servlet-mapping>
 </web-app>

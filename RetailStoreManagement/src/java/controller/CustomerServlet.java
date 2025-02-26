@@ -11,100 +11,128 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-
 public class CustomerServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
     private CustomerDAO customerDAO = new CustomerDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String searchQuery = request.getParameter("search");
-        String editId = request.getParameter("editId");
+        try {
+            String searchQuery = request.getParameter("search");
+            List<Customer> customers;
 
-        List<Customer> customers;
-
-        // 🔍 Nếu có tìm kiếm, lấy dữ liệu tìm kiếm mà không lưu vào session
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            customers = customerDAO.searchCustomers(searchQuery);
-            request.setAttribute("customers", customers);
-        } else {
-            // 🛠 Nếu không tìm kiếm, lấy danh sách từ session hoặc database
-            customers = (List<Customer>) session.getAttribute("customers");
-            if (customers == null || request.getParameter("refresh") != null) {
-                customers = customerDAO.getAllCustomers();
-                session.setAttribute("customers", customers);
+            if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                customers = customerDAO.searchCustomers(searchQuery);
+            } else {
+                // 🛠 Kiểm tra session trước khi lấy từ database
+                customers = (List<Customer>) session.getAttribute("customers");
+                if (customers == null || request.getParameter("refresh") != null) {
+                    customers = customerDAO.getAllCustomers();
+                    session.setAttribute("customers", customers);  // Cập nhật lại session
+                }
             }
+
             request.setAttribute("customers", customers);
+            request.getRequestDispatcher("customers.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("error", "⚠️ Error fetching customers: " + e.getMessage());
+            request.getRequestDispatcher("customers.jsp").forward(request, response);
         }
 
-        // 📌 Nếu đang vào Edit, lấy dữ liệu khách hàng cần chỉnh sửa
-        
-
-        request.getRequestDispatcher("customers.jsp").forward(request, response);
     }
 
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String action = request.getParameter("action");
-    HttpSession session = request.getSession();
-    String message = "";
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        HttpSession session = request.getSession();
+        String message = "";
 
-    try {
-        List<Customer> customers = (List<Customer>) session.getAttribute("customers");
-        if (customers == null) {
-            customers = customerDAO.getAllCustomers(); // Lấy từ database nếu session rỗng
-        }
+        try {
+            // Danh sách khách hàng để cập nhật session
 
-        if ("add".equals(action)) {
-            String name = request.getParameter("customerName");
-            String phone = request.getParameter("phone");
-            String address = request.getParameter("address");
-            Integer points = parseInteger(request.getParameter("points"));
+            if ("add".equals(action)) {
+                String name = request.getParameter("customerName");
+                String phone = request.getParameter("phone");
+                String address = request.getParameter("address");
+                Integer points = request.getParameter("points") == null || request.getParameter("points").isEmpty()
+                        ? 0 : Integer.parseInt(request.getParameter("points"));
 
-            if (name == null || name.trim().isEmpty()) {
-                throw new IllegalArgumentException("Customer name is required!");
-            }
+                // ✅ Sử dụng constructor không có id
+                Customer customer = new Customer(name, phone, address, points);
 
-            Customer customer = new Customer(0, name, phone, address, points);
-            customerDAO.addCustomer(customer);
-            customers = customerDAO.getAllCustomers(); // Cập nhật danh sách mới nhất
-            message = "✅ Customer added successfully!";
+                CustomerDAO customerDAO = new CustomerDAO();
+                boolean success = customerDAO.addCustomer(customer);
 
-        } else if ("update".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            String name = request.getParameter("customerName");
-            String phone = request.getParameter("phone");
-            String address = request.getParameter("address");
-            Integer points = parseInteger(request.getParameter("points"));
+                if (success) {
+                    session.setAttribute("message", "✅ Customer added successfully!");
+                } else {
+                    session.setAttribute("message", "❌ Failed to add customer!");
+                }
+                List<Customer> customers = customerDAO.getAllCustomers();
+                session.setAttribute("customers", customers);
 
-            if (name == null || name.trim().isEmpty()) {
-                throw new IllegalArgumentException("Customer name is required!");
-            }
+                response.sendRedirect("CustomerServlet");
+            } else if ("update".equals(action)) {
+    String idParam = request.getParameter("id");
+    System.out.println("🚀 Received update request - ID: " + idParam);
 
-            Customer customer = new Customer(id, name, phone, address, points);
-            customerDAO.updateCustomer(customer);
-            customers = customerDAO.getAllCustomers(); // Cập nhật danh sách mới nhất
-            message = "✅ Customer updated successfully!";
-
-        } else if ("delete".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            customerDAO.deleteCustomer(id);
-            customers = customerDAO.getAllCustomers(); // Cập nhật danh sách mới nhất
-            message = "❌ Customer deleted successfully!";
-        }
-
-        // 🔄 Cập nhật session với danh sách mới
-        session.setAttribute("customers", customers);
-        session.setAttribute("message", message);
-
-    } catch (Exception e) {
-        session.setAttribute("message", "⚠️ Error: " + e.getMessage());
+    if (idParam == null || idParam.trim().isEmpty()) {
+        session.setAttribute("message", "⚠️ Customer ID is required for update!");
+        response.sendRedirect("CustomerServlet");
+        return;
     }
 
-    response.sendRedirect("CustomerServlet");  // Reload lại danh sách sau CRUD
-}
+    int id = Integer.parseInt(idParam);
+    String name = request.getParameter("customerName");
+    String phone = request.getParameter("phone");
+    String address = request.getParameter("address");
+    Integer points = parseInteger(request.getParameter("points"));
 
+    System.out.println("📌 Received Data - ID: " + id + ", Name: " + name + ", Phone: " + phone + ", Address: " + address + ", Points: " + points);
+
+    if (name == null || name.trim().isEmpty() || phone == null || phone.trim().isEmpty()) {
+        session.setAttribute("message", "⚠️ Name and Phone are required!");
+        response.sendRedirect("CustomerServlet");
+        return;
+    }
+
+    Customer updatedCustomer = new Customer(id, name, phone, address, points);
+    System.out.println("📌 Sending to DAO - ID: " + updatedCustomer.getId());
+
+    customerDAO.updateCustomer(updatedCustomer);
+
+    // 🔄 Cập nhật lại danh sách khách hàng sau khi update
+    List<Customer> customers = customerDAO.getAllCustomers();
+    session.setAttribute("customers", customers);
+
+    session.setAttribute("message", "✅ Customer updated successfully!");
+    response.sendRedirect("CustomerServlet");
+}
+ else if ("delete".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                boolean success = customerDAO.deleteCustomer(id);
+
+                session.setAttribute("message", success ? "✅ Customer deleted successfully!" : "❌ Failed to delete customer!");
+                List<Customer> customers = customerDAO.getAllCustomers();
+                session.setAttribute("customers", customers);
+
+                response.sendRedirect("CustomerServlet");
+            }
+
+            // 🔄 Luôn cập nhật session sau khi thêm/xóa/sửa khách hàng
+//            customers = customerDAO.getAllCustomers();
+//            session.setAttribute("customers", customers);
+//            session.setAttribute("message", message);
+        } catch (NumberFormatException e) {
+            session.setAttribute("message", "⚠️ Invalid ID format!");
+        } catch (Exception e) {
+            session.setAttribute("message", "⚠️ Error: " + e.getMessage());
+        }
+
+        // Reload lại danh sách
+    }
 
     private Integer parseInteger(String value) {
         try {

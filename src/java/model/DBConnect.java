@@ -23,8 +23,8 @@ public class DBConnect {
         }
    }
     public DBConnect() {
-        this("jdbc:sqlserver://localhost:1433;databaseName=slimDemo",
-                "sa","123456");
+        this("jdbc:sqlserver://localhost:1433;databaseName=SlimDB1",
+                "sa","12345678");
     }
     public ResultSet getData(String sql){
         ResultSet rs=null;

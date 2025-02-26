@@ -1,13 +1,42 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity;
 
-/**
- *
- * @author Admin
- */
+import java.util.Date;
+
 public class Payment {
-    
+    private int paymentID;
+    private Date paymentDate;
+    private String paymentMethods;
+
+    public Payment() {
+    }
+
+    public Payment(int paymentID, Date paymentDate, String paymentMethods) {
+        this.paymentID = paymentID;
+        this.paymentDate = paymentDate;
+        this.paymentMethods = paymentMethods;
+    }
+
+    public int getPaymentID() {
+        return paymentID;
+    }
+
+    public void setPaymentID(int paymentID) {
+        this.paymentID = paymentID;
+    }
+
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public String getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    public void setPaymentMethods(String paymentMethods) {
+        this.paymentMethods = paymentMethods;
+    }
 }

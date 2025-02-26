@@ -45,64 +45,69 @@ public class VoucherServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
+        HttpSession session = request.getSession();
 
-        if ("add".equals(action)) {
-            String code = request.getParameter("code");
-            int minOrder = Integer.parseInt(request.getParameter("minOrder"));
-            int discountRate = Integer.parseInt(request.getParameter("discountRate"));
-            int maxValue = Integer.parseInt(request.getParameter("maxValue"));
+        try {
+            if ("add".equals(action)) {
+                // Lấy dữ liệu từ form
+                String code = request.getParameter("code");
+                int minOrder = Integer.parseInt(request.getParameter("minOrder"));
+                int discountRate = Integer.parseInt(request.getParameter("discountRate"));
+                int maxValue = Integer.parseInt(request.getParameter("maxValue"));
+                LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+                LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
-            String startDateStr = request.getParameter("startDate");
-            String endDateStr = request.getParameter("endDate");
+                // Kiểm tra ngày hợp lệ
+                if (startDate.isAfter(endDate)) {
+                    session.setAttribute("message", "Lỗi: Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
+                    response.sendRedirect("vouchers.jsp");
+                    return;
+                } else if (minOrder < 1 || discountRate < 1 || maxValue < 1) {
+                    session.setAttribute("message", "❌ Lỗi: Giá trị phải lớn hơn hoặc bằng 1!");
+                    response.sendRedirect("vouchers.jsp");
+                    return;
+                }
 
-            // ✅ Kiểm tra và chuyển đổi ngày một cách an toàn
-            LocalDate startDate = startDateStr != null && !startDateStr.isEmpty() ? LocalDate.parse(startDateStr) : null;
-            LocalDate endDate = endDateStr != null && !endDateStr.isEmpty() ? LocalDate.parse(endDateStr) : null;
+                Voucher voucher = new Voucher(code, minOrder, discountRate, maxValue, startDate, endDate);
+                voucherDAO.addVoucher(voucher);
+                session.setAttribute("message", "✅ Thêm voucher thành công!");
 
-            if (startDate == null || endDate == null) {
-                request.setAttribute("error", "Start Date và End Date không được để trống.");
-                request.getRequestDispatcher("vouchers.jsp").forward(request, response);
-                return;
+            } else if ("update".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                String code = request.getParameter("code");
+                int minOrder = Integer.parseInt(request.getParameter("minOrder"));
+                int discountRate = Integer.parseInt(request.getParameter("discountRate"));
+                int maxValue = Integer.parseInt(request.getParameter("maxValue"));
+                LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+                LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+
+                // Kiểm tra ngày hợp lệ
+                if (startDate.isAfter(endDate)) {
+                    session.setAttribute("message", "Lỗi: Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
+                    response.sendRedirect("vouchers.jsp");
+                    return;
+                }else if (minOrder < 1 || discountRate < 1 || maxValue < 1) {
+                    session.setAttribute("message", "❌ Lỗi: Giá trị phải lớn hơn hoặc bằng 1!");
+                    response.sendRedirect("vouchers.jsp");
+                    return;
+                }
+
+                Voucher voucher = new Voucher(id, code, minOrder, discountRate, maxValue, startDate, endDate);
+                voucherDAO.updateVoucher(voucher);
+                session.setAttribute("message", "✅ Cập nhật voucher thành công!");
+
+            } else if ("delete".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                voucherDAO.deleteVoucher(id);
+                session.setAttribute("message", "🗑️ Xóa voucher thành công!");
             }
 
-            // Thêm voucher vào DB
-            Voucher voucher = new Voucher(code, minOrder, discountRate, maxValue, startDate, endDate);
-            voucherDAO.addVoucher(voucher);
-        } else if ("update".equals(action)) {
-            // Lấy dữ liệu từ form update
-            int id = Integer.parseInt(request.getParameter("id"));
-            String code = request.getParameter("code");
-            int minOrder = Integer.parseInt(request.getParameter("minOrder"));
-            int discountRate = Integer.parseInt(request.getParameter("discountRate"));
-            int maxValue = Integer.parseInt(request.getParameter("maxValue"));
-
-            // Kiểm tra nếu ngày bị null hoặc sai định dạng
-            LocalDate startDate = null;
-            LocalDate endDate = null;
-            try {
-                startDate = LocalDate.parse(request.getParameter("startDate"));
-                endDate = LocalDate.parse(request.getParameter("endDate"));
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.getSession().setAttribute("message", "❌ Lỗi khi cập nhật: Ngày không hợp lệ!");
-                response.sendRedirect("vouchers.jsp");
-                return;
-            }
-
-            // Cập nhật voucher
-            Voucher voucher = new Voucher(id, code, minOrder, discountRate, maxValue, startDate, endDate);
-            voucherDAO.updateVoucher(voucher);
-            request.getSession().setAttribute("message", "✅ Cập nhật voucher thành công!");
-
-        } else if ("delete".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            voucherDAO.deleteVoucher(id);
+            // Cập nhật danh sách voucher
+            session.setAttribute("vouchers", voucherDAO.getAllVouchers());
+        } catch (Exception e) {
+            session.setAttribute("message", "❌ Lỗi xử lý dữ liệu: " + e.getMessage());
         }
 
-        // Cập nhật danh sách voucher sau khi CRUD
-        HttpSession session = request.getSession();
-        session.setAttribute("vouchers", voucherDAO.getAllVouchers());
-
-        response.sendRedirect("vouchers.jsp"); // Quay về trang JSP
+        response.sendRedirect("vouchers.jsp");
     }
 }

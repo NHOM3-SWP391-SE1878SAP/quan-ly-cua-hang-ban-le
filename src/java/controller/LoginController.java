@@ -36,7 +36,7 @@ public class LoginController extends HttpServlet {
                 if ("Admin".equalsIgnoreCase(roleName)) {
                     response.sendRedirect("admin-dashboard.jsp");  // Điều hướng đến trang Admin
                 } else if ("Employee".equalsIgnoreCase(roleName)) {
-                    response.sendRedirect("employee-dashboard.jsp");  // Điều hướng đến trang Employee
+                    response.sendRedirect("ProductController");  // Điều hướng đến trang Employee
                 } else {
                     response.sendRedirect("home.jsp");  // Mặc định nếu không có role cụ thể
                 }

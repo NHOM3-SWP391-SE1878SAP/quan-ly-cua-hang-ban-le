@@ -35,13 +35,13 @@ public class DAOProduct extends DBConnect {
                 int id = rs.getInt("ID");
                 String productName = rs.getString("ProductName");
                 String productCode = rs.getString("ProductCode");
-                int unitPrice = rs.getInt("UnitPrice");
+                int price = rs.getInt("Price");
                 int stockQuantity = rs.getInt("StockQuantity");
                 boolean isAvailable = rs.getBoolean("IsAvailable");
                 String imageURL = rs.getString("imageURL");  // Bổ sung lấy ảnh
                 int categoryId = rs.getInt("CategoryID");
 
-                Product product = new Product(id, productName, productCode, unitPrice, stockQuantity, isAvailable, imageURL, categoryId);
+                Product product = new Product(id, productName, productCode, price, stockQuantity, isAvailable, imageURL, categoryId);
                 products.add(product);
             }
 
@@ -76,13 +76,13 @@ public class DAOProduct extends DBConnect {
                     int id = rs.getInt("ID");
                     String productName = rs.getString("ProductName");
                     String productCode = rs.getString("ProductCode");
-                    int unitPrice = rs.getInt("UnitPrice");
+                    int price = rs.getInt("Price");
                     int stockQuantity = rs.getInt("StockQuantity");
                     boolean isAvailable = rs.getBoolean("IsAvailable");
                     String imageURL = rs.getString("imageURL");  // Bổ sung lấy ảnh
                     int categoryId = rs.getInt("CategoryID");
 
-                    product = new Product(id, productName, productCode, unitPrice, stockQuantity, isAvailable, imageURL, categoryId);
+                    product = new Product(id, productName, productCode, price, stockQuantity, isAvailable, imageURL, categoryId);
                 }
             }
         } catch (SQLException ex) {

@@ -3,6 +3,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="entity.Product" %>
 <%@ page import="entity.CartItem" %>
+<%@ page import="entity.Account" %>
 <!DOCTYPE html>
 <html>     
     <head>         
@@ -96,10 +97,17 @@
             <div>                 
                 <i class="fas fa-shopping-cart me-3"></i>                 
                 <i class="fas fa-sync-alt me-3"></i>                 
-                <i class="fas fa-print me-3"></i>                 
-                <span>0385726162</span>                 
+                <i class="fas fa-print me-3"></i>     
+                     <i>
+            <% 
+                Account account = (Account) session.getAttribute("account");
+                String phoneNumber = (account != null) ? account.getPhone() : "Chưa đăng nhập";
+            %>
+            <span><%= phoneNumber %></span>           
+        </i> 
                 <i class="fas fa-bars menu-icon ms-3"></i>             
-            </div>         
+            </div> 
+            
         </div>          
 
         <div class="container mt-3">             

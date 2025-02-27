@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DAOAccount extends DBConnect {
 
     // Kiểm tra thông tin đăng nhập
@@ -27,9 +24,10 @@ public class DAOAccount extends DBConnect {
                 String email = rs.getString("Email");
                 int phone = rs.getInt("Phone");
                 String address = rs.getString("Address");
-                // Giả sử RoleID là cột lưu ID vai trò trong bảng Accounts
-                int roleID = rs.getInt("RoleID");
-                Role role = getRoleById(roleID); // Phương thức này để lấy thông tin Role
+                int roleID = rs.getInt("RoleID"); // Lấy RoleID
+                
+                Role role = getRoleById(roleID); // Lấy Role từ ID
+                
                 account = new Account(id, userName, password, email, phone, address, role);
             }
         } catch (SQLException e) {
@@ -49,7 +47,7 @@ public class DAOAccount extends DBConnect {
             stmt.setInt(1, roleID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                role = new Role(roleID, rs.getString("RoleName"));
+                role = new Role(roleID, rs.getString("RoleName")); // Lấy RoleName từ database
             }
         } catch (SQLException e) {
             e.printStackTrace();

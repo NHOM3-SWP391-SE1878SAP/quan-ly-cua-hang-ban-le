@@ -9,9 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.DAOAccount;
 import entity.Account;
+import entity.Role;
 
 /**
- * Servlet xử lý đăng nhập người dùng.
+ * Servlet xử lý đăng nhập người dùng với phân quyền Admin và Employee.
  */
 @WebServlet(name = "LoginController", urlPatterns = {"/login"})
 public class LoginController extends HttpServlet {
@@ -27,11 +28,25 @@ public class LoginController extends HttpServlet {
             // Lưu thông tin tài khoản vào session
             HttpSession session = request.getSession();
             session.setAttribute("account", account);
-            response.sendRedirect("home.jsp");  // Chuyển hướng đến trang chính sau khi đăng nhập thành công
+            
+            // Phân quyền dựa trên Role
+            Role role = account.getRole();
+            if (role != null) {
+                String roleName = role.getRoleName();
+                if ("Admin".equalsIgnoreCase(roleName)) {
+                    response.sendRedirect("admin-dashboard.jsp");  // Điều hướng đến trang Admin
+                } else if ("Employee".equalsIgnoreCase(roleName)) {
+                    response.sendRedirect("employee-dashboard.jsp");  // Điều hướng đến trang Employee
+                } else {
+                    response.sendRedirect("home.jsp");  // Mặc định nếu không có role cụ thể
+                }
+            } else {
+                response.sendRedirect("home.jsp"); // Nếu không có role, về trang chủ
+            }
         } else {
-            // Nếu đăng nhập không thành công
+            // Nếu đăng nhập thất bại
             request.setAttribute("errorMessage", "Invalid username or password");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("Login.jsp").forward(request, response);
         }
     }
 }

@@ -39,6 +39,12 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </head>
 
   <body>
@@ -70,14 +76,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                   <div class="mb-3">
                     <input
                       type="text"
-                      name="code"
-                      class="form-control"
-                      placeholder="Search by Code"
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <input
-                      type="text"
                       name="name"
                       class="form-control"
                       placeholder="Search by Name"
@@ -90,24 +88,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                       class="form-control"
                       placeholder="Search by Phone"
                     />
-                  </div>
-                  <div class="mb-3">
-                    <label for="group">Supplier Group</label>
-                    <div class="input-group">
-                      <select class="form-control" id="group" name="group">
-                        <option value="">All</option>
-                        <option value="group1">Group 1</option>
-                        <option value="group2">Group 2</option>
-                      </select>
-                      <button
-                        class="btn btn-secondary"
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addGroupModal"
-                      >
-                        <i class="bi bi-plus-circle"></i>
-                      </button>
-                    </div>
                   </div>
                   <div class="mb-3">
                     <button type="submit" class="btn btn-primary w-100">
@@ -149,7 +129,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                 <table class="table datatable">
                   <thead>
                     <tr>
-                      <th>Supplier Code</th>
                       <th>Name</th>
                       <th>Phone</th>
                       <th>Email</th>
@@ -160,16 +139,21 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                   <tbody>
                     <c:forEach items="${suppliers}" var="s">
                       <tr>
-                        <td>${s.supplierCode}</td>
                         <td>${s.supplierName}</td>
                         <td>${s.phone}</td>
                         <td>${s.email}</td>
                         <td>${s.address}</td>
                         <td>
-                          <button class="btn btn-primary btn-sm" onclick="editSupplier('${s.id}')">
+                          <button
+                            class="btn btn-primary btn-sm"
+                            onclick="editSupplier('${s.id}')"
+                          >
                             <i class="bi bi-pencil"></i>
                           </button>
-                          <button class="btn btn-danger btn-sm" onclick="deleteSupplier('${s.id}')">
+                          <button
+                            class="btn btn-danger btn-sm"
+                            onclick="deleteSupplier('${s.id}')"
+                          >
                             <i class="bi bi-trash"></i>
                           </button>
                         </td>
@@ -211,10 +195,27 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <jsp:include page="add-group-modal.jsp"></jsp:include>
     <!-- End Add Group Modal -->
 
+    <!-- Edit Supplier Modal -->
+    <jsp:include page="modal-edit-supplier.jsp"></jsp:include>
+    <!-- End Edit Supplier Modal -->
+
     <!-- Custom JavaScript for Supplier Management -->
     <script>
+      // Create a hidden form for edit supplier request
+      const editForm = document.createElement("form");
+      editForm.style.display = "none";
+      editForm.method = "GET";
+      editForm.action = "supplier";
+      document.body.appendChild(editForm);
+
       function editSupplier(id) {
-        window.location.href = "supplier?action=edit&id=" + id;
+        console.log("Edit supplier with ID:", id);
+        editForm.innerHTML =
+          '<input type="text" name="id" value="' +
+          id +
+          '">' +
+          '<input type="text" name="action" value="edit">';
+        editForm.submit();
       }
 
       function deleteSupplier(id) {

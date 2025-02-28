@@ -11,11 +11,6 @@
                     <input type="hidden" name="action" value="add">
                     
                     <div class="mb-3">
-                        <label for="supplierCode" class="form-label">Supplier Code</label>
-                        <input type="text" class="form-control" id="supplierCode" name="supplierCode" required>
-                    </div>
-                    
-                    <div class="mb-3">
                         <label for="supplierName" class="form-label">Supplier Name</label>
                         <input type="text" class="form-control" id="supplierName" name="supplierName" required>
                     </div>
@@ -33,15 +28,6 @@
                     <div class="mb-3">
                         <label for="address" class="form-label">Address</label>
                         <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="supplierGroup" class="form-label">Supplier Group</label>
-                        <select class="form-control" id="supplierGroup" name="supplierGroup">
-                            <option value="">Select Group</option>
-                            <option value="group1">Group 1</option>
-                            <option value="group2">Group 2</option>
-                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -6,22 +6,16 @@ public class Supplier {
     private String phone;
     private String address;
     private String email;
-    private boolean isActive;
-    private String supplierCode;
-    private String supplierGroup;
     
     public Supplier() {
     }
 
-    public Supplier(int id, String supplierName, String phone, String address, String email, boolean isActive, String supplierCode, String supplierGroup) {
+    public Supplier(int id, String supplierName, String phone, String address, String email) {
         this.id = id;
         this.supplierName = supplierName;
         this.phone = phone;
         this.address = address;
         this.email = email;
-        this.isActive = isActive;
-        this.supplierCode = supplierCode;
-        this.supplierGroup = supplierGroup;
     }
 
     // Getters and Setters
@@ -65,32 +59,8 @@ public class Supplier {
         this.email = email;
     }
 
-    public boolean isIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public String getSupplierCode() {
-        return supplierCode;
-    }
-
-    public void setSupplierCode(String supplierCode) {
-        this.supplierCode = supplierCode;
-    }
-
-    public String getSupplierGroup() {
-        return supplierGroup;
-    }
-
-    public void setSupplierGroup(String supplierGroup) {
-        this.supplierGroup = supplierGroup;
-    }
-
     @Override
     public String toString() {
-        return "Supplier{" + "id=" + id + ", supplierName=" + supplierName + ", phone=" + phone + ", address=" + address + ", email=" + email + ", isActive=" + isActive + ", supplierCode=" + supplierCode + ", supplierGroup=" + supplierGroup + '}';
+        return "Supplier{" + "id=" + id + ", supplierName=" + supplierName + ", phone=" + phone + ", address=" + address + ", email=" + email + '}';
     }
 }

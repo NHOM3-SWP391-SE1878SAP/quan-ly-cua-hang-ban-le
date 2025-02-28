@@ -17,7 +17,7 @@ public class DAOSupplier extends DBConnect {
             st.setString(1, supplier.getSupplierName());
             st.setString(2, supplier.getPhone());
             st.setString(3, supplier.getAddress());
-            st.setString(4, supplier.getEmail());
+            st.setString(4, supplier.getEmail());        
             return st.executeUpdate();
         } catch (SQLException e) {
             System.out.println("addSupplier: " + e.getMessage());

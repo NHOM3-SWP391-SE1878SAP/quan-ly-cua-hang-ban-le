@@ -22,7 +22,7 @@ public class DAOAccount extends DBConnect {
             if (rs.next()) {
                 int id = rs.getInt("ID");
                 String email = rs.getString("Email");
-                int phone = rs.getInt("Phone");
+                String phone = rs.getString("Phone");
                 String address = rs.getString("Address");
                 int roleID = rs.getInt("RoleID"); // Lấy RoleID
                 

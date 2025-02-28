@@ -1,3 +1,89 @@
-/build/
-/dist/
-/nbproject/private/
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# IDE-specific files
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# Build tool files
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Dependency directories
+lib/
+libs/
+
+# Web application specific
+# Ignore generated WAR/JAR files
+*.war
+*.jar
+*.ear
+
+# Ignore local configuration files
+*.properties (nếu là file cấu hình cục bộ, ví dụ: database.properties)
+*.local
+*.env
+
+# OS-specific files
+.DS_Store (macOS)
+Thumbs.db (Windows)
+
+# Database files
+*.db
+*.sqlite
+
+# Test reports
+test-reports/
+surefire-reports/
+
+nbproject/build-impl.xml
+nbproject/genfiles.properties
+nbproject/project.properties
+nbproject/project.xml
+nbproject/private/private.properties
+nbproject/private/private.xml

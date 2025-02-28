@@ -1,46 +1,41 @@
-<%-- 
-    Document   : model-import-supplier
-    Created on : Feb 12, 2025, 5:51:51 PM
-    Author     : TNO
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<div class="modal fade" id="importSupplierModal" tabindex="-1" aria-labelledby="importSupplierModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Import Supplier Modal -->
+<div class="modal fade" id="importSupplierModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importSupplierModalLabel">Import Suppliers</h5>
+                <h5 class="modal-title">Import Suppliers</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form>
+            <form action="supplier" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="import">
+                    
                     <div class="mb-3">
-                        <a href="path/to/sample.xlsx" class="btn btn-link">Download Sample File: Excel file</a>
+                        <label for="file" class="form-label">Select Excel File</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx,.xls" required>
+                        <div class="form-text">Only Excel files (.xlsx, .xls) are allowed</div>
                     </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="debtUpdateOption" id="updateDebt" value="update">
-                            <label class="form-check-label" for="updateDebt">
-                                Update Ending Balance
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="debtUpdateOption" id="noUpdateDebt" value="noUpdate" checked>
-                            <label class="form-check-label" for="noUpdateDebt">
-                                Do Not Update Ending Balance
-                            </label>
-                        </div>
+                    
+                    <div class="alert alert-info">
+                        <h6>Import Guidelines:</h6>
+                        <ul>
+                            <li>File must be in Excel format</li>
+                            <li>First row should contain headers</li>
+                            <li>Required columns: Code, Name, Phone, Email, Address</li>
+                            <li>Optional columns: Group</li>
+                        </ul>
+                        <p class="mb-0">
+                            <a href="assets/templates/supplier-import-template.xlsx" class="alert-link">
+                                Download template file
+                            </a>
+                        </p>
                     </div>
-                    <div class="mb-3">
-                        <label for="supplierFile" class="form-label">Select Data File</label>
-                        <input class="form-control" type="file" id="supplierFile">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Import</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -24,7 +24,7 @@ public class DBConnect {
    }
     public DBConnect() {
         this("jdbc:sqlserver://localhost:1433;databaseName=SlimDB4",
-                "sa","123456");
+                "sa","123");
     }
     public ResultSet getData(String sql){
         ResultSet rs=null;

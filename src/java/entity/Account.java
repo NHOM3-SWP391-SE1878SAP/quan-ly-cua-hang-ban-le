@@ -5,14 +5,14 @@ public class Account {
     private String userName;
     private String password;
     private String email;
-    private int phone;
+    private String phone;
     private String address;
     private Role role;
 
     public Account() {
     }
 
-    public Account(int id, String userName, String password, String email, int phone, String address, Role role) {
+    public Account(int id, String userName, String password, String email, String phone, String address, Role role) {
         this.id = id;
         this.userName = userName;
         this.password = password;
@@ -54,11 +54,11 @@ public class Account {
         this.email = email;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -77,4 +77,6 @@ public class Account {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    
 }

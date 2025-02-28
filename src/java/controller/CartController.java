@@ -57,7 +57,7 @@ public class CartController extends HttpServlet {
         } else if ("getTotal".equals(action)) {
             int total = 0;
             for (CartItem item : cart.values()) {
-                total += item.getProduct().getUnitPrice() * item.getQuantity();
+                total += item.getProduct().getPrice() * item.getQuantity();
             }
             session.setAttribute("totalAmount", total);
             response.getWriter().print(total);
@@ -65,7 +65,7 @@ public class CartController extends HttpServlet {
         } else if ("checkout".equals(action)) {
             int total = 0;
             for (CartItem item : cart.values()) {
-                total += item.getProduct().getUnitPrice() * item.getQuantity();
+                total += item.getProduct().getPrice() * item.getQuantity();
             }
             session.setAttribute("totalAmount", total);
             response.sendRedirect("Invoice.jsp");
@@ -78,7 +78,7 @@ public class CartController extends HttpServlet {
             for (CartItem item : cart.values()) {
                 out.println("<div class='cart-item'>"
                         + "<span>" + item.getProduct().getProductName() + " (x" + item.getQuantity() + ")</span>"
-                        + "<span>" + (item.getProduct().getUnitPrice() * item.getQuantity()) + " VND</span>"
+                        + "<span>" + (item.getProduct().getPrice() * item.getQuantity()) + " VND</span>"
                         + "<div class='cart-actions'>"
                         + "<button onclick=\"updateCart(" + item.getProduct().getId() + ", 'decrease')\">➖</button>"
                         + "<button onclick=\"updateCart(" + item.getProduct().getId() + ", 'increase')\">➕</button>"

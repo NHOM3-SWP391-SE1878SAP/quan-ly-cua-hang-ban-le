@@ -30,7 +30,7 @@ public class CartItem {
 
     // Tính tổng giá trị của sản phẩm trong giỏ hàng
     public int getTotalPrice() {
-        return product.getUnitPrice() * quantity;
+        return product.getPrice() * quantity;
     }
 
     // ToString() dùng để debug nếu cần

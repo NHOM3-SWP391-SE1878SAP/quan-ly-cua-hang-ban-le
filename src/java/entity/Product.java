@@ -7,40 +7,28 @@ public class Product {
     private int id;
     private String productName;
     private String productCode;
-    private int unitPrice;
+    private int price;
     private int stockQuantity;
     private boolean isAvailable;
     private String imageURL;
     private int categoryId;
 
     // Default Constructor
+
     public Product() {
     }
 
-    // Constructor đầy đủ
-    public Product(int id, String productName, String productCode, int unitPrice, int stockQuantity, boolean isAvailable, String imageURL, int categoryId) {
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, int categoryId) {
         this.id = id;
         this.productName = productName;
         this.productCode = productCode;
-        this.unitPrice = unitPrice;
+        this.price = price;
         this.stockQuantity = stockQuantity;
         this.isAvailable = isAvailable;
         this.imageURL = imageURL;
         this.categoryId = categoryId;
     }
 
-    // Constructor không có ID (dùng khi thêm mới sản phẩm)
-    public Product(String productName, String productCode, int unitPrice, int stockQuantity, boolean isAvailable, String imageURL, int categoryId) {
-        this.productName = productName;
-        this.productCode = productCode;
-        this.unitPrice = unitPrice;
-        this.stockQuantity = stockQuantity;
-        this.isAvailable = isAvailable;
-        this.imageURL = imageURL;
-        this.categoryId = categoryId;
-    }
-
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -65,12 +53,12 @@ public class Product {
         this.productCode = productCode;
     }
 
-    public int getUnitPrice() {
-        return unitPrice;
+    public int getPrice() {
+        return price;
     }
 
-    public void setUnitPrice(int unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public int getStockQuantity() {
@@ -81,11 +69,11 @@ public class Product {
         this.stockQuantity = stockQuantity;
     }
 
-    public boolean isAvailable() {  // Getter đúng chuẩn Java
+    public boolean isIsAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(boolean isAvailable) {  // Setter giữ nguyên tên thuộc tính
+    public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
 
@@ -104,19 +92,5 @@ public class Product {
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
-
-    // toString() method for debugging
-    @Override
-    public String toString() {
-        return "Product{" +  
-                "id=" + id +
-                ", productName='" + productName + '\'' +
-                ", productCode='" + productCode + '\'' +
-                ", unitPrice=" + unitPrice +
-                ", stockQuantity=" + stockQuantity +
-                ", isAvailable=" + isAvailable +
-                ", imageURL='" + imageURL + '\'' +
-                ", categoryId=" + categoryId +
-                '}';
-    }
+    
 }

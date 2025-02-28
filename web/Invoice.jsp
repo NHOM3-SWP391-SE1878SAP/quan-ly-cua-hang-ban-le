@@ -77,7 +77,7 @@
                     int totalAmount = 0;
                     if (cart != null && !cart.isEmpty()) {
                         for (CartItem item : cart.values()) {
-                            int itemTotal = item.getProduct().getUnitPrice() * item.getQuantity();
+                            int itemTotal = item.getProduct().getPrice() * item.getQuantity();
                             totalAmount += itemTotal;
                 %>
                 <tr>

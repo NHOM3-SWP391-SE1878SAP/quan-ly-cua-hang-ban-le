@@ -120,7 +120,7 @@
                             %>
                             <div class="cart-item">
                                 <span><%= item.getProduct().getProductName() %> (x<%= item.getQuantity() %>)</span>
-                                <span><%= item.getProduct().getUnitPrice() * item.getQuantity() %> VND</span>
+                                <span><%= item.getProduct().getPrice() * item.getQuantity() %> VND</span>
                                 <div class="cart-actions">
                                     <button onclick="updateCart(<%= item.getProduct().getId() %>, 'decrease')">➖</button>
                                     <button onclick="updateCart(<%= item.getProduct().getId() %>, 'increase')">➕</button>
@@ -162,7 +162,7 @@
                                     <div class="product-info">
                                         <h6><%= product.getProductName() %></h6>                                     
                                         <p><%= product.getProductCode() %></p>                                     
-                                        <p><%= product.getUnitPrice() %> VND</p>                                     
+                                        <p><%= product.getPrice() %> VND</p>                                     
                                         <p>Số lượng còn lại: <strong><%= product.getStockQuantity() %></strong></p>                                 
                                     </div>
                                 </div>                             

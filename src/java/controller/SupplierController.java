@@ -7,10 +7,6 @@ import jakarta.servlet.annotation.*;
 import java.io.*;
 import java.util.List;
 import model.DAOSupplier;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import java.util.ArrayList;
 
 @WebServlet(name = "SupplierController", urlPatterns = {"/supplier"})
 public class SupplierController extends HttpServlet {

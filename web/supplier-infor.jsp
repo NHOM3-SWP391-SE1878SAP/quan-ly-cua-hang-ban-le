@@ -34,85 +34,6 @@
     <link href="assets/css/style.css" rel="stylesheet" />
     
     <style>
-      .info-card {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-      }
-      
-      .info-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
-      }
-      
-      .info-title {
-        font-size: 1.2em;
-        font-weight: 600;
-        color: #333;
-      }
-      
-      .info-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-      }
-      
-      .info-item {
-        margin-bottom: 15px;
-      }
-      
-      .info-label {
-        color: #666;
-        font-size: 0.9em;
-        margin-bottom: 5px;
-      }
-      
-      .info-value {
-        color: #333;
-        font-weight: 500;
-      }
-      
-      .info-input {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-      
-      .info-textarea {
-        width: 100%;
-        min-height: 100px;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        resize: vertical;
-      }
-      
-      .tabs {
-        display: flex;
-        border-bottom: 1px solid #ddd;
-        margin-bottom: 20px;
-      }
-      
-      .tab {
-        padding: 10px 20px;
-        cursor: pointer;
-        color: #666;
-        font-weight: 500;
-        border-bottom: 2px solid transparent;
-      }
-      
-      .tab.active {
-        color: #00c853;
-        border-bottom-color: #00c853;
-      }
-      
       .badge {
         padding: 5px 10px;
         border-radius: 4px;
@@ -128,6 +49,22 @@
       .badge-inactive {
         background-color: #757575;
         color: white;
+      }
+
+      .nav-tabs .nav-link {
+        color: #666;
+        font-weight: 500;
+      }
+
+      .nav-tabs .nav-link.active {
+        color: #00c853;
+        border-color: #00c853;
+      }
+
+      .form-label {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 5px;
       }
     </style>
   </head>
@@ -150,96 +87,143 @@
 
       <section class="section">
         <div class="row">
-          <div class="col-12">
-            <div class="info-card">
-              <div class="info-header">
-                <div class="info-title">Thông tin nhà cung cấp</div>
-                <div class="status">
-                  <span class="badge ${supplier.status ? 'badge-active' : 'badge-inactive'}">
-                    ${supplier.status ? 'Hoạt động' : 'Ngưng hoạt động'}
+          <div class="col-lg-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Thao tác nhanh</h5>
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-primary" onclick="window.location.href='supplier-purchase-history.jsp?id=${supplier.id}'">
+                    <i class="bi bi-clock-history"></i> Lịch sử nhập/trả hàng
+                  </button>
+                  <button type="button" class="btn btn-success" onclick="window.location.href='supplier-payment.jsp?id=${supplier.id}'">
+                    <i class="bi bi-cash-coin"></i> Nợ cần trả NCC
+                  </button>
+                  <button type="button" class="btn btn-info text-white">
+                    <i class="bi bi-download"></i> Xuất thông tin
+                  </button>
+                </div>
+
+                <hr>
+
+                <div class="text-center mb-3">
+                  <span class="badge ${supplier.status ? 'badge-active' : 'badge-inactive'} fs-6">
+                    ${supplier.status ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                   </span>
                 </div>
-              </div>
 
-              <div class="tabs">
-                <div class="tab active">Thông tin</div>
-                <div class="tab" onclick="window.location.href='supplier-purchase-history.jsp?id=${supplier.id}'">
-                  Lịch sử nhập/trả hàng
+                <div class="mb-3">
+                  <label class="form-label">Nợ hiện tại</label>
+                  <div class="fs-5 text-end">${supplier.currentDebt}</div>
                 </div>
-                <div class="tab" onclick="window.location.href='supplier-payment.jsp?id=${supplier.id}'">
-                  Nợ cần trả NCC
+
+                <div class="mb-3">
+                  <label class="form-label">Tổng mua</label>
+                  <div class="fs-5 text-end">${supplier.totalPurchase}</div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <form action="supplier" method="POST">
+          <div class="col-lg-9">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h5 class="card-title mb-0">Thông tin nhà cung cấp</h5>
+                </div>
+
+                <ul class="nav nav-tabs mb-3">
+                  <li class="nav-item">
+                    <a class="nav-link active" href="#">Thông tin</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="supplier-purchase-history.jsp?id=${supplier.id}">Lịch sử nhập/trả hàng</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="supplier-payment.jsp?id=${supplier.id}">Nợ cần trả NCC</a>
+                  </li>
+                </ul>
+
+                <form action="supplier" method="POST" class="row g-3">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="id" value="${supplier.id}">
                 
-                <div class="info-grid">
-                  <div class="info-item">
-                    <div class="info-label">Mã nhà cung cấp</div>
-                    <input type="text" class="info-input" name="supplierCode" value="${supplier.supplierCode}" readonly>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Mã nhà cung cấp</label>
+                      <input type="text" class="form-control" name="supplierCode" value="${supplier.supplierCode}" readonly>
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Tên công ty</div>
-                    <input type="text" class="info-input" name="companyName" value="${supplier.companyName}">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Tên công ty</label>
+                      <input type="text" class="form-control" name="companyName" value="${supplier.companyName}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Tên nhà cung cấp</div>
-                    <input type="text" class="info-input" name="supplierName" value="${supplier.supplierName}">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Tên nhà cung cấp</label>
+                      <input type="text" class="form-control" name="supplierName" value="${supplier.supplierName}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Mã số thuế</div>
-                    <input type="text" class="info-input" name="taxCode" value="${supplier.taxCode}">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Mã số thuế</label>
+                      <input type="text" class="form-control" name="taxCode" value="${supplier.taxCode}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Địa chỉ</div>
-                    <input type="text" class="info-input" name="address" value="${supplier.address}">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="form-label">Địa chỉ</label>
+                      <input type="text" class="form-control" name="address" value="${supplier.address}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Nhóm NCC</div>
-                    <input type="text" class="info-input" name="supplierGroup" value="${supplier.supplierGroup}">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="form-label">Nhóm NCC</label>
+                      <input type="text" class="form-control" name="supplierGroup" value="${supplier.supplierGroup}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Khu vực</div>
-                    <input type="text" class="info-input" name="region" value="${supplier.region}">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="form-label">Khu vực</label>
+                      <input type="text" class="form-control" name="region" value="${supplier.region}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Phường xã</div>
-                    <input type="text" class="info-input" name="ward" value="${supplier.ward}">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="form-label">Phường xã</label>
+                      <input type="text" class="form-control" name="ward" value="${supplier.ward}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Điện thoại</div>
-                    <input type="text" class="info-input" name="phone" value="${supplier.phone}">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Điện thoại</label>
+                      <input type="text" class="form-control" name="phone" value="${supplier.phone}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Email</div>
-                    <input type="text" class="info-input" name="email" value="${supplier.email}">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Email</label>
+                      <input type="text" class="form-control" name="email" value="${supplier.email}">
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Nợ hiện tại</div>
-                    <div class="info-value">${supplier.currentDebt}</div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="form-label">Ghi chú</label>
+                      <textarea class="form-control" name="notes" rows="3">${supplier.notes}</textarea>
+                    </div>
                   </div>
-                  <div class="info-item">
-                    <div class="info-label">Tổng mua</div>
-                    <div class="info-value">${supplier.totalPurchase}</div>
-                  </div>
-                  <div class="info-item">
-                    <div class="info-label">Người tạo</div>
-                    <div class="info-value">${supplier.createdBy}</div>
-                  </div>
-                  <div class="info-item">
-                    <div class="info-label">Ngày tạo</div>
-                    <div class="info-value">${supplier.createdDate}</div>
-                  </div>
-                </div>
 
-                <div class="info-item mt-4">
-                  <div class="info-label">Ghi chú</div>
-                  <textarea class="info-textarea" name="notes">${supplier.notes}</textarea>
-                </div>
+                  <div class="col-12">
+                    <div class="alert alert-info">
+                      <small>
+                        <i class="bi bi-info-circle"></i>
+                        Người tạo: ${supplier.createdBy} - Ngày tạo: ${supplier.createdDate}
+                      </small>
+                    </div>
+                  </div>
 
-                <div class="d-flex justify-content-end gap-2 mt-4">
+                  <div class="col-12 text-end">
                   <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> Cập nhật
                   </button>

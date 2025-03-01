@@ -433,9 +433,15 @@
             </div>
             
             <div class="tab-container">
-                <div class="tab">Thông tin</div>
-                <div class="tab active">Lịch sử nhập/trả hàng</div>
-                <div class="tab">Nợ cần trả NCC</div>
+                <div class="tab" onclick="window.location.href='supplier-infor.jsp?id=${param.id}'">
+                    Thông tin
+                </div>
+                <div class="tab active">
+                    Lịch sử nhập/trả hàng
+                </div>
+                <div class="tab" onclick="window.location.href='supplier-payment.jsp?id=${param.id}'">
+                    Nợ cần trả NCC
+                </div>
             </div>
             
             <button class="export-button">

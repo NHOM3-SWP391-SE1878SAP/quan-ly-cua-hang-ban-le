@@ -163,8 +163,12 @@
 
               <div class="tabs">
                 <div class="tab active">Thông tin</div>
-                <div class="tab">Lịch sử nhập/trả hàng</div>
-                <div class="tab">Nợ cần trả NCC</div>
+                <div class="tab" onclick="window.location.href='supplier-purchase-history.jsp?id=${supplier.id}'">
+                  Lịch sử nhập/trả hàng
+                </div>
+                <div class="tab" onclick="window.location.href='supplier-payment.jsp?id=${supplier.id}'">
+                  Nợ cần trả NCC
+                </div>
               </div>
 
               <form action="supplier" method="POST">
@@ -280,5 +284,27 @@
 
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
+    
+    <script>
+      // Set active tab based on action parameter
+      document.addEventListener('DOMContentLoaded', function() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const action = urlParams.get('action');
+          const tabs = document.querySelectorAll('.tab');
+          
+          tabs.forEach(tab => tab.classList.remove('active'));
+          
+          switch(action) {
+              case 'history':
+                  tabs[1].classList.add('active');
+                  break;
+              case 'debt':
+                  tabs[2].classList.add('active');
+                  break;
+              default:
+                  tabs[0].classList.add('active');
+          }
+      });
+    </script>
   </body>
 </html>

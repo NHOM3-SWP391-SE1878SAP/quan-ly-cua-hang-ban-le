@@ -79,10 +79,20 @@ public class SupplierController extends HttpServlet {
             String toDate = request.getParameter("toDate");
             
             Supplier supplier = dao.getSupplierById(supplierId);
+            if (supplier == null) {
+                response.sendRedirect("supplier?action=list");
+                return;
+            }
+            
             List<GoodReceipt> receipts = dao.getGoodReceipts(supplierId, fromDate, toDate);
             
             request.setAttribute("supplier", supplier);
             request.setAttribute("transactions", receipts);
+            request.setAttribute("tab", "history"); // Mark active tab
+            request.setAttribute("fromDate", fromDate);
+            request.setAttribute("toDate", toDate);
+            request.setAttribute("pageTitle", "Lịch sử nhập/trả hàng");
+            
             RequestDispatcher dispatcher = request.getRequestDispatcher("supplier-payment.jsp");
             dispatcher.forward(request, response);
         } catch (NumberFormatException e) {
@@ -98,10 +108,20 @@ public class SupplierController extends HttpServlet {
             String toDate = request.getParameter("toDate");
             
             Supplier supplier = dao.getSupplierById(supplierId);
+            if (supplier == null) {
+                response.sendRedirect("supplier?action=list");
+                return;
+            }
+            
             List<SupplierPayment> payments = dao.getSupplierPayments(supplierId, fromDate, toDate);
             
             request.setAttribute("supplier", supplier);
             request.setAttribute("transactions", payments);
+            request.setAttribute("tab", "debt"); // Mark active tab
+            request.setAttribute("fromDate", fromDate);
+            request.setAttribute("toDate", toDate);
+            request.setAttribute("pageTitle", "Nợ cần trả NCC");
+            
             RequestDispatcher dispatcher = request.getRequestDispatcher("supplier-payment.jsp");
             dispatcher.forward(request, response);
         } catch (NumberFormatException e) {

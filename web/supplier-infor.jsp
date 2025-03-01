@@ -1,569 +1,284 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý nhà cung cấp</title>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>Thông tin nhà cung cấp - SLIM</title>
+    <meta content="" name="description" />
+    <meta content="" name="keywords" />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" />
+
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        
-        body {
-            background-color: #f0f0f0;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            color: #333;
-        }
-        
-        .search-bar {
-            display: flex;
-            width: 500px;
-            position: relative;
-        }
-        
-        .search-bar input {
-            width: 100%;
-            padding: 10px 40px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        
-        .search-bar i {
-            position: absolute;
-            left: 15px;
-            top: 12px;
-            color: #888;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .btn-primary {
-            background-color: #00c853;
-        }
-        
-        .btn-secondary {
-            background-color: #03a9f4;
-        }
-        
-        .btn-dropdown {
-            background-color: #00c853;
-        }
-        
-        .sidebar {
-            width: 250px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-right: 20px;
-            float: left;
-        }
-        
-        .sidebar-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .sidebar-title {
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .sidebar-icon {
-            color: #888;
-            cursor: pointer;
-        }
-        
-        .sidebar-content {
-            padding: 15px;
-        }
-        
-        .sidebar-filter {
-            margin-bottom: 20px;
-        }
-        
-        .sidebar-filter-title {
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #333;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .input-group {
-            margin-bottom: 10px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        
-        .radio-group {
-            margin-bottom: 10px;
-        }
-        
-        .content {
-            margin-left: 270px;
-        }
-        
-        .main-table {
-            width: 100%;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .table th {
-            background-color: #f9f9f9;
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .table-row {
-            border-left: 5px solid transparent;
-        }
-        
-        .table-row.active {
-            border-left: 5px solid #00c853;
-            background-color: #f5fff9;
-        }
-        
-        .supplier-detail {
-            margin-top: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #666;
-        }
-        
-        .tab.active {
-            color: #00c853;
-            border-bottom: 2px solid #00c853;
-        }
-        
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        .detail-item {
-            margin-bottom: 15px;
-        }
-        
-        .detail-label {
-            color: #666;
-            margin-bottom: 5px;
-        }
-        
-        .detail-value {
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .note-area {
-            margin-top: 20px;
-        }
-        
-        .note-area textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            resize: none;
-        }
-        
-        .detail-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .btn-danger {
-            background-color: #f44336;
-        }
-        
-        .notification-bar {
-            background-color: #fffde7;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #eee;
-        }
-        
-        .notification-text {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .notification-link {
-            color: #f44336;
-            text-decoration: none;
-        }
-        
-        .checkbox {
-            width: 18px;
-            height: 18px;
-        }
-        
-        .scroll-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: #2196f3;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .chat-support {
-            position: fixed;
-            bottom: 70px;
-            right: 20px;
-            padding: 10px 15px;
-            background-color: #2196f3;
-            color: white;
-            border-radius: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            gap: 5px;
-        }
+      .info-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      
+      .info-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .info-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #333;
+      }
+      
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      
+      .info-item {
+        margin-bottom: 15px;
+      }
+      
+      .info-label {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+      }
+      
+      .info-value {
+        color: #333;
+        font-weight: 500;
+      }
+      
+      .info-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .info-textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+      }
+      
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
+      }
+      
+      .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        color: #666;
+        font-weight: 500;
+        border-bottom: 2px solid transparent;
+      }
+      
+      .tab.active {
+        color: #00c853;
+        border-bottom-color: #00c853;
+      }
+      
+      .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      .badge-active {
+        background-color: #00c853;
+        color: white;
+      }
+      
+      .badge-inactive {
+        background-color: #757575;
+        color: white;
+      }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Nhà cung cấp</h1>
-            
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Theo mã, tên, điện thoại">
+  </head>
+
+  <body>
+    <!-- ======= Header ======= -->
+    <%@include file="HeaderAdmin.jsp"%>
+
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>Chi tiết nhà cung cấp</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="supplier?action=list">Nhà cung cấp</a></li>
+            <li class="breadcrumb-item active">Chi tiết</li>
+          </ol>
+        </nav>
+      </div>
+
+      <section class="section">
+        <div class="row">
+          <div class="col-12">
+            <div class="info-card">
+              <div class="info-header">
+                <div class="info-title">Thông tin nhà cung cấp</div>
+                <div class="status">
+                  <span class="badge ${supplier.status ? 'badge-active' : 'badge-inactive'}">
+                    ${supplier.status ? 'Hoạt động' : 'Ngưng hoạt động'}
+                  </span>
+                </div>
+              </div>
+
+              <div class="tabs">
+                <div class="tab active">Thông tin</div>
+                <div class="tab">Lịch sử nhập/trả hàng</div>
+                <div class="tab">Nợ cần trả NCC</div>
+              </div>
+
+              <form action="supplier" method="POST">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" value="${supplier.id}">
+                
+                <div class="info-grid">
+                  <div class="info-item">
+                    <div class="info-label">Mã nhà cung cấp</div>
+                    <input type="text" class="info-input" name="supplierCode" value="${supplier.supplierCode}" readonly>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Tên công ty</div>
+                    <input type="text" class="info-input" name="companyName" value="${supplier.companyName}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Tên nhà cung cấp</div>
+                    <input type="text" class="info-input" name="supplierName" value="${supplier.supplierName}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Mã số thuế</div>
+                    <input type="text" class="info-input" name="taxCode" value="${supplier.taxCode}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Địa chỉ</div>
+                    <input type="text" class="info-input" name="address" value="${supplier.address}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Nhóm NCC</div>
+                    <input type="text" class="info-input" name="supplierGroup" value="${supplier.supplierGroup}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Khu vực</div>
+                    <input type="text" class="info-input" name="region" value="${supplier.region}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Phường xã</div>
+                    <input type="text" class="info-input" name="ward" value="${supplier.ward}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Điện thoại</div>
+                    <input type="text" class="info-input" name="phone" value="${supplier.phone}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <input type="text" class="info-input" name="email" value="${supplier.email}">
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Nợ hiện tại</div>
+                    <div class="info-value">${supplier.currentDebt}</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Tổng mua</div>
+                    <div class="info-value">${supplier.totalPurchase}</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Người tạo</div>
+                    <div class="info-value">${supplier.createdBy}</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Ngày tạo</div>
+                    <div class="info-value">${supplier.createdDate}</div>
+                  </div>
+                </div>
+
+                <div class="info-item mt-4">
+                  <div class="info-label">Ghi chú</div>
+                  <textarea class="info-textarea" name="notes">${supplier.notes}</textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> Cập nhật
+                  </button>
+                  <button type="button" class="btn btn-warning" 
+                          onclick="if(confirm('Bạn có chắc muốn ngưng hoạt động nhà cung cấp này?')) {
+                            document.getElementById('statusForm').submit();
+                          }">
+                    <i class="bi bi-pause-circle"></i> Ngưng hoạt động
+                  </button>
+                  <button type="button" class="btn btn-danger"
+                          onclick="if(confirm('Bạn có chắc muốn xóa nhà cung cấp này?')) {
+                            window.location.href = 'supplier?action=delete&id=${supplier.id}';
+                          }">
+                    <i class="bi bi-trash"></i> Xóa
+                  </button>
+                  <a href="supplier?action=list" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                  </a>
+                </div>
+              </form>
+
+              <form id="statusForm" action="supplier" method="POST" style="display: none;">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" value="${supplier.id}">
+                <input type="hidden" name="status" value="false">
+              </form>
             </div>
-            
-            <div class="action-buttons">
-                <button class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Nhà cung cấp
-                </button>
-                <button class="btn btn-secondary">
-                    <i class="fas fa-file-import"></i>
-                    Import
-                </button>
-                <button class="btn btn-secondary">
-                    <i class="fas fa-file-export"></i>
-                    Xuất file
-                </button>
-                <button class="btn btn-dropdown">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
+          </div>
         </div>
-        
-        <div class="sidebar">
-            <div class="sidebar-item">
-                <div class="sidebar-title">Nhóm NCC</div>
-                <div class="sidebar-icon">
-                    <i class="fas fa-plus"></i>
-                </div>
-            </div>
-            <div class="sidebar-item">
-                <div class="sidebar-title">Tất cả các nhóm</div>
-                <div class="sidebar-icon">
-                    <i class="fas fa-chevron-down"></i>
-                    <i class="fas fa-pencil-alt"></i>
-                </div>
-            </div>
-            
-            <div class="sidebar-filter">
-                <div class="sidebar-filter-title">
-                    <span>Tổng mua</span>
-                    <i class="fas fa-chevron-up"></i>
-                </div>
-                
-                <div class="sidebar-content">
-                    <div class="input-group">
-                        <label>Từ</label>
-                        <input type="text" placeholder="Giá trị">
-                    </div>
-                    <div class="input-group">
-                        <label>Tới</label>
-                        <input type="text" placeholder="Giá trị">
-                    </div>
-                    
-                    <div class="radio-group">
-                        <input type="radio" id="all-time" name="time-period" checked>
-                        <label for="all-time">Toàn thời gian</label>
-                    </div>
-                    <div class="radio-group">
-                        <input type="radio" id="custom-time" name="time-period">
-                        <label for="custom-time">Lựa chọn khác</label>
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar-filter">
-                <div class="sidebar-filter-title">
-                    <span>Nợ hiện tại</span>
-                    <i class="fas fa-chevron-up"></i>
-                </div>
-                
-                <div class="sidebar-content">
-                    <div class="input-group">
-                        <label>Từ</label>
-                        <input type="text" placeholder="Giá trị">
-                    </div>
-                    <div class="input-group">
-                        <label>Tới</label>
-                        <input type="text" placeholder="Giá trị">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar-filter">
-                <div class="sidebar-filter-title">
-                    <span>Trạng thái</span>
-                    <i class="fas fa-chevron-up"></i>
-                </div>
-                
-                <div class="sidebar-content">
-                    <div class="radio-group">
-                        <input type="radio" id="all-status" name="status" checked>
-                        <label for="all-status">Tất cả</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="content">
-            <div class="main-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" class="checkbox"></th>
-                            <th>Mã nhà cung cấp</th>
-                            <th>Tên nhà cung cấp</th>
-                            <th>Điện thoại</th>
-                            <th>Email</th>
-                            <th>Nợ cần trả hiện tại</th>
-                            <th>Tổng mua</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="7">0</td>
-                        </tr>
-                        <tr class="table-row active">
-                            <td><input type="checkbox" class="checkbox" checked></td>
-                            <td>NCC0002</td>
-                            <td>Công ty Hoàng Gia</td>
-                            <td></td>
-                            <td></td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="supplier-detail">
-                <div class="tabs">
-                    <div class="tab active">Thông tin</div>
-                    <div class="tab">Lịch sử nhập/trả hàng</div>
-                    <div class="tab">Nợ cần trả NCC</div>
-                </div>
-                
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">Mã nhà cung cấp:</div>
-                        <div class="detail-value">NCC0002</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Công ty:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Tên nhà cung cấp:</div>
-                        <div class="detail-value">Công ty Hoàng Gia</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Mã số thuế:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Địa chỉ:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Nhóm NCC:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Khu vực:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Người tạo:</div>
-                        <div class="detail-value">Nguyễn Thành Long</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Phường xã:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Ngày tạo:</div>
-                        <div class="detail-value">25/02/2025</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Điện thoại:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Email:</div>
-                        <div class="detail-value"></div>
-                    </div>
-                </div>
-                
-                <div class="note-area">
-                    <textarea placeholder="Ghi chú..."></textarea>
-                </div>
-                
-                <div class="detail-actions">
-                    <button class="btn btn-primary">
-                        <i class="fas fa-check"></i>
-                        Cập nhật
-                    </button>
-                    <button class="btn btn-danger">
-                        <i class="fas fa-ban"></i>
-                        Ngưng hoạt động
-                    </button>
-                    <button class="btn btn-danger">
-                        <i class="fas fa-trash"></i>
-                        Xóa
-                    </button>
-                </div>
-            </div>
-            
-            <div class="main-table" style="margin-top: 20px;">
-                <table class="table">
-                    <tbody>
-                        <tr class="table-row">
-                            <td><input type="checkbox" class="checkbox"></td>
-                            <td>NCC0003</td>
-                            <td>Công ty Gia Hưng</td>
-                            <td></td>
-                            <td></td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div class="notification-bar">
-        <div class="notification-text">
-            <i class="fas fa-info-circle"></i>
-            <span>Bạn đang dùng thử KiotViet bản không giới hạn tính năng.</span>
-            <a href="#" class="notification-link">Xem chi tiết</a>
-        </div>
-    </div>
-    
-    <div class="scroll-to-top">
-        <i class="fas fa-arrow-up"></i>
-    </div>
-    
-    <div class="chat-support">
-        <i class="fas fa-headset"></i>
-        <span>Hỗ trợ: 1900 6522</span>
-    </div>
-</body>
+      </section>
+    </main>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js/chart.umd.js"></script>
+    <script src="assets/vendor/echarts/echarts.min.js"></script>
+    <script src="assets/vendor/quill/quill.js"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
+  </body>
 </html>

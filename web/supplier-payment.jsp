@@ -1,4 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -370,8 +372,33 @@
             </div>
         </div>
         
-        <div class="main-content">
-            <table class="supplier-table">
+        <!-- Add Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <!-- Add Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- Add custom JS -->
+        <script src="assets/js/supplier-payment.js" defer></script>
+    </head>
+<body>
+    <%@include file="HeaderAdmin.jsp"%>
+    
+    <div class="main-content">
+        <div class="pagetitle">
+            <h1>Công nợ nhà cung cấp</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="supplier?action=list">Nhà cung cấp</a></li>
+                    <li class="breadcrumb-item active">Công nợ</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <table class="supplier-table">
                 <thead>
                     <tr>
                         <th width="40px"><input type="checkbox"></th>
@@ -391,10 +418,14 @@
                                     <div class="supplier-checkbox">
                                         <input type="checkbox">
                                     </div>
-                                    <div class="supplier-code">NCC0002</div>
-                                    <div class="supplier-name">Công ty Hoàng Gia</div>
-                                    <div class="supplier-debt">0</div>
-                                    <div class="supplier-total">0</div>
+                                    <div class="supplier-code">${supplier.supplierCode}</div>
+                                    <div class="supplier-name">${supplier.supplierName}</div>
+                                    <div class="supplier-debt">
+                                        <fmt:formatNumber value="${supplier.currentDebt}" type="currency" currencySymbol="₫"/>
+                                    </div>
+                                    <div class="supplier-total">
+                                        <fmt:formatNumber value="${supplier.totalPurchase}" type="currency" currencySymbol="₫"/>
+                                    </div>
                                 </div>
                                 
                                 <div class="tab-nav">
@@ -421,57 +452,96 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>PN000038</td>
-                                                <td>17/02/2025 10:50</td>
-                                                <td>Nhập hàng</td>
-                                                <td>249,000</td>
-                                                <td>249,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>PN000036</td>
-                                                <td>15/02/2025 10:48</td>
-                                                <td>Nhập hàng</td>
-                                                <td>471,000</td>
-                                                <td>471,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>PN000035</td>
-                                                <td>14/02/2025 10:47</td>
-                                                <td>Nhập hàng</td>
-                                                <td>447,000</td>
-                                                <td>447,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>PN000016</td>
-                                                <td>26/01/2025 10:30</td>
-                                                <td>Nhập hàng</td>
-                                                <td>192,000</td>
-                                                <td>192,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>PN000014</td>
-                                                <td>24/01/2025 10:28</td>
-                                                <td>Nhập hàng</td>
-                                                <td>487,000</td>
-                                                <td>487,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>PN00006</td>
-                                                <td>16/01/2025 10:23</td>
-                                                <td>Nhập hàng</td>
-                                                <td>326,000</td>
-                                                <td>326,000</td>
-                                            </tr>
+                                            <c:forEach items="${transactions}" var="trans">
+                                                <tr>
+                                                    <td>${trans.id}</td>
+                                                    <td><fmt:formatDate value="${trans.date}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                                    <td>${trans.type}</td>
+                                                    <td><fmt:formatNumber value="${trans.amount}" type="currency" currencySymbol="₫"/></td>
+                                                    <td><fmt:formatNumber value="${trans.remainingDebt}" type="currency" currencySymbol="₫"/></td>
+                                                </tr>
+                                            </c:forEach>
                                         </tbody>
                                     </table>
                                     
                                     <div class="action-buttons">
-                                        <button class="btn btn-primary"><i>🔄</i> Điều chỉnh</button>
-                                        <button class="btn btn-secondary"><i>💵</i> Thanh toán</button>
-                                        <button class="btn btn-info"><i>🧾</i> Chiết khấu thanh toán</button>
-                                        <button class="btn btn-export"><i>📤</i> Xuất file công nợ</button>
-                                        <button class="btn btn-export"><i>📤</i> Xuất file</button>
+                                        <button class="btn btn-primary" onclick="showAdjustmentModal()">
+                                            <i class="bi bi-arrow-repeat"></i> Điều chỉnh
+                                        </button>
+                                        <button class="btn btn-secondary" onclick="showPaymentModal()">
+                                            <i class="bi bi-cash-coin"></i> Thanh toán
+                                        </button>
+                                        <button class="btn btn-info" onclick="showDiscountModal()">
+                                            <i class="bi bi-receipt"></i> Chiết khấu thanh toán
+                                        </button>
+                                        <button class="btn btn-export" onclick="exportDebtReport()">
+                                            <i class="bi bi-file-earmark-arrow-down"></i> Xuất file công nợ
+                                        </button>
+                                        <button class="btn btn-export" onclick="exportTransactions()">
+                                            <i class="bi bi-file-earmark-arrow-down"></i> Xuất file
+                                        </button>
+                                    </div>
+
+                                    <!-- Filter Form -->
+                                    <form id="filterForm" class="mt-3">
+                                        <input type="hidden" name="action" value="filter">
+                                        <input type="hidden" name="supplierId" value="${supplier.id}">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <input type="date" class="form-control" name="fromDate" 
+                                                       value="${param.fromDate}" placeholder="Từ ngày">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="date" class="form-control" name="toDate" 
+                                                       value="${param.toDate}" placeholder="Đến ngày">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-search"></i> Lọc
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <!-- Payment Modal -->
+                                    <div class="modal fade" id="paymentModal" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Thanh toán công nợ</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="paymentForm" action="supplier" method="POST">
+                                                        <input type="hidden" name="action" value="makePayment">
+                                                        <input type="hidden" name="supplierId" value="${supplier.id}">
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Số tiền thanh toán</label>
+                                                            <input type="number" class="form-control" name="amount" required 
+                                                                   max="${supplier.currentDebt}">
+                                                        </div>
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Phương thức thanh toán</label>
+                                                            <select class="form-select" name="paymentMethod" required>
+                                                                <option value="CASH">Tiền mặt</option>
+                                                                <option value="BANK">Chuyển khoản</option>
+                                                            </select>
+                                                        </div>
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ghi chú</label>
+                                                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="submit" form="paymentForm" class="btn btn-primary">Xác nhận</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

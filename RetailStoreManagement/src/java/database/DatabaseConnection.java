@@ -2,9 +2,7 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseConnection {
     private static final String URL = "jdbc:sqlserver://DESKTOP-F488CFL\\LONG:1433;databaseName=slim;encrypt=true;trustServerCertificate=true";
@@ -20,11 +18,14 @@ public class DatabaseConnection {
 
             // Kết nối đến SQL Server
             conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-           
+            System.out.println("✅ Database connected successfully!");
 
-        } catch (ClassNotFoundException | SQLException ex) {
-            ex.printStackTrace();
-            
+        } catch (ClassNotFoundException e) {
+            System.err.println("❌ JDBC Driver not found! Hãy kiểm tra thư viện JDBC.");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi kết nối SQL Server! Kiểm tra lại thông tin kết nối.");
+            e.printStackTrace();
         }
     }
 
@@ -32,21 +33,10 @@ public class DatabaseConnection {
         return conn;
     }
 
-    public ResultSet getData(String sql) {
-        ResultSet rs = null;
-        try {
-            Statement state = conn.createStatement(
-                ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE
-            );
-            rs = state.executeQuery(sql);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return rs;
-    }
-
     public static void main(String[] args) {
         DatabaseConnection db = new DatabaseConnection();
+        if (db.getConnection() == null) {
+            System.out.println("❌ Không thể kết nối database!");
+        }
     }
 }

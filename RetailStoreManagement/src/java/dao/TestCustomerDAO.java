@@ -5,11 +5,11 @@ import java.util.List;
 
 public class TestCustomerDAO {
     public static void main(String[] args) {
-        CustomerDAO customerDAO = new CustomerDAO();
-        
-        // Kiểm tra kết nối & lấy danh sách khách hàng
-        List<Customer> customers = customerDAO.getAllCustomers();
+        System.out.println("🚀 Bắt đầu test CustomerDAO...");
 
+        CustomerDAO customerDAO = new CustomerDAO();
+
+        List<Customer> customers = customerDAO.getAllCustomers();
         if (customers.isEmpty()) {
             System.out.println("❌ Không có khách hàng nào!");
         } else {

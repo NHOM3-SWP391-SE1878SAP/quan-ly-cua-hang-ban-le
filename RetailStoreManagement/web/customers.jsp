@@ -1,226 +1,205 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Customer" %>
-<%@ page import="java.util.ArrayList" %>
 
 <%
-    // 🔍 Lấy danh sách khách hàng từ session hoặc request
-    List<Customer> customers = (List<Customer>) request.getAttribute("customers");
-      if (customers == null) {
-        customers = (List<Customer>) session.getAttribute("customers"); // Lấy từ session nếu cần
-        if (customers == null) {
-            customers = new ArrayList<>();
-        }
-    }
-
-    // 📌 Lấy thông báo từ session
+    // Lấy thông báo từ session nếu có
     String message = (String) session.getAttribute("message");
     if (message != null) {
-        session.removeAttribute("message"); // Xóa sau khi hiển thị để tránh hiển thị lại
+        session.removeAttribute("message");
     }
 %>
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <title>Customer Management</title>
-        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-        <link href="assets/css/style.css" rel="stylesheet">
-    </head>
-    <body>
 
-        <header id="header" class="header fixed-top d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-between">
-                <a href="index.html" class="logo d-flex align-items-center">
-                    <img src="assets/img/logo.png" alt="">
-                    <span class="d-none d-lg-block">NiceAdmin</span>
-                </a>
-                <i class="bi bi-list toggle-sidebar-btn"></i>
-            </div>
-        </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Khách hàng</title>
 
-        <aside id="sidebar" class="sidebar">
-            <ul class="sidebar-nav" id="sidebar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" href="CustomerServlet">
-                        <i class="bi bi-people"></i><span>Customer Management</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
+    <!-- Bootstrap & CSS -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
 
-        <main id="main" class="main">
-            <div class="pagetitle">
-                <h1>Customer Management</h1>
-            </div>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Quản lý Khách hàng</h2>
 
-            <section class="section">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Customer List</h5>
+        <!-- Hiển thị thông báo -->
+        <% if (message != null) { %>
+        <div class="alert alert-info"><%= message %></div>
+        <% } %>
 
-                        <!-- 🛠 Hiển thị thông báo từ session -->
-                        <% if (message != null) { %>
-                        <div class="alert alert-info"><%= message %></div>
-                        <% } %>
+        <!-- Thanh tìm kiếm -->
+        <form action="CustomerServlet" method="get" class="d-flex mb-3">
+            <input class="form-control me-2" type="text" name="search" placeholder="Tìm kiếm theo tên hoặc số điện thoại...">
+            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+        </form>
 
-                        <!-- 🔍 Search Form -->
-                        <!-- 🔍 Form tìm kiếm -->
-                        <form action="CustomerServlet" method="get" class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" name="search" class="form-control" placeholder="Search by name or phone" value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+        <!-- Nút Thêm Khách hàng -->
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addCustomerModal">Thêm Khách hàng</button>
+
+        <!-- Bảng hiển thị danh sách khách hàng -->
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="table-primary">
+                    <tr>
+                        
+                        <th>Tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Điểm thưởng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% List<Customer> customers = (List<Customer>) request.getAttribute("customers");
+                        if (customers != null && !customers.isEmpty()) {
+                            for (Customer c : customers) { %>
+                    <tr>
+                        
+                        <td><%= c.getCustomerName() %></td>
+                        <td><%= c.getPhone() %></td>
+                        <td><%= c.getAddress() %></td>
+                        <td><%= c.getPoints() != null ? c.getPoints() : 0 %></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <form action="CustomerServlet" method="post" onsubmit="return confirmDelete(this)">
+                                    <input type="hidden" name="id" value="<%= c.getId() %>">
+                                    <button type="submit" class="btn btn-danger btn-sm" name="action" value="delete">Xóa</button>
+                                </form>
+                                <button class="btn btn-warning btn-sm" 
+                                        onclick="openEditForm('<%= c.getId() %>', '<%= c.getCustomerName() %>', 
+                                                              '<%= c.getPhone() %>', '<%= c.getAddress() %>', 
+                                                              '<%= c.getPoints() != null ? c.getPoints() : 0 %>')" 
+                                        data-bs-toggle="modal" data-bs-target="#editCustomerModal">
+                                    Sửa
+                                </button>
                             </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary">Search</button>
-                            </div>
-                        </form>
+                        </td>
+                    </tr>
+                    <% } } else { %>
+                    <tr><td colspan="6" class="text-center">Không có khách hàng nào.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+                <ul class="pagination justify-content-center">
+            <% 
+                Integer currentPageObj = (Integer) request.getAttribute("currentPage");
+                Integer totalPagesObj = (Integer) request.getAttribute("totalPages");
 
+                int currentPage = (currentPageObj != null) ? currentPageObj : 1;
+                int totalPages = (totalPagesObj != null) ? totalPagesObj : 1;
 
-                        <!-- 📋 Bảng danh sách khách hàng -->
-                        <table class="table table-bordered mt-3">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                    <th>Address</th>
-                                    <th>Points</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <% if (customers != null && !customers.isEmpty()) { %>
-                            <tbody>
-                                <% for (Customer c : customers) { %>
-                                <tr>
-                                    <td><%= c.getId() %></td>
-                                    <td><%= c.getCustomerName() %></td>
-                                    <td><%= c.getPhone() %></td>
-                                    <td><%= c.getAddress() %></td>
-                                    <td><%= c.getPoints() != null ? c.getPoints() : "" %></td>
-                                    <td>
-                                        <button type="button" class="btn btn-warning btn-sm" 
-                                                onclick="openEditModal('<%= c.getId() %>', '<%= c.getCustomerName() %>', '<%= c.getPhone() %>', '<%= c.getAddress() != null ? c.getAddress() : "" %>', '<%= c.getPoints() != null ? c.getPoints() : 0 %>')">
-                                            Edit
-                                        </button>
+                if (currentPage > 1) { %>
+            <li class="page-item"><a class="page-link" href="CustomerServlet?page=1">Trang đầu</a></li>
+            <li class="page-item"><a class="page-link" href="CustomerServlet?page=<%= currentPage - 1 %>">Trước</a></li>
+                <% } 
 
+                    for (int i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= (i == currentPage) ? "active" : "" %>">
+                <a class="page-link" href="CustomerServlet?page=<%= i %>"><%= i %></a>
+            </li>
+            <% } 
 
-                                        <form action="CustomerServlet" method="post" class="d-inline">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="id" value="<%= c.getId() %>">
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                            <% } else { %>
-                            <tr>
-                                <td colspan="6" class="text-center">No customers found.</td>
-                            </tr>
-                            <% } %>
-                        </table>
+                if (currentPage < totalPages) { %>
+            <li class="page-item"><a class="page-link" href="CustomerServlet?page=<%= currentPage + 1 %>">Sau</a></li>
+            <li class="page-item"><a class="page-link" href="CustomerServlet?page=<%= totalPages %>">Trang cuối</a></li>
+                <% } %>
+        </ul>
+    </div>
 
-                        <!-- 🛠 Form thêm khách hàng -->
-                        <h5 class="mt-4">Add New Customer</h5>
-                        <form action="CustomerServlet" method="post">
-                            <input type="hidden" name="action" value="add">
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <input type="text" name="customerName" class="form-control" placeholder="Name" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="text" name="phone" class="form-control" placeholder="Phone" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" name="address" class="form-control" placeholder="Address">
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="number" name="points" class="form-control" placeholder="Points">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-success">Add</button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
+    <!-- 🟢 MODAL THÊM KHÁCH HÀNG -->
+    <div class="modal fade" id="addCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </section>
-        </main>
+                <div class="modal-body">
+                    <form action="CustomerServlet" method="post" onsubmit="return confirmAdd(this)">
+                        <input type="hidden" name="action" value="add">
 
-        <!-- 🔵 MODAL CHỈNH SỬA -->
-        <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Customer</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="updateForm" action="CustomerServlet" method="post">
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="id" id="editId">
+                        <label class="form-label">Tên Khách hàng</label>
+                        <input type="text" class="form-control mb-3" name="customerName" required>
 
-                            <label>Name:</label>
-                            <input type="text" name="customerName" id="editName" class="form-control" required>
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control mb-3" name="phone" required>
 
-                            <label>Phone:</label>
-                            <input type="text" name="phone" id="editPhone" class="form-control" required>
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control mb-3" name="address">
 
-                            <label>Address:</label>
-                            <input type="text" name="address" id="editAddress" class="form-control">
+                        <label class="form-label">Điểm thưởng</label>
+                        <input type="number" class="form-control mb-3" name="points">
 
-                            <label>Points:</label>
-                            <input type="number" name="points" id="editPoints" class="form-control">
-
-                            <button type="submit" class="btn btn-primary mt-3">Update</button>
-                        </form>
-                    </div>
+                        <button type="submit" class="btn btn-success w-100">Thêm</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            document.querySelector("#updateForm").addEventListener("submit", function (event) {
-                let id = document.getElementById('editId').value;
-                let name = document.getElementById('editName').value;
-                let phone = document.getElementById('editPhone').value;
-                let address = document.getElementById('editAddress').value;
-                let points = document.getElementById('editPoints').value;
+    <!-- 🟡 MODAL CẬP NHẬT KHÁCH HÀNG -->
+    <div class="modal fade" id="editCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa Khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="CustomerServlet" method="post" onsubmit="return confirmUpdate(this)">
+                        <input type="hidden" id="editCustomerId" name="id">
+                        <input type="hidden" name="action" value="update">
 
-                console.log("🔹 Submitting Update - ID:", id, "Name:", name, "Phone:", phone, "Address:", address, "Points:", points);
+                        <label class="form-label">Tên Khách hàng</label>
+                        <input type="text" class="form-control mb-3" id="editCustomerName" name="customerName" required>
 
-                if (!id || id.trim() === "") {
-                    alert("⚠️ Error: Missing customer ID!");
-                    event.preventDefault(); // Chặn submit nếu thiếu ID
-                }
-            });
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control mb-3" id="editCustomerPhone" name="phone" required>
 
-            function openEditModal(id, name, phone, address, points) {
-                console.log("Editing Customer ID:", id);
-                console.log("Received Data - Name:", name, "Phone:", phone, "Address:", address, "Points:", points);
-                if (!id || id == "undefined") {
-                    alert("⚠️ Error: Missing customer ID!");
-                    return;
-                }
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control mb-3" id="editCustomerAddress" name="address">
 
-                document.getElementById('editId').value = id;
-                document.getElementById('editName').value = name;
-                document.getElementById('editPhone').value = phone;
-                document.getElementById('editAddress').value = address;
-                document.getElementById('editPoints').value = points ? points : 0;
-                new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
-            }
+                        <label class="form-label">Điểm thưởng</label>
+                        <input type="number" class="form-control mb-3" id="editCustomerPoints" name="points">
 
+                        <button type="submit" class="btn btn-warning w-100">Cập nhật</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        </script>
-        <<script>
+    <!-- JavaScript -->
+    <script>
+        function openEditForm(id, name, phone, address, points) {
+            document.getElementById("editCustomerId").value = id;
+            document.getElementById("editCustomerName").value = name;
+            document.getElementById("editCustomerPhone").value = phone;
+            document.getElementById("editCustomerAddress").value = address;
+            document.getElementById("editCustomerPoints").value = points;
+        }
 
-        </script>
-        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        function confirmDelete() {
+            return confirm("⚠️ Bạn có chắc chắn muốn xóa khách hàng này?");
+        }
 
-    </body>
+        function confirmAdd() {
+            return confirm("✅ Xác nhận thêm khách hàng?");
+        }
+
+        function confirmUpdate() {
+            return confirm("⚠️ Bạn có chắc chắn muốn cập nhật khách hàng?");
+        }
+    </script>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>

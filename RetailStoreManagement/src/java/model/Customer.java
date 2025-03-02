@@ -5,17 +5,9 @@ public class Customer {
     private String customerName;
     private String phone;
     private String address;
-    private Integer points; // Đổi từ double sang Integer để xử lý NULL
+    private Integer points;
 
-    // 🔹 Constructor không có id (Dùng khi thêm mới khách hàng)
-    public Customer(String customerName, String phone, String address, Integer points) {
-        this.customerName = customerName;
-        this.phone = phone;
-        this.address = address;
-        this.points = points;
-    }
-
-    // 🔹 Constructor đầy đủ (Dùng khi lấy từ database hoặc cập nhật)
+    // ✅ Constructor đầy đủ (Dùng khi lấy dữ liệu từ database)
     public Customer(int id, String customerName, String phone, String address, Integer points) {
         this.id = id;
         this.customerName = customerName;
@@ -24,23 +16,35 @@ public class Customer {
         this.points = points;
     }
 
-    // 🔹 Constructor không có `points` (Nếu có thể NULL)
-    public Customer(String customerName, String phone, String address) {
+    // ✅ Constructor không có ID (Dùng khi tạo mới)
+    public Customer(String customerName, String phone, String address, Integer points) {
         this.customerName = customerName;
         this.phone = phone;
         this.address = address;
-        this.points = 0; // Giá trị mặc định nếu không nhập điểm
+        this.points = points;
     }
 
-    // Getter và Setter
+    // ✅ Constructor chỉ có ID (Dùng khi xóa)
+    public Customer(int id) {
+        this.id = id;
+    }
+
+    // ✅ Constructor rỗng
+    public Customer() {}
+
+    // ✅ Getter & Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
+
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
-    public Integer getPoints() { return points; }  
+
+    public Integer getPoints() { return points; }
     public void setPoints(Integer points) { this.points = points; }
 }

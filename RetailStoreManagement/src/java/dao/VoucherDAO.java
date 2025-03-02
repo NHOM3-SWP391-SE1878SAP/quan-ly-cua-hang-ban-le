@@ -14,6 +14,47 @@ public class VoucherDAO {
         this.conn = conn;
     }
 
+    public int getTotalVoucherCount() {
+        String query = "SELECT COUNT(*) FROM vouchers";
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // ✅ Phân trang: Lấy danh sách vouchers theo trang
+    public List<Voucher> getVouchersByPage(int page, int recordsPerPage) {
+        List<Voucher> vouchers = new ArrayList<>();
+        int start = (page - 1) * recordsPerPage;
+
+        String query = "SELECT * FROM vouchers ORDER BY ID DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, start);
+            stmt.setInt(2, recordsPerPage);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                vouchers.add(new Voucher(
+                        rs.getInt("ID"),
+                        rs.getString("Code"),
+                        rs.getInt("MinOrder"),
+                        rs.getInt("DiscountRate"),
+                        rs.getInt("MaxValue"),
+                        rs.getDate("StartDate").toLocalDate(),
+                        rs.getDate("EndDate").toLocalDate()
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vouchers;
+    }
+
     // 📌 Lấy danh sách tất cả voucher
     public List<Voucher> getAllVouchers() {
         List<Voucher> vouchers = new ArrayList<>();

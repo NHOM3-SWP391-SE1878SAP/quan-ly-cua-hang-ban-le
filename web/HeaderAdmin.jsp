@@ -282,7 +282,7 @@
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="ProductsControllerURL?service=setPrice">
               <i class="bi bi-circle"></i><span>Thiết lập giá</span>
             </a>
           </li>

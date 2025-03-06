@@ -14,11 +14,26 @@ public class Product {
     private String imageURL;
     private int categoryId;
     private Category category;
+    private GoodReceiptDetail goodReceiptDetail;
 
+    
     // Default Constructor
     public Product() {
     }
 
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, int categoryId, Category category, GoodReceiptDetail goodReceiptDetail) {
+        this.id = id;
+        this.productName = productName;
+        this.productCode = productCode;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.isAvailable = isAvailable;
+        this.imageURL = imageURL;
+        this.categoryId = categoryId;
+        this.category = category;
+        this.goodReceiptDetail = goodReceiptDetail;
+    }
+    
     public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, Category category) {
         this.id = id;
         this.productName = productName;
@@ -28,6 +43,14 @@ public class Product {
         this.isAvailable = isAvailable;
         this.imageURL = imageURL;
         this.category = category;
+    }
+
+    public GoodReceiptDetail getGoodReceiptDetail() {
+        return goodReceiptDetail;
+    }
+
+    public void setGoodReceiptDetail(GoodReceiptDetail goodReceiptDetail) {
+        this.goodReceiptDetail = goodReceiptDetail;
     }
     
     public Category getCategory() {

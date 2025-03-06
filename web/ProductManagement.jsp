@@ -33,7 +33,14 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Add New Product</h5>
-                                <form action="ProductsControllerURL" method="post" class="w-100">
+
+                                <!-- Hiển thị lỗi nếu có -->
+                                <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
+                                <% if (errorMessage != null) { %>
+                                    <div class="alert alert-danger"><%= errorMessage %></div>
+                                <% } %>
+
+                                <form action="ProductsControllerURL" method="post" class="w-100" onsubmit="return validateForm()">
                                     <input type="hidden" name="service" value="addProduct">
                                     <div class="mb-3">
                                         <label for="productName" class="form-label">Product Name</label>
@@ -44,12 +51,12 @@
                                         <input type="text" class="form-control" id="productCode" name="productCode" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="price" class="form-label">Price</label>
-                                        <input type="number" class="form-control" id="price" name="price" required>
+                                        <label for="price" class="form-label">Price (VNĐ)</label>
+                                        <input type="number" class="form-control" id="price" name="price" min="0" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="stockQuantity" class="form-label">Stock Quantity</label>
-                                        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity" required>
+                                        <input type="number" class="form-control" id="stockQuantity" name="stockQuantity" min="0" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="imageURL" class="form-label">Image</label>
@@ -57,8 +64,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="category" class="form-label">Category</label>
-                                        <select class="form-control" id="category" name="categoryId">
-                                            <!-- Add categories dynamically from the database -->
+                                        <select class="form-control" id="category" name="categoryId" required>
                                             <option value="1">Electronics</option>
                                             <option value="2">Apparel</option>
                                         </select>
@@ -81,7 +87,7 @@
                                             <th scope="col">Product Code</th>
                                             <th scope="col">Product Name</th>
                                             <th scope="col">Category</th>
-                                            <th scope="col">Price</th>
+                                            <th scope="col">Price (VNĐ)</th>
                                             <th scope="col">Stock</th>
                                             <th scope="col">Status</th>
                                             <th scope="col" style="text-align: center;">Actions</th>
@@ -89,12 +95,10 @@
                                     </thead>
                                     <tbody>
                                         <%
-                                            // Retrieve the 'data' attribute passed from the controller
                                             Vector<Product> productList = (Vector<Product>) request.getAttribute("data");
                                             if (productList != null && !productList.isEmpty()) {
-                                                // Iterate over each product
                                                 for (Product p : productList) {
-                                                    Category category = p.getCategory(); // Get the associated category
+                                                    Category category = p.getCategory();
                                         %>
                                         <tr>
                                             <td>
@@ -103,16 +107,17 @@
                                             </td>
                                             <td><%= p.getProductCode() %></td>
                                             <td><%= p.getProductName() %></td>
-                                            <td><%= category != null ? category.getCategoryName() : "N/A" %></td> <!-- Display Category Name -->
-                                            <td><%= String.format("%,d", p.getPrice()) %> VNĐ</td>
+                                            <td><%= category != null ? category.getCategoryName() : "N/A" %></td>
+                                            <td><%= String.format("%,d", p.getPrice()) %></td>
                                             <td><%= p.getStockQuantity() %></td>
                                             <td>
-                                                <span class="badge <%= p.isIsAvailable() ? "bg-success" : "bg-danger" %>">
-                                                    <%= p.isIsAvailable() ? "Available" : "Out of Stock" %>
+                                                <span class="badge <%= p.getStockQuantity() > 0  ? "bg-success" : "bg-danger" %>">
+                                                    <%= p.getStockQuantity() > 0 ? "Available" : "Out of Stock" %>
                                                 </span>
                                             </td>
                                             <td style="text-align: center;">
                                                 <a class="btn btn-outline-warning btn-sm" href="ProductsControllerURL?service=edit&id=<%= p.getId() %>">Edit</a>
+                                                <a class="btn btn-outline-success btn-sm" href="ProductsControllerURL?service=detail&id=<%= p.getId() %>">Detail</a>
                                                 <a class="btn btn-outline-danger btn-sm" href="ProductsControllerURL?service=delete&id=<%= p.getId() %>" 
                                                    onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
                                             </td>
@@ -137,5 +142,24 @@
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
         <script src="assets/js/main.js"></script>
+
+        <script>
+        function validateForm() {
+            let productName = document.getElementById("productName").value.trim();
+            let productCode = document.getElementById("productCode").value.trim();
+            let price = document.getElementById("price").value;
+            let stockQuantity = document.getElementById("stockQuantity").value;
+
+            if (productName.length < 3) {
+                alert("Product Name must be at least 3 characters long.");
+                return false;
+            }
+            if (!/^[A-Z0-9]+$/.test(productCode)) {
+                alert("Product Code must contain only uppercase letters and numbers.");
+                return false;
+            }
+            return true;
+        }
+        </script>
     </body>
 </html>

@@ -69,6 +69,11 @@
                                     </div>
                                     
                                     <div class="mb-3">
+                                        <label for="imageURL" class="form-label">Image</label>
+                                        <input type="text" class="form-control" id="imageURL" name="imageURL" value="<%= product.getImageURL() %>" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
                                         <label for="category" class="form-label">Category</label>
                                         <select class="form-control" id="category" name="categoryId">
                                             <option value="<%= category.getCategoryID() %>" selected><%= category.getCategoryName() %></option>

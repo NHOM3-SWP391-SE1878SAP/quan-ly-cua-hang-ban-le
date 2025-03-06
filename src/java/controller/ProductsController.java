@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.RequestDispatcher;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 @WebServlet(name = "ProductsController", urlPatterns = {"/ProductsControllerURL"})
@@ -47,6 +50,12 @@ public class ProductsController extends HttpServlet {
                 case "delete":
                     deleteProduct(request, response, dao);
                     break;
+                case "setPrice":  // New Service
+                    setPrice(request, response, dao);
+                    break;
+                case "updatePriceBatch":
+                    updatePriceBatch(request, response, dao);
+                    break;
 
                 default:
                     response.sendRedirect("ProductManagement.jsp"); // Redirect to default page for unknown services
@@ -59,7 +68,6 @@ public class ProductsController extends HttpServlet {
     }
 
     private void listAllProducts(HttpServletRequest request, HttpServletResponse response, DAOProduct dao) throws ServletException, IOException {
-        // Fetch all products
         Vector<Product> vector = dao.getAllProducts1();
         request.setAttribute("data", vector);
         RequestDispatcher dispatcher = request.getRequestDispatcher("ProductManagement.jsp");
@@ -72,15 +80,16 @@ public class ProductsController extends HttpServlet {
         String productCode = request.getParameter("productCode");
         int price = Integer.parseInt(request.getParameter("price"));
         int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-        boolean isAvailable = Boolean.parseBoolean(request.getParameter("isAvailable"));
-        String imageURL = request.getParameter("imageURL");
-        int categoryId = Integer.parseInt(request.getParameter("categoryID"));
 
-        // Create a new Product object
-        Product newProduct = new Product(0, productName, productCode, price, stockQuantity, isAvailable, imageURL, categoryId);
+        boolean isAvailable = stockQuantity > 0; // Nếu stock > 0 thì Available = true
+        String imageURL = request.getParameter("imageURL");
+        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+
+        Category category = new Category(categoryId, "", "", ""); // Tạo Category object
+        Product newProduct = new Product(0, productName, productCode, price, stockQuantity, isAvailable, imageURL, category);
+
         dao.addProduct(newProduct); // Add the product using DAO
 
-        // Redirect to the product list after adding
         response.sendRedirect("ProductsControllerURL?service=listAll");
     }
 
@@ -104,16 +113,14 @@ public class ProductsController extends HttpServlet {
         String productCode = request.getParameter("productCode");
         int price = Integer.parseInt(request.getParameter("price"));
         int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+        String imageURL = request.getParameter("imageURL");
         int categoryId = Integer.parseInt(request.getParameter("categoryId"));
 
-        // Create updated Product object
         Category category = new Category(categoryId, "", "", ""); // Assuming no category image for now
-        Product updatedProduct = new Product(productId, productName, productCode, price, stockQuantity, true, "", category);
+        Product updatedProduct = new Product(productId, productName, productCode, price, stockQuantity, true, imageURL, category);
 
-        // Update product in the database
         dao.updateProduct(updatedProduct);
 
-        // Redirect back to the product list after updating
         response.sendRedirect("ProductsControllerURL?service=listAll");
     }
 
@@ -127,6 +134,48 @@ public class ProductsController extends HttpServlet {
         } else {
             // Send an error if the delete operation fails
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete product.");
+        }
+    }
+
+    private void setPrice(HttpServletRequest request, HttpServletResponse response, DAOProduct dao) throws ServletException, IOException {
+        Vector<Product> vector = dao.getProductsWithUnitCost();
+        request.setAttribute("data", vector);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("SetPrice.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void updatePriceBatch(HttpServletRequest request, HttpServletResponse response, DAOProduct dao) throws ServletException, IOException {
+        String[] productIdsArray = request.getParameterValues("productIds");
+        String[] pricesArray = request.getParameterValues("prices");
+
+        if (productIdsArray == null || pricesArray == null || productIdsArray.length != pricesArray.length) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Dữ liệu không hợp lệ.");
+            return;
+        }
+
+        List<Product> updatedProducts = new ArrayList<>();
+
+        for (int i = 0; i < productIdsArray.length; i++) {
+            try {
+                int productId = Integer.parseInt(productIdsArray[i]);
+                int price = Integer.parseInt(pricesArray[i]);
+
+                Product product = new Product();
+                product.setId(productId);
+                product.setPrice(price);
+                updatedProducts.add(product);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID hoặc giá không hợp lệ.");
+                return;
+            }
+        }
+
+        boolean success = dao.updateProductsPriceBatch(updatedProducts);
+
+        if (success) {
+            response.sendRedirect("ProductsControllerURL?service=setPrice");
+        } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi cập nhật giá.");
         }
     }
 

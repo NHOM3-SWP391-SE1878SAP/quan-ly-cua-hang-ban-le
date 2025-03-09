@@ -7,19 +7,21 @@ public class Return {
     private int quantity;
     private String reason;
     private Date returnDate;
-    private Order order;
-    private Employee employee;
+    private int orderId;
+    private int employeeId;
+    private Float refundAmount;
 
     public Return() {
     }
 
-    public Return(int returnID, int quantity, String reason, Date returnDate, Order order, Employee employee) {
+    public Return(int returnID, int quantity, String reason, Date returnDate, int orderId, int employeeId, Float refundAmount) {
         this.returnID = returnID;
         this.quantity = quantity;
         this.reason = reason;
         this.returnDate = returnDate;
-        this.order = order;
-        this.employee = employee;
+        this.orderId = orderId;
+        this.employeeId = employeeId;
+        this.refundAmount = refundAmount;
     }
 
     public int getReturnID() {
@@ -54,19 +56,28 @@ public class Return {
         this.returnDate = returnDate;
     }
 
-    public Order getOrder() {
-        return order;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
+
+    public Float getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(Float refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
 }

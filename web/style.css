@@ -1,0 +1,270 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+}
+
+.search-bar {
+    background-color: #007bff;
+    padding: 10px;
+    color: white;
+}
+
+.search-input {
+    border-radius: 5px;
+    border: none;
+    padding: 6px 12px;
+    width: 100%;
+}
+
+.tab-bar {
+    background-color: #007bff;
+    color: white;
+    padding: 0;
+}
+
+.product-table {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.product-row {
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 0;
+    position: relative;
+}
+
+.product-row:last-child {
+    border-bottom: none;
+}
+
+.summary-panel {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 15px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.action-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.header-icons {
+    font-size: 1.2rem;
+}
+
+.header-icon {
+    margin-left: 15px;
+    color: white;
+}
+
+.note-input {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+.customer-info {
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.return-title {
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Quantity controls styling */
+.quantity-container {
+    position: relative;
+    display: inline-block;
+}
+
+.quantity-display {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.quantity-controls {
+    display: none;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    padding: 5px 10px;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.quantity-container:hover .quantity-controls {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.quantity-input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+/* Action menu styling */
+.action-menu-toggle {
+    cursor: pointer;
+}
+
+.action-menu {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 100%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 100;
+    width: 150px;
+}
+
+.action-menu.show {
+    display: block;
+}
+
+.action-menu-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.action-menu-item:last-child {
+    border-bottom: none;
+}
+
+.action-menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Styles for dropdown menu */
+.dropdown-menu {
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 250px;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    margin: 0;
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 8px;
+    border: none;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.search-options {
+    padding: 10px;
+}
+
+.search-options h6 {
+    color: #495057;
+    font-weight: 600;
+}
+
+.form-label.small {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.pagination-controls .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.pagination-info {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.modal-footer .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 0.5rem 1.5rem;
+} 

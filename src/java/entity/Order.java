@@ -3,32 +3,48 @@ package entity;
 import java.util.Date;
 
 public class Order {
-    private int orderID;
+
+    private Integer orderID;
     private Date orderDate;
-    private int totalAmount;
-    private Customer customer;
-    private Employee employee;
-    private Payment payment;
-    private Voucher voucher;
+    private Integer totalAmount;
+    private Integer customerID;
+    private Integer employeeID;
+    private Integer paymentID;
+    private Integer voucherID;
+    private String employeeName;
+    private String customerName;
+
+    // Constructor
+    public Order(Integer orderID, Date orderDate, Integer totalAmount, Integer customerID,
+            Integer employeeID, Integer paymentID, Integer voucherID) {
+        this.orderID = orderID;
+        this.orderDate = orderDate;
+        this.totalAmount = totalAmount;
+        this.customerID = customerID;
+        this.employeeID = employeeID;
+        this.paymentID = paymentID;
+        this.voucherID = voucherID;
+    }
 
     public Order() {
     }
 
-    public Order(int orderID, Date orderDate, int totalAmount, Customer customer, Employee employee, Payment payment, Voucher voucher) {
+    public Order(int orderID, Date orderDate, int totalAmount, int customerID, int employeeID, int paymentID, int voucherID) {
         this.orderID = orderID;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
-        this.customer = customer;
-        this.employee = employee;
-        this.payment = payment;
-        this.voucher = voucher;
+        this.customerID = customerID;
+        this.employeeID = employeeID;
+        this.paymentID = paymentID;
+        this.voucherID = voucherID;
     }
 
-    public int getOrderID() {
+    // Getters and Setters
+    public Integer getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(int orderID) {
+    public void setOrderID(Integer orderID) {
         this.orderID = orderID;
     }
 
@@ -40,43 +56,74 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public int getTotalAmount() {
+    public Integer getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(int totalAmount) {
+    public void setTotalAmount(Integer totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Integer getCustomerID() {
+        return customerID;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerID(Integer customerID) {
+        this.customerID = customerID;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public Integer getEmployeeID() {
+        return employeeID;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeID(Integer employeeID) {
+        this.employeeID = employeeID;
     }
 
-    public Payment getPayment() {
-        return payment;
+    public Integer getPaymentID() {
+        return paymentID;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
+    public void setPaymentID(Integer paymentID) {
+        this.paymentID = paymentID;
     }
 
-    public Voucher getVoucher() {
-        return voucher;
+    public Integer getVoucherID() {
+        return voucherID;
     }
 
-    public void setVoucher(Voucher voucher) {
-        this.voucher = voucher;
+    public void setVoucherID(Integer voucherID) {
+        this.voucherID = voucherID;
+    }
+
+    // Getters and Setters
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    // toString method for logging or printing
+    @Override
+    public String toString() {
+        return "Order{"
+                + "orderID=" + orderID
+                + ", orderDate=" + orderDate
+                + ", totalAmount=" + totalAmount
+                + ", customerID=" + customerID
+                + ", employeeID=" + employeeID
+                + ", paymentID=" + paymentID
+                + ", voucherID=" + voucherID
+                + '}';
     }
 }

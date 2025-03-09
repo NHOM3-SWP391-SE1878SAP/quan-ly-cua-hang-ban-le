@@ -1,5 +1,5 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -22,8 +22,14 @@
     />
 
     <!-- Vendor CSS Files -->
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
     <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
     <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
@@ -32,7 +38,7 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
-    
+
     <style>
       .badge {
         padding: 5px 10px;
@@ -40,12 +46,12 @@
         font-size: 12px;
         font-weight: 500;
       }
-      
+
       .badge-active {
         background-color: #00c853;
         color: white;
       }
-      
+
       .badge-inactive {
         background-color: #757575;
         color: white;
@@ -62,7 +68,7 @@
       }
     </style>
   </head>
-  
+
   <body>
     <!-- ======= Header ======= -->
     <%@include file="HeaderAdmin.jsp"%>
@@ -73,7 +79,9 @@
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item"><a href="supplier?action=list">Nhà cung cấp</a></li>
+            <li class="breadcrumb-item">
+              <a href="supplier?action=list">Nhà cung cấp</a>
+            </li>
             <li class="breadcrumb-item active">Lịch sử nhập/trả hàng</li>
           </ol>
         </nav>
@@ -86,28 +94,40 @@
               <div class="card-body">
                 <h5 class="card-title">Thao tác nhanh</h5>
                 <div class="d-grid gap-2">
-                  <button type="button" class="btn btn-primary" onclick="window.location.href='supplier-infor.jsp?id=${param.id}'">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="window.location.href='supplier?action=view&id=${supplier.id}'"
+                  >
                     <i class="bi bi-info-circle"></i> Thông tin nhà cung cấp
                   </button>
-                  <button type="button" class="btn btn-success" onclick="window.location.href='supplier-payment.jsp?id=${param.id}'">
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    onclick="window.location.href='supplier?action=debt&id=${supplier.id}'"
+                  >
                     <i class="bi bi-cash-coin"></i> Nợ cần trả NCC
                   </button>
-                  <button type="button" class="btn btn-info text-white">
+                  <button
+                    type="button"
+                    class="btn btn-info text-white"
+                    onclick="window.location.href='supplier?action=exportTransactions&id=${supplier.id}'"
+                  >
                     <i class="bi bi-download"></i> Xuất thông tin
                   </button>
                 </div>
 
-                <hr>
+                <hr />
 
                 <h5 class="card-title">Lọc dữ liệu</h5>
                 <form id="filterForm">
                   <div class="mb-3">
                     <label class="form-label">Từ ngày</label>
-                    <input type="date" class="form-control" name="fromDate">
+                    <input type="date" class="form-control" name="fromDate" />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Đến ngày</label>
-                    <input type="date" class="form-control" name="toDate">
+                    <input type="date" class="form-control" name="toDate" />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Trạng thái</label>
@@ -137,13 +157,23 @@
 
                 <ul class="nav nav-tabs mb-3">
                   <li class="nav-item">
-                    <a class="nav-link" href="supplier-infor.jsp?id=${param.id}">Thông tin</a>
+                    <a
+                      class="nav-link"
+                      href="supplier?action=view&id=${supplier.id}"
+                      >Thông tin</a
+                    >
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link active" href="#">Lịch sử nhập/trả hàng</a>
+                    <a class="nav-link active" href="#"
+                      >Lịch sử nhập/trả hàng</a
+                    >
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="supplier-payment.jsp?id=${param.id}">Nợ cần trả NCC</a>
+                    <a
+                      class="nav-link"
+                      href="supplier?action=debt&id=${supplier.id}"
+                      >Nợ cần trả NCC</a
+                    >
                   </li>
                 </ul>
 
@@ -168,16 +198,25 @@
                           <td>${item.date}</td>
                           <td>${item.createdBy}</td>
                           <td class="text-end">
-                            <fmt:formatNumber value="${item.total}" type="currency" currencySymbol="₫"/>
+                            <fmt:formatNumber
+                              value="${item.total}"
+                              type="currency"
+                              currencySymbol="₫"
+                            />
                           </td>
                           <td>
-                            <span class="badge ${item.status == 'completed' ? 'bg-success' : 
-                                               item.status == 'pending' ? 'bg-warning' : 'bg-danger'}">
+                            <span
+                              class="badge ${item.status == 'completed' ? 'bg-success' : item.status == 'pending' ? 'bg-warning' : 'bg-danger'}"
+                            >
                               ${item.statusText}
                             </span>
                           </td>
                           <td>
-                            <a href="#" class="btn btn-sm btn-info text-white" title="Chi tiết">
+                            <a
+                              href="#"
+                              class="btn btn-sm btn-info text-white"
+                              title="Chi tiết"
+                            >
                               <i class="bi bi-eye"></i>
                             </a>
                           </td>

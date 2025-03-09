@@ -107,12 +107,7 @@
                 </c:forEach>
             </div>
             
-            <form id="checkoutForm" action="payment.jsp" method="GET">
-    <input type="hidden" name="cartItems" id="cartItemsInput">
-    <input type="hidden" name="totalPayable" id="totalPayableInput">
-    <button type="submit" class="checkout-btn">Thanh Toán</button>
-</form>
-
+            <button class="checkout-btn" id="checkoutBtn">THANH TOÁN</button>
             
             <div class="d-flex justify-content-between mt-3">
                 <div class="d-flex align-items-center">

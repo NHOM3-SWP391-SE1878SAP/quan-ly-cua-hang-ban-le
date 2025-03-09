@@ -17,8 +17,7 @@ public class OrderDetail {
         this.productID = productID;
     }
 
-    public OrderDetail(int orderDetailID, int orderID, int productID, int quantity, int price) {
-        this.orderDetailID = orderDetailID;
+    public OrderDetail(int orderID, int productID, int quantity, int price) {
         this.orderID = orderID;
         this.productID = productID;
         this.quantity = quantity;

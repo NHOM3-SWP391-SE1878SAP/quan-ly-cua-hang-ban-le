@@ -29,8 +29,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(int orderID, Date orderDate, int totalAmount, int customerID, int employeeID, int paymentID, int voucherID) {
-        this.orderID = orderID;
+    public Order(Date orderDate, int totalAmount, int customerID, int employeeID, int paymentID, int voucherID) {
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.customerID = customerID;

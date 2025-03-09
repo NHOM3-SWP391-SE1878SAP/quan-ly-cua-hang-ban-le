@@ -25,26 +25,24 @@ public class LoginController extends HttpServlet {
         Account account = dao.checkLogin(userName, password);
         
         if (account != null) {
-            // Lưu thông tin tài khoản vào session
             HttpSession session = request.getSession();
             session.setAttribute("account", account);
             
-            // Phân quyền dựa trên Role
             Role role = account.getRole();
             if (role != null) {
                 String roleName = role.getRoleName();
                 if ("Admin".equalsIgnoreCase(roleName)) {
-                    response.sendRedirect("admin-dashboard.jsp");  // Điều hướng đến trang Admin
+                    response.sendRedirect("HeaderAdmin.jsp"); 
                 } else if ("Employee".equalsIgnoreCase(roleName)) {
-                    response.sendRedirect("ProductController");  // Điều hướng đến trang Employee
+                    session.setAttribute("employee", dao.getEmployeeByAccountID(account.getId()));  // Lưu Employee vào session
+                    response.sendRedirect("attendance.jsp");  
                 } else {
-                    response.sendRedirect("home.jsp");  // Mặc định nếu không có role cụ thể
+                    response.sendRedirect("Login.jsp"); 
                 }
             } else {
-                response.sendRedirect("home.jsp"); // Nếu không có role, về trang chủ
+                response.sendRedirect("Login.jsp"); 
             }
         } else {
-            // Nếu đăng nhập thất bại
             request.setAttribute("errorMessage", "Invalid username or password");
             request.getRequestDispatcher("Login.jsp").forward(request, response);
         }

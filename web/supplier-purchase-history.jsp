@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%> <%@ taglib prefix="c"
-uri="http://java.sun.com/jsp/jstl/core" %>
+uri="http://java.sun.com/jsp/jstl/core" %> <%@ taglib prefix="fmt"
+uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -65,6 +66,12 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       .nav-tabs .nav-link.active {
         color: #00c853;
         border-color: #00c853;
+      }
+
+      tr,
+      td {
+        text-align: center;
+        vertical-align: middle;
       }
     </style>
   </head>
@@ -183,33 +190,27 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                       <tr>
                         <th>Mã phiếu</th>
                         <th>Thời gian</th>
-                        <th>Người tạo</th>
+                        <!-- <th>Người tạo</th> -->
                         <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
+                        <!-- <th>Trạng thái</th> -->
                         <th>Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <c:forEach items="${history}" var="item">
+                      <c:forEach items="${transactions}" var="item">
                         <tr>
                           <td>
-                            <a href="#" class="text-primary">${item.id}</a>
+                            <a href="#" class="text-primary"
+                              >${item.goodReceiptID}</a
+                            >
                           </td>
-                          <td>${item.date}</td>
-                          <td>${item.createdBy}</td>
-                          <td class="text-end">
+                          <td>${item.receivedDate}</td>
+                          <td>
                             <fmt:formatNumber
-                              value="${item.total}"
+                              value="${item.totalCost}"
                               type="currency"
                               currencySymbol="₫"
                             />
-                          </td>
-                          <td>
-                            <span
-                              class="badge ${item.status == 'completed' ? 'bg-success' : item.status == 'pending' ? 'bg-warning' : 'bg-danger'}"
-                            >
-                              ${item.statusText}
-                            </span>
                           </td>
                           <td>
                             <a

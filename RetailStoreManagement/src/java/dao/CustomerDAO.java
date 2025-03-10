@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDAO {
+
     private Connection conn;
 
-    
     public CustomerDAO(Connection conn) {
         this.conn = conn;
     }
-    
+
     public CustomerDAO() {
         this.conn = new DatabaseConnection().getConnection();
     }
@@ -21,8 +21,7 @@ public class CustomerDAO {
     // ✅ Lấy tổng số khách hàng để phục vụ phân trang
     public int getTotalCustomerCount() {
         String query = "SELECT COUNT(*) FROM customers";
-        try (PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -59,7 +58,7 @@ public class CustomerDAO {
     }
 
     // ✅ Lấy danh sách tất cả khách hàng
-     public List<Customer> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customer ORDER BY ID DESC";
 
@@ -112,7 +111,7 @@ public class CustomerDAO {
     }
 
     // ✅ Thêm khách hàng mới
-    public void addCustomer(Customer customer) {
+    public void addCustomer(Customer customer) {    
         String query = "INSERT INTO customers (CustomerName, Phone, Address, Points) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, customer.getCustomerName());
@@ -150,4 +149,42 @@ public class CustomerDAO {
             e.printStackTrace();
         }
     }
+    // ✅ Kiểm tra xem số điện thoại đã tồn tại chưa
+
+    public boolean isPhoneExists(String phone) {
+        String query = "SELECT COUNT(*) FROM customers WHERE Phone = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Trả về true nếu số điện thoại đã tồn tại
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // ✅ Lấy thông tin khách hàng theo ID
+public Customer getCustomerById(int id) {
+    String sql = "SELECT * FROM customers WHERE ID = ?";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return new Customer(
+                rs.getInt("ID"),
+                rs.getString("CustomerName"),
+                rs.getString("Phone"),
+                rs.getString("Address"),
+                rs.getObject("Points") != null ? rs.getInt("Points") : 0
+            );
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+
 }

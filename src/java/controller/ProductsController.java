@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.RequestDispatcher;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +51,19 @@ public class ProductsController extends HttpServlet {
                 case "delete":
                     deleteProduct(request, response, dao);
                     break;
+
+                case "stopsell":
+                    stopSellProduct(request, response, dao);
+                    break;
+
+                case "resumesell":
+                    resumeSellProduct(request, response, dao);
+                    break;
+
                 case "setPrice":  // New Service
                     setPrice(request, response, dao);
                     break;
+
                 case "updatePriceBatch":
                     updatePriceBatch(request, response, dao);
                     break;
@@ -135,6 +146,28 @@ public class ProductsController extends HttpServlet {
             // Send an error if the delete operation fails
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete product.");
         }
+    }
+
+    private void stopSellProduct(HttpServletRequest request, HttpServletResponse response, DAOProduct dao) throws IOException {
+            int productId = Integer.parseInt(request.getParameter("id"));
+            boolean success = dao.stopSellProduct(productId);
+
+            if (success) {
+             response.sendRedirect("ProductsControllerURL?service=listAll");
+            } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete product.");
+            }
+    }
+
+    private void resumeSellProduct(HttpServletRequest request, HttpServletResponse response, DAOProduct dao) throws IOException {
+        int productId = Integer.parseInt(request.getParameter("id"));
+            boolean success = dao.resumeSellProduct(productId);
+
+            if (success) {
+             response.sendRedirect("ProductsControllerURL?service=listAll");
+            } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete product.");
+            }
     }
 
     private void setPrice(HttpServletRequest request, HttpServletResponse response, DAOProduct dao) throws ServletException, IOException {

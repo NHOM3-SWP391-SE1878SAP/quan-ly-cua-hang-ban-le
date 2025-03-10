@@ -110,6 +110,43 @@ public class DAOProduct extends DBConnect {
         }
     }
 
+    public boolean stopSellProduct(int productId) {
+        String sql = "UPDATE Products SET IsAvailable = 0 WHERE ID = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, productId);
+            int rowsUpdated = pre.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, "Error stopping product sale", ex);
+            return false;
+        }
+    }
+
+    public boolean resumeSellProduct(int productId) {
+        String sql = "UPDATE Products SET IsAvailable = 1 WHERE ID = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, productId);
+            int rowsUpdated = pre.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, "Error resuming product sale", ex);
+            return false;
+        }
+    }   
+    
+    public boolean updateProductStatus(int productId, boolean isAvailable) {
+        String sql = "UPDATE Products SET IsAvailable = ? WHERE ID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, isAvailable);
+            ps.setInt(2, productId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public void addProduct(Product product) {
         String sql = "INSERT INTO Products (productName, productCode, price, stockQuantity, isAvailable, imageURL, categoryID) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -248,27 +285,27 @@ public class DAOProduct extends DBConnect {
         }
         return products;
     }
-public boolean updateProductsPriceBatch(List<Product> products) {
-    String sql = "UPDATE Products SET price = ? WHERE ID = ?";
-    try {
-        PreparedStatement pre = conn.prepareStatement(sql);
-        for (Product product : products) {
-            pre.setInt(1, product.getPrice());
-            pre.setInt(2, product.getId());
-            pre.addBatch();
+
+    public boolean updateProductsPriceBatch(List<Product> products) {
+        String sql = "UPDATE Products SET price = ? WHERE ID = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            for (Product product : products) {
+                pre.setInt(1, product.getPrice());
+                pre.setInt(2, product.getId());
+                pre.addBatch();
+            }
+
+            int[] rowsAffected = pre.executeBatch();
+
+            System.out.println("Số sản phẩm được cập nhật: " + Arrays.stream(rowsAffected).sum());
+
+            return Arrays.stream(rowsAffected).sum() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, "Lỗi cập nhật giá hàng loạt!", ex);
+            return false;
         }
-        
-        int[] rowsAffected = pre.executeBatch();
-
-        System.out.println("Số sản phẩm được cập nhật: " + Arrays.stream(rowsAffected).sum());
-
-        return Arrays.stream(rowsAffected).sum() > 0;
-    } catch (SQLException ex) {
-        Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, "Lỗi cập nhật giá hàng loạt!", ex);
-        return false;
     }
-}
-
 
     public Product getProductById(int productId) {
         Product product = null;

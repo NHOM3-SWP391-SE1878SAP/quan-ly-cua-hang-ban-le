@@ -3,14 +3,12 @@ package entity;
 public class Customer {
     private int id;
     private String customerName;
-    private int phone;
+    private String phone;
     private String address;
-    private int points;
+    private Integer points;
 
-    public Customer() {
-    }
-
-    public Customer(int id, String customerName, int phone, String address, int points) {
+    // ✅ Constructor đầy đủ (Dùng khi lấy dữ liệu từ database)
+    public Customer(int id, String customerName, String phone, String address, Integer points) {
         this.id = id;
         this.customerName = customerName;
         this.phone = phone;
@@ -18,43 +16,35 @@ public class Customer {
         this.points = points;
     }
 
-    public int getId() {
-        return id;
+    // ✅ Constructor không có ID (Dùng khi tạo mới)
+    public Customer(String customerName, String phone, String address, Integer points) {
+        this.customerName = customerName;
+        this.phone = phone;
+        this.address = address;
+        this.points = points;
     }
 
-    public void setId(int id) {
+    // ✅ Constructor chỉ có ID (Dùng khi xóa)
+    public Customer(int id) {
         this.id = id;
     }
 
-    public String getCustomerName() {
-        return customerName;
-    }
+    // ✅ Constructor rỗng
+    public Customer() {}
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+    // ✅ Getter & Setter
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public int getPhone() {
-        return phone;
-    }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
-    public void setPhone(int phone) {
-        this.phone = phone;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public String getAddress() {
-        return address;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
-    }
+    public Integer getPoints() { return points; }
+    public void setPoints(Integer points) { this.points = points; }
 }

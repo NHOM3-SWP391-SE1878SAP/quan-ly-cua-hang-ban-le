@@ -202,13 +202,13 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">thangnd</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
+              <h6>thangnd</h6>
+              <span>Admin</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -292,6 +292,12 @@
             </a>
           </li>
           
+          <li>
+            <a href="VoucherServlet">
+              <i class="bi bi-circle"></i><span>Mã giảm giá</span>
+            </a>
+          </li>
+          
         </ul>
       </li>
 
@@ -344,12 +350,12 @@
         </a>
         <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="">
+            <a href="CustomerServlet">
               <i class="bi bi-circle"></i><span>Khách hàng</span>
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="supplier">
               <i class="bi bi-circle"></i><span>Nhà cung cấp</span>
             </a>
           </li>
@@ -367,12 +373,12 @@
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="WeeklyScheduleController">
               <i class="bi bi-circle"></i><span>Lịch làm việc</span>
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="WeeklyScheduleController?service=getAllAttendanceHistory">
               <i class="bi bi-circle"></i><span>Chấm công</span>
             </a>
           </li>

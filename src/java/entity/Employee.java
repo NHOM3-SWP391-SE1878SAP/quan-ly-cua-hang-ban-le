@@ -7,7 +7,7 @@ public class Employee {
     private String employeeName;
     private String avatar;
     private Date dob;  // Date of Birth
-    private String gender;
+    private boolean gender;
     private int salary;
     private String cccd;    
     private boolean isAvailable; // Availability status
@@ -16,7 +16,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(int employeeID, String employeeName, String avatar, Date dob, String gender, int salary, String cccd, boolean isAvailable, Account account) {
+    public Employee(int employeeID, String employeeName, String avatar, Date dob, boolean gender, int salary, String cccd, boolean isAvailable, Account account) {
         this.employeeID = employeeID;
         this.employeeName = employeeName;
         this.avatar = avatar;
@@ -60,11 +60,11 @@ public class Employee {
         this.dob = dob;
     }
 
-    public String getGender() {
+    public boolean isGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(boolean gender) {
         this.gender = gender;
     }
 
@@ -98,5 +98,7 @@ public class Employee {
 
     public void setAccount(Account account) {
         this.account = account;
-    } 
+    }
+
+    
 }

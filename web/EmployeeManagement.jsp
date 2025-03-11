@@ -43,7 +43,7 @@
         <div class="d-flex mb-3">
             <div class="me-auto">
                 <select id="statusFilter" class="form-select" onchange="filterEmployees()">
-                    <option value="">Trạng thái</option>
+                    <option value="">Tất cả</option>
                     <option value="1">Còn làm việc</option>
                     <option value="0">Nghỉ việc</option>
                 </select>
@@ -64,7 +64,7 @@
                             <th>Số điện thoại</th>
                             <th>Trạng thái</th>
                             <th>Chi tiết</th>
-                            <th></th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,8 +85,8 @@
                                     <span class="badge bg-danger">Nghỉ việc</span>
                                 <% } %>
                             </td>
-                           <td>
-    <button class="btn btn-outline-warning btn-sm" 
+                            <td>
+    <button class="btn btn-outline-primary btn-sm" 
             data-bs-toggle="modal" 
             data-bs-target="#employeeDetailModal"
             onclick="showEmployeeDetail('<%= employee.getEmployeeID() %>', 
@@ -102,8 +102,29 @@
         Chi tiết
     </button>
 </td>
-<td>
-    <a href="EmployeeControllerURL?service=deleteEmployee&employeeID=<%= employee.getEmployeeID() %>" class="btn btn-outline-danger btn-sm">Delete</a>
+                            <td>
+    <button class="btn btn-outline-warning btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#updateEmployeeModal"
+            onclick="showUpdateEmployeeModal('<%= employee.getEmployeeID() %>', 
+                                             '<%= employee.getEmployeeName().replace("'", "\\'") %>', 
+                                             '<%= employee.getAvatar() %>',
+                                             '<%= employee.getDob() %>',
+                                             '<%= employee.isGender() %>',
+                                             '<%= employee.getSalary() %>',
+                                             '<%= employee.getCccd() %>',
+                                             '<%= employee.isIsAvailable() %>',
+                                             '<%= employee.getAccount().getUserName() %>',
+                                             '<%= employee.getAccount().getEmail() %>',
+                                             '<%= employee.getAccount().getPhone() %>',
+                                             '<%= employee.getAccount().getAddress().replace("'", "\\'") %>')">
+        Cập nhật
+    </button>
+
+
+
+                           
+
     
 </td>
 
@@ -130,7 +151,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addEmployeeForm">
+                <form id="addEmployeeForm" onsubmit="return confirmAdd()">
                     <input type="hidden" name="service" value="addEmployee">
 
                     <div class="row">
@@ -229,24 +250,24 @@
     </div>
 </div>
 
-<!-- Modal for Employee Details (Update) -->
-<div class="modal fade" id="employeeDetailModal" tabindex="-1" aria-labelledby="employeeDetailModalLabel" aria-hidden="true">
+
+<!-- Modal Cập nhật Nhân Viên -->
+<div class="modal fade" id="updateEmployeeModal" tabindex="-1" aria-labelledby="updateEmployeeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="employeeDetailModalLabel">Chi tiết nhân viên</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="updateEmployeeModalLabel">Cập nhật nhân viên</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
             </div>
             <div class="modal-body">
-                <form id="updateEmployeeForm">
+                <form id="updateEmployeeForm" action="EmployeeControllerURL" method="POST"  onsubmit="return confirmUpdate()">
                     <input type="hidden" name="service" value="updateEmployee">
                     <input type="hidden" name="employeeID" id="updateEmployeeID">
 
                     <div class="row">
-                        <!-- Cột trái: Thông tin nhân viên -->
                         <div class="col-md-6">
                             <h5>Thông tin nhân viên</h5>
-
                             <label>Họ và Tên:</label>
                             <input type="text" name="employeeName" id="updateEmployeeName" class="form-control" required>
 
@@ -258,8 +279,8 @@
 
                             <label>Giới tính:</label>
                             <select name="gender" id="updateGender" class="form-control">
-                                <option value="Male">Nam</option>
-                                <option value="Female">Nữ</option>
+                                <option value="true">Nam</option>
+                                <option value="false">Nữ</option>
                             </select>
 
                             <label>Lương:</label>
@@ -275,10 +296,8 @@
                             </select>
                         </div>
 
-                        <!-- Cột phải: Thông tin tài khoản -->
                         <div class="col-md-6">
                             <h5>Thông tin tài khoản</h5>
-
                             <label>Tên đăng nhập:</label>
                             <input type="text" name="userName" id="updateUserName" class="form-control" required>
 
@@ -286,7 +305,7 @@
                             <input type="email" name="email" id="updateEmail" class="form-control" required>
 
                             <label>Số điện thoại:</label>
-                            <input type="number" name="phone" id="updatePhone" class="form-control" required>
+                            <input type="text" name="phone" id="updatePhone" class="form-control" required>
 
                             <label>Địa chỉ:</label>
                             <input type="text" name="address" id="updateAddress" class="form-control" required>
@@ -301,6 +320,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     function filterEmployees() {
@@ -329,6 +349,42 @@
     }
 
     
+</script>
+<script>
+    function showUpdateEmployeeModal(id, name, avatar, dob, gender, salary, cccd, isAvailable, username, email, phone, address) {
+        document.getElementById("updateEmployeeID").value = id;
+        document.getElementById("updateEmployeeName").value = name;
+        document.getElementById("updateAvatar").value = avatar;
+        
+        // Chuyển đổi ngày về định dạng YYYY-MM-DD để input date hiển thị đúng
+        if (dob) {
+            let dateObj = new Date(dob);
+            let formattedDate = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD
+            document.getElementById("updateDob").value = formattedDate;
+        } else {
+            document.getElementById("updateDob").value = "";
+        }
+
+        document.getElementById("updateGender").value = gender === "true" ? "true" : "false";
+        document.getElementById("updateSalary").value = salary;
+        document.getElementById("updateCccd").value = cccd;
+        document.getElementById("updateIsAvailable").value = isAvailable === "true" ? "true" : "false";
+        document.getElementById("updateUserName").value = username;
+        document.getElementById("updateEmail").value = email;
+        document.getElementById("updatePhone").value = phone;
+        document.getElementById("updateAddress").value = address;
+
+        // Hiển thị modal cập nhật
+    }
+
+
+        function confirmAdd() {
+            return confirm("✅ Xác nhận thêm nhân viên?");
+        }
+
+        function confirmUpdate() {
+            return confirm("⚠️ Bạn có chắc chắn muốn cập nhật nhân viên?");
+        }
 </script>
 
 <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>

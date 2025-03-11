@@ -28,7 +28,7 @@ public class DBConnect {
     }
 
     public DBConnect() {
-        this("jdbc:sqlserver://localhost:1433;databaseName=SlimDB4",
+        this("jdbc:sqlserver://localhost:1433;databaseName=slim10",
                 "sa","12345678");
 
     }

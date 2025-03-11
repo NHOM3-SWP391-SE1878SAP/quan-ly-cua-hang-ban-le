@@ -14,7 +14,7 @@ public class DAOEmployee extends DBConnect {
 
 public Vector<Employee> getAllEmployees() {
     Vector<Employee> employees = new Vector<>();
-    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Address " +
+    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Adress " +
                  "FROM Employees e " +
                  "LEFT JOIN Accounts a ON e.AccountsID = a.ID"; 
 
@@ -26,8 +26,8 @@ public Vector<Employee> getAllEmployees() {
                     rs.getString("UserName"),
                     rs.getString("Password"),
                     rs.getString("Email"),
-                    rs.getInt("Phone"),
-                    rs.getString("Address"),
+                    rs.getString("Phone"),
+                    rs.getString("Adress"),
                     null // Không cần gán Role
             );
 
@@ -37,7 +37,7 @@ public Vector<Employee> getAllEmployees() {
                     rs.getString("EmployeeName"),
                     rs.getString("Avatar"),
                     rs.getDate("DoB"),
-                    rs.getString("Gender"),
+                    rs.getBoolean("Gender"),
                     rs.getInt("Salary"),
                     rs.getString("CCCD"),
                     rs.getBoolean("IsAvailable"),
@@ -52,11 +52,15 @@ public Vector<Employee> getAllEmployees() {
 }
 
 public boolean addEmployee(Employee emp) {
-    String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Address) VALUES (?, ?, ?, ?, ?)";
+    String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Adress, RoleID) VALUES (?, ?, ?, ?, ?, ?)";
     String sqlEmployee = "INSERT INTO Employees (EmployeeName, Avatar, DoB, Gender, Salary, CCCD, IsAvailable, AccountsID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     try {
         conn.setAutoCommit(false);
+
+        // Set RoleID = 2 for the account
+        Role role = new Role(2, "Employee");  // Assuming role with ID 2 is called "Employee"
+        emp.getAccount().setRole(role);  // Set the role to the Account object
 
         // Thêm tài khoản trước
         int accountID = -1;
@@ -64,8 +68,9 @@ public boolean addEmployee(Employee emp) {
             pstmt.setString(1, emp.getAccount().getUserName());
             pstmt.setString(2, emp.getAccount().getPassword());
             pstmt.setString(3, emp.getAccount().getEmail());
-            pstmt.setInt(4, emp.getAccount().getPhone());
+            pstmt.setString(4, emp.getAccount().getPhone());
             pstmt.setString(5, emp.getAccount().getAddress());
+            pstmt.setInt(6, emp.getAccount().getRole().getRoleID());  // Insert RoleID (2)
             int rows = pstmt.executeUpdate();
 
             if (rows > 0) {
@@ -86,7 +91,7 @@ public boolean addEmployee(Employee emp) {
             pstmt.setString(1, emp.getEmployeeName());
             pstmt.setString(2, emp.getAvatar());
             pstmt.setDate(3, new java.sql.Date(emp.getDob().getTime()));
-            pstmt.setString(4, emp.getGender());
+            pstmt.setBoolean(4, emp.isGender());  // 'emp.isGender()' returns boolean
             pstmt.setInt(5, emp.getSalary());
             pstmt.setString(6, emp.getCccd());
             pstmt.setBoolean(7, emp.isIsAvailable());
@@ -119,31 +124,34 @@ public boolean addEmployee(Employee emp) {
     }
 }
 
-public boolean updateEmployee(int employeeID, String name, String avatar, Date dob, String gender, int salary, String cccd, boolean isAvailable, String username, String email, int phone, String address) {
+
+public boolean updateEmployee(Employee emp) {
     String sqlUpdateEmployee = "UPDATE Employees SET EmployeeName=?, Avatar=?, DoB=?, Gender=?, Salary=?, CCCD=?, IsAvailable=? WHERE ID=?";
-    String sqlUpdateAccount = "UPDATE Accounts SET UserName=?, Email=?, Phone=?, Address=? WHERE ID=(SELECT AccountsID FROM Employees WHERE ID=?)";
+    String sqlUpdateAccount = "UPDATE Accounts SET UserName=?, Email=?, Phone=?, Adress=? WHERE ID=(SELECT AccountsID FROM Employees WHERE ID=?)";
 
     try {
         conn.setAutoCommit(false);
 
+        // Cập nhật thông tin nhân viên
         try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdateEmployee)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, avatar);
-            pstmt.setDate(3, new java.sql.Date(dob.getTime()));
-            pstmt.setString(4, gender);
-            pstmt.setInt(5, salary);
-            pstmt.setString(6, cccd);
-            pstmt.setBoolean(7, isAvailable);
-            pstmt.setInt(8, employeeID);
+            pstmt.setString(1, emp.getEmployeeName());
+            pstmt.setString(2, emp.getAvatar());
+            pstmt.setDate(3, new java.sql.Date(emp.getDob().getTime()));
+            pstmt.setBoolean(4, emp.isGender());
+            pstmt.setInt(5, emp.getSalary());
+            pstmt.setString(6, emp.getCccd());
+            pstmt.setBoolean(7, emp.isIsAvailable());
+            pstmt.setInt(8, emp.getEmployeeID());
             pstmt.executeUpdate();
         }
 
+        // Cập nhật tài khoản liên quan
         try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdateAccount)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, email);
-            pstmt.setInt(3, phone);
-            pstmt.setString(4, address);
-            pstmt.setInt(5, employeeID);
+            pstmt.setString(1, emp.getAccount().getUserName());
+            pstmt.setString(2, emp.getAccount().getEmail());
+            pstmt.setString(3, emp.getAccount().getPhone());
+            pstmt.setString(4, emp.getAccount().getAddress());
+            pstmt.setInt(5, emp.getEmployeeID());
             pstmt.executeUpdate();
         }
 
@@ -164,6 +172,44 @@ public boolean updateEmployee(int employeeID, String name, String avatar, Date d
             ex.printStackTrace();
         }
     }
+}
+
+public Employee getEmployeeByID(int employeeID) {
+    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Adress " +
+                 "FROM Employees e " +
+                 "LEFT JOIN Accounts a ON e.AccountsID = a.ID WHERE e.ID = ?";
+
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setInt(1, employeeID);
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            Account account = new Account(
+                    rs.getInt("AccountID"),
+                    rs.getString("UserName"),
+                    rs.getString("Password"),
+                    rs.getString("Email"),
+                    rs.getString("Phone"),
+                    rs.getString("Address"),
+                    null // Không cần Role
+            );
+
+            return new Employee(
+                    rs.getInt("ID"),
+                    rs.getString("EmployeeName"),
+                    rs.getString("Avatar"),
+                    rs.getDate("DoB"),
+                    rs.getBoolean("Gender"),
+                    rs.getInt("Salary"),
+                    rs.getString("CCCD"),
+                    rs.getBoolean("IsAvailable"),
+                    account
+            );
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return null;
 }
 
 

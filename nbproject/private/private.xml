@@ -3,17 +3,57 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/New%20Folder%20(3)/Slim/web/HeaderAdmin.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Attendance.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Role.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/attendance.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Voucher.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/VoucherServlet.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOEmployee.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/VoucherDAO.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/Login.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOSupplier.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/SupplierDebt.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Account.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Shift.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/META-INF/context.xml</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Employee.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/EmployeeController.java</file>
-            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Role.java</file>
-            <file>file:/D:/New%20Folder%20(3)/Slim/web/OrdersManagement.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/EmployeeManagement.jsp</file>
-            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DBConnect.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/CustomerServlet.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Payroll.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Return.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/GoodReceipt.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/SupplierController.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Payment.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/WeeklyScheduleController.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOWeeklySchedule.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOAttendance.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/OrderDetail.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/WeeklySchedule.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Order.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAORole.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/SupplierPayment.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/database/DatabaseConnection.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOAccount.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/CustomerDAO.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/customers.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Category.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/EmployeePayroll.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Product.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/GoodReceiptDetail.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Customer.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/LoginController.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/vouchers.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/TestCustomerDAO.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/AttendanceHistory.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DBConnect.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/GenerateVoucherCodeServlet.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/HeaderAdmin.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOShift.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/WeekDay.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/WeeklySchedule.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/index.html</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/AttendanceController.java</file>
         </group>
     </open-files>
 </project-private>

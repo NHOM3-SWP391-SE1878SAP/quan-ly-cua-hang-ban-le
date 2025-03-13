@@ -1,6 +1,6 @@
 package dao;
 
-import model.Customer;
+import entity.Customer;
 import java.util.List;
 
 public class TestCustomerDAO {

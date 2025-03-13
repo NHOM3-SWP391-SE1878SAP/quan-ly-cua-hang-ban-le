@@ -1,7 +1,8 @@
 package dao;
 
-import model.Customer;
+
 import database.DatabaseConnection;
+import entity.Customer;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

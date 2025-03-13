@@ -20,16 +20,14 @@ public class DBConnect {
             //connect
             conn = DriverManager.getConnection(URL, userName, password);
             System.out.println("Connected");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();
         }
     }
 
     public DBConnect() {
         this("jdbc:sqlserver://localhost:1433;databaseName=slim10",
-                "sa","12345678");
+                "sa","123");
 
     }
 

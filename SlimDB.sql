@@ -101,7 +101,7 @@ CREATE TABLE Vouchers (
     EndDate DATE NOT NULL
 );
 
--- T?o b?ng Orders (Quan h? 1-1 v?i Payments và Vouchers)
+-- T?o b?ng Orders (Quan h? 1-1 v?i Payments vï¿½ Vouchers)
 CREATE TABLE Orders (
     ID INT IDENTITY(1,1) PRIMARY KEY,
     OrderDate DATE NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE Orders (
     VouchersID INT UNIQUE  -- Quan h? 1-1 v?i Vouchers
 );
 
--- Thi?t l?p khóa ngo?i cho Orders ?? ??m b?o quan h? 1-1
+-- Thi?t l?p khï¿½a ngo?i cho Orders ?? ??m b?o quan h? 1-1
 ALTER TABLE Orders
 ADD CONSTRAINT FK_Orders_Payments FOREIGN KEY (PaymentsID) REFERENCES Payments(ID) ON DELETE SET NULL;
 

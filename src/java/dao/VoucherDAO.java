@@ -1,6 +1,6 @@
 package dao;
 
-import model.Voucher;
+import entity.Voucher;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

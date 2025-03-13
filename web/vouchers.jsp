@@ -1,6 +1,6 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
-<%@ page import="model.Voucher" %>
+<%@ page import="entity.Voucher" %>
 
 <%
    
@@ -27,6 +27,8 @@
     </head>
 
     <body>
+        <%@include file="HeaderAdmin.jsp"%>
+<main id="main" class="main">
         <div class="container mt-4">
             <h2 class="text-center">Quản lý Voucher</h2>
 
@@ -199,6 +201,7 @@
                 </div>
             </div>
         </div>
+</main>
 
         <!-- JavaScript -->
         <script>

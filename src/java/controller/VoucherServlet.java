@@ -1,8 +1,8 @@
 package controller;
 
-import dao.VoucherDAO;
+import model.VoucherDAO;
 import database.DatabaseConnection;
-import model.Voucher;
+import entity.Voucher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,6 +15,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
+@WebServlet(name = "VoucherServlet", urlPatterns = {"/VoucherServlet"})
 public class VoucherServlet extends HttpServlet {
 
     private VoucherDAO voucherDAO;

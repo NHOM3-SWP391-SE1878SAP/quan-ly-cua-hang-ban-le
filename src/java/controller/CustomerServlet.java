@@ -1,9 +1,9 @@
 package controller;
 
 import java.sql.Connection;
-import dao.CustomerDAO;
+import model.CustomerDAO;
 import database.DatabaseConnection;
-import model.Customer;
+import entity.Customer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+
+@WebServlet(name = "CustomerServlet", urlPatterns = {"/CustomerServlet"})
+
 
 public class CustomerServlet extends HttpServlet {
     
@@ -55,11 +58,6 @@ public class CustomerServlet extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String address = request.getParameter("address");
                 Integer points = parseInteger(request.getParameter("points"));
-                 if (customerDAO.isPhoneExists(phone)) {
-                    session.setAttribute("message", "❌ Error: Phone number already exists!");
-                    response.sendRedirect("CustomerServlet?page=1");
-                    return;
-                }
                 Customer customer = new Customer(name, phone, address, points);
                 customerDAO.addCustomer(customer);
                 session.setAttribute("message", "✅ Customer added successfully!");
@@ -70,21 +68,6 @@ public class CustomerServlet extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String address = request.getParameter("address");
                 Integer points = parseInteger(request.getParameter("points"));
-                
-                 Customer existingCustomer = customerDAO.getCustomerById(id);
-                if (existingCustomer == null) {
-                    session.setAttribute("message", "❌ Error: Customer not found!");
-                    response.sendRedirect("CustomerServlet?page=1");
-                    return;
-                }
-
-                // 📌 Kiểm tra nếu số điện thoại đã tồn tại nhưng khác với khách hàng hiện tại
-                if (!existingCustomer.getPhone().equals(phone) && customerDAO.isPhoneExists(phone)) {
-                    session.setAttribute("message", "❌ Error: Phone number already exists!");
-                    response.sendRedirect("CustomerServlet?page=1");
-                    return;
-                }
-                
                 Customer customer = new Customer(id, name, phone, address, points);
                 customerDAO.updateCustomer(customer);
                 session.setAttribute("message", "✅ Customer updated successfully!");

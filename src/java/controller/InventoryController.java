@@ -80,6 +80,10 @@ public class InventoryController extends HttpServlet {
         }
         int pageSize = 10; // Số lượng phiếu nhập hàng trên mỗi trang
         
+        // Lấy danh sách nhà cung cấp để hiển thị trong form nhập Excel
+        List<Supplier> suppliers = supplierDAO.getAllSuppliers();
+        request.setAttribute("suppliers", suppliers);
+        
         // Lấy danh sách phiếu nhập hàng theo bộ lọc
         List<GoodReceipt> goodsReceipts = goodReceiptDAO.getGoodReceiptsByFilter(timeFilter, supplierId, search, page, pageSize);
         
@@ -87,11 +91,8 @@ public class InventoryController extends HttpServlet {
         int totalItems = goodReceiptDAO.countGoodReceiptsByFilter(timeFilter, supplierId, search);
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
         
-        // Lấy danh sách nhà cung cấp cho bộ lọc
-        List<Supplier> suppliers = supplierDAO.getAllSuppliers();
         // Đặt các thuộc tính vào request
         request.setAttribute("goodsReceipts", goodsReceipts);
-        request.setAttribute("suppliers", suppliers);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("totalItems", totalItems);

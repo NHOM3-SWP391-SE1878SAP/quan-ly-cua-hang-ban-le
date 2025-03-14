@@ -1,13 +1,13 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %> <%@ taglib prefix="fmt"
+uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Phiếu nhập hàng - SLIM</title>
-    
+
     <!-- Favicons -->
     <link href="assets/img/favicon.png" rel="icon" />
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
@@ -20,8 +20,14 @@
     />
 
     <!-- Vendor CSS Files -->
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
     <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
     <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
@@ -30,7 +36,7 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
-    
+
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -415,7 +421,7 @@
                   name="search"
                   value="${param.search}"
                 />
-                <button type="submit" style="display: none;"></button>
+                <button type="submit" style="display: none"></button>
               </form>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -425,12 +431,39 @@
                 Nhập hàng
               </a>
               <div class="dropdown d-inline-block">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                  class="btn btn-primary dropdown-toggle"
+                  type="button"
+                  id="exportDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
                   <i class="bi bi-download"></i>
                   Xuất file
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                  <li><a class="dropdown-item" href="ExportInventoryExcelServlet">Xuất Excel</a></li>
+                  <li>
+                    <a class="dropdown-item" href="ExportInventoryExcelServlet"
+                      >Xuất Excel</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="DownloadInventoryTemplateServlet"
+                      >Tải mẫu nhập hàng</a
+                    >
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      data-bs-toggle="modal"
+                      data-bs-target="#importExcelModal"
+                      >Nhập hàng từ Excel</a
+                    >
+                  </li>
                 </ul>
               </div>
               <button class="btn btn-primary">
@@ -449,7 +482,10 @@
                   <thead>
                     <tr>
                       <th width="30">
-                        <label class="checkbox-container" style="margin-bottom: 0">
+                        <label
+                          class="checkbox-container"
+                          style="margin-bottom: 0"
+                        >
                           <input type="checkbox" id="selectAll" />
                           <span class="checkmark"></span>
                         </label>
@@ -463,33 +499,66 @@
                   </thead>
                   <tbody>
                     <c:forEach var="receipt" items="${goodsReceipts}">
-                      <tr onclick="viewReceiptDetails(${receipt.goodReceiptID})">
+                      <tr
+                        onclick="viewReceiptDetails(${receipt.goodReceiptID})"
+                      >
                         <td>
-                          <label class="checkbox-container" style="margin-bottom: 0">
-                            <input type="checkbox" class="receipt-checkbox" value="${receipt.goodReceiptID}" onclick="event.stopPropagation();" />
+                          <label
+                            class="checkbox-container"
+                            style="margin-bottom: 0"
+                          >
+                            <input
+                              type="checkbox"
+                              class="receipt-checkbox"
+                              value="${receipt.goodReceiptID}"
+                              onclick="event.stopPropagation();"
+                            />
                             <span class="checkmark"></span>
                           </label>
                         </td>
-                        <td>PN${String.format("%06d", receipt.goodReceiptID)}</td>
-                        <td><fmt:formatDate value="${receipt.receivedDate}" pattern="dd/MM/yyyy HH:mm" /></td>
+                        <td>
+                          PN${String.format("%06d", receipt.goodReceiptID)}
+                        </td>
+                        <td>
+                          <fmt:formatDate
+                            value="${receipt.receivedDate}"
+                            pattern="dd/MM/yyyy HH:mm"
+                          />
+                        </td>
                         <td>${receipt.supplier.supplierName}</td>
-                        <td><fmt:formatNumber value="${receipt.totalCost}" type="number" groupingUsed="true" /></td>
+                        <td>
+                          <fmt:formatNumber
+                            value="${receipt.totalCost}"
+                            type="number"
+                            groupingUsed="true"
+                          />
+                        </td>
                         <td>
                           <div class="d-flex gap-2">
-                            <a href="inventory?action=edit&id=${receipt.goodReceiptID}" class="btn btn-sm btn-primary" onclick="event.stopPropagation();">
+                            <a
+                              href="inventory?action=edit&id=${receipt.goodReceiptID}"
+                              class="btn btn-sm btn-primary"
+                              onclick="event.stopPropagation();"
+                            >
                               <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="javascript:void(0);" onclick="confirmDelete(${receipt.goodReceiptID}, event);" class="btn btn-sm btn-danger">
+                            <a
+                              href="javascript:void(0);"
+                              onclick="confirmDelete(${receipt.goodReceiptID}, event);"
+                              class="btn btn-sm btn-danger"
+                            >
                               <i class="bi bi-trash"></i>
                             </a>
                           </div>
                         </td>
                       </tr>
                     </c:forEach>
-                    
+
                     <c:if test="${empty goodsReceipts}">
                       <tr>
-                        <td colspan="7" class="text-center">Không có phiếu nhập hàng nào</td>
+                        <td colspan="7" class="text-center">
+                          Không có phiếu nhập hàng nào
+                        </td>
                       </tr>
                     </c:if>
                   </tbody>
@@ -499,16 +568,37 @@
                 <div class="pagination">
                   <div class="pagination-controls">
                     <button class="page-btn" onclick="goToPage(1)">◀◀</button>
-                    <button class="page-btn" onclick="goToPage(${currentPage > 1 ? currentPage - 1 : 1})">◀</button>
-                    
+                    <button
+                      class="page-btn"
+                      onclick="goToPage(${currentPage > 1 ? currentPage - 1 : 1})"
+                    >
+                      ◀
+                    </button>
+
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                      <button class="page-btn ${currentPage == i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>
+                      <button
+                        class="page-btn ${currentPage == i ? 'active' : ''}"
+                        onclick="goToPage(${i})"
+                      >
+                        ${i}
+                      </button>
                     </c:forEach>
-                    
-                    <button class="page-btn" onclick="goToPage(${currentPage < totalPages ? currentPage + 1 : totalPages})">▶</button>
-                    <button class="page-btn" onclick="goToPage(${totalPages})">▶▶</button>
+
+                    <button
+                      class="page-btn"
+                      onclick="goToPage(${currentPage < totalPages ? currentPage + 1 : totalPages})"
+                    >
+                      ▶
+                    </button>
+                    <button class="page-btn" onclick="goToPage(${totalPages})">
+                      ▶▶
+                    </button>
                   </div>
-                  <div>Hiển thị ${(currentPage-1)*10 + 1} - ${Math.min(currentPage*10, totalItems.longValue())} / Tổng số ${totalItems} phiếu nhập hàng</div>
+                  <div>
+                    Hiển thị ${(currentPage-1)*10 + 1} -
+                    ${Math.min(currentPage*10, totalItems.longValue())} / Tổng
+                    số ${totalItems} phiếu nhập hàng
+                  </div>
                 </div>
               </div>
             </div>
@@ -538,19 +628,38 @@
 
     <!-- JavaScript -->
     <script>
-      // Chọn tất cả checkbox
-      document.getElementById("selectAll").addEventListener("change", function() {
-        const checkboxes = document.querySelectorAll(".receipt-checkbox");
-        checkboxes.forEach(checkbox => {
-          checkbox.checked = this.checked;
+      document
+        .getElementById("exportDropdown")
+        .addEventListener("click", function () {
+          const menu = this.nextElementSibling;
+          menu.style.display =
+            menu.style.display === "block" ? "none" : "block";
         });
+
+      // Hide dropdown when clicking outside
+      document.addEventListener("click", function (event) {
+        if (
+          !event.target.matches("#exportDropdown") &&
+          !event.target.closest("#exportDropdown")
+        ) {
+          document.querySelector(".dropdown-menu").style.display = "none";
+        }
       });
-      
+      // Chọn tất cả checkbox
+      document
+        .getElementById("selectAll")
+        .addEventListener("change", function () {
+          const checkboxes = document.querySelectorAll(".receipt-checkbox");
+          checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+          });
+        });
+
       // Xem chi tiết phiếu nhập hàng
       function viewReceiptDetails(id) {
         window.location.href = "inventory?action=edit&id=" + id;
       }
-      
+
       // Xác nhận xóa phiếu nhập hàng
       function confirmDelete(id, event) {
         event.stopPropagation();
@@ -558,21 +667,21 @@
           window.location.href = "inventory?action=delete&id=" + id;
         }
       }
-      
+
       // Chuyển trang
       function goToPage(page) {
         const url = new URL(window.location.href);
         url.searchParams.set("page", page);
         window.location.href = url.toString();
       }
-      
+
       // Đánh dấu yêu thích
       function toggleFavorite(id, event) {
         event.stopPropagation();
         // Gửi yêu cầu AJAX để cập nhật trạng thái yêu thích
         fetch("inventory?action=toggleFavorite&id=" + id)
-          .then(response => response.json())
-          .then(data => {
+          .then((response) => response.json())
+          .then((data) => {
             if (data.success) {
               const icon = event.target;
               if (data.favorite) {
@@ -588,5 +697,90 @@
           });
       }
     </script>
+
+    <!-- Modal Import Excel -->
+    <div
+      class="modal fade"
+      id="importExcelModal"
+      tabindex="-1"
+      aria-labelledby="importExcelModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="importExcelModalLabel">
+              Nhập hàng từ Excel
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form
+              action="ImportInventoryExcelServlet"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <div class="mb-3">
+                <label for="supplierSelect" class="form-label"
+                  >Nhà cung cấp</label
+                >
+                <select
+                  class="form-select"
+                  id="supplierSelect"
+                  name="supplierID"
+                  required
+                >
+                  <option value="">-- Chọn nhà cung cấp --</option>
+                  <c:forEach var="supplier" items="${suppliers}">
+                    <option value="${supplier.id}">
+                      ${supplier.supplierName}
+                    </option>
+                  </c:forEach>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="excelFile" class="form-label"
+                  >Chọn file Excel</label
+                >
+                <input
+                  class="form-control"
+                  type="file"
+                  id="excelFile"
+                  name="excelFile"
+                  accept=".xls,.xlsx"
+                  required
+                />
+                <div class="form-text">
+                  Chỉ chấp nhận file Excel (.xls, .xlsx)
+                </div>
+              </div>
+              <div class="mb-3">
+                <a
+                  href="DownloadInventoryTemplateServlet"
+                  class="text-decoration-none"
+                >
+                  <i class="bi bi-download"></i> Tải mẫu nhập hàng
+                </a>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Đóng
+                </button>
+                <button type="submit" class="btn btn-primary">Nhập hàng</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

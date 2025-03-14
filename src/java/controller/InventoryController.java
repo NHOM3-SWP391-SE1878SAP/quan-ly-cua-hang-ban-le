@@ -5,7 +5,6 @@ import entity.GoodReceiptDetail;
 import entity.Product;
 import entity.Supplier;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +38,6 @@ public class InventoryController extends HttpServlet {
             case "edit" -> showEditForm(request, response);
             case "save" -> saveGoodReceipt(request, response);
             case "delete" -> deleteGoodReceipt(request, response);
-            case "toggleFavorite" -> toggleFavorite(request, response);
             default -> listGoodReceipts(request, response);
         }
     }
@@ -130,7 +128,7 @@ public class InventoryController extends HttpServlet {
             request.setAttribute("goodReceiptDetails", goodReceiptDetails);
             
             // Chuyển hướng đến trang xem chi tiết phiếu nhập hàng
-            request.getRequestDispatcher("inventory-view.jsp").forward(request, response);
+            request.getRequestDispatcher("inventory-detail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("inventory");
         }
@@ -195,7 +193,7 @@ public class InventoryController extends HttpServlet {
             request.setAttribute("products", products);
             
             // Chuyển hướng đến trang chỉnh sửa phiếu nhập hàng
-            request.getRequestDispatcher("inventory-edit.jsp").forward(request, response);
+            request.getRequestDispatcher("inventory-form.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("inventory");
         }
@@ -335,35 +333,6 @@ public class InventoryController extends HttpServlet {
             response.sendRedirect("inventory");
         } catch (NumberFormatException e) {
             response.sendRedirect("inventory");
-        }
-    }
-    
-    // Đánh dấu phiếu nhập hàng yêu thích
-    private void toggleFavorite(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-        if (idParam == null || idParam.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-        
-        try {
-            int id = Integer.parseInt(idParam);
-            GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
-            
-            // Đảo ngược trạng thái yêu thích
-            boolean success = goodReceiptDAO.toggleFavorite(id);
-            
-            // Trả về kết quả dưới dạng JSON
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-//            JSONObject json = new JSONObject();
-//            json.put("success", success);
-//            json.put("favorite", goodReceiptDAO.isFavorite(id));
-//            out.print(json.toString());
-            out.flush();
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 

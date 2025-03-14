@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${empty goodsReceipt ? 'Thêm mới' : 'Chỉnh sửa'} phiếu nhập hàng - SLIM</title>
+    <title>${empty goodReceipt ? 'Thêm mới' : 'Chỉnh sửa'} phiếu nhập hàng - SLIM</title>
     
     <!-- Favicons -->
     <link href="assets/img/favicon.png" rel="icon" />
@@ -123,12 +123,12 @@
 
     <main id="main" class="main">
       <div class="pagetitle">
-        <h1>${empty goodsReceipt ? 'Thêm mới' : 'Chỉnh sửa'} phiếu nhập hàng</h1>
+        <h1>${empty goodReceipt ? 'Thêm mới' : 'Chỉnh sửa'} phiếu nhập hàng</h1>
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
             <li class="breadcrumb-item"><a href="inventory">Phiếu nhập hàng</a></li>
-            <li class="breadcrumb-item active">${empty goodsReceipt ? 'Thêm mới' : 'Chỉnh sửa'}</li>
+            <li class="breadcrumb-item active">${empty goodReceipt ? 'Thêm mới' : 'Chỉnh sửa'}</li>
           </ol>
         </nav>
       </div>
@@ -137,9 +137,9 @@
         <div class="row">
           <div class="col-lg-12">
             <form action="inventory" method="post" id="receiptForm">
-              <input type="hidden" name="action" value="${empty goodsReceipt ? 'add' : 'edit'}">
-              <c:if test="${not empty goodsReceipt}">
-                <input type="hidden" name="id" value="${goodsReceipt.ID}">
+              <input type="hidden" name="action" value="save">
+              <c:if test="${not empty goodReceipt}">
+                <input type="hidden" name="id" value="${goodReceipt.goodReceiptID}">
               </c:if>
               
               <!-- Thông tin phiếu nhập -->
@@ -147,7 +147,7 @@
                 <div class="card-body">
                   <div class="form-header">
                     <div class="form-title">
-                      ${empty goodsReceipt ? 'Thêm mới' : 'Chỉnh sửa'} phiếu nhập hàng
+                      ${empty goodReceipt ? 'Thêm mới' : 'Chỉnh sửa'} phiếu nhập hàng
                     </div>
                     <div class="form-actions">
                       <button type="submit" class="btn btn-primary">
@@ -166,7 +166,7 @@
                         <select class="form-select" id="supplierId" name="supplierId" required>
                           <option value="">-- Chọn nhà cung cấp --</option>
                           <c:forEach var="supplier" items="${suppliers}">
-                            <option value="${supplier.id}" ${goodsReceipt.suppliersID == supplier.id ? 'selected' : ''}>${supplier.supplierName}</option>
+                            <option value="${supplier.id}" ${goodReceipt.supplier.id == supplier.id ? 'selected' : ''}>${supplier.supplierName}</option>
                           </c:forEach>
                         </select>
                       </div>
@@ -175,7 +175,7 @@
                       <div class="mb-3">
                         <label for="receivedDate" class="form-label required-field">Ngày nhập</label>
                         <input type="date" class="form-control" id="receivedDate" name="receivedDate" 
-                               value="<fmt:formatDate value='${goodsReceipt.receivedDate}' pattern='yyyy-MM-dd' />" 
+                               value="<fmt:formatDate value='${goodReceipt.receivedDate}' pattern='yyyy-MM-dd' />" 
                                required>
                       </div>
                     </div>
@@ -192,7 +192,17 @@
                           <i class="bi bi-search"></i> Tìm kiếm
                         </button>
                       </div>
-                      <div class="product-search-results" id="searchResults"></div>
+                      <div class="product-search-results" id="searchResults">
+                        <c:forEach var="product" items="${products}">
+                          <div class="product-search-item" 
+                               data-id="${product.productID}"
+                               data-code="${product.productCode}"
+                               data-name="${product.productName}"
+                               data-price="${product.unitPrice}">
+                            <strong>${product.productCode}</strong> - ${product.productName}
+                          </div>
+                        </c:forEach>
+                      </div>
                     </div>
                     
                     <div class="table-responsive">
@@ -211,14 +221,14 @@
                           </tr>
                         </thead>
                         <tbody id="productTableBody">
-                          <c:if test="${not empty details}">
-                            <c:forEach var="detail" items="${details}" varStatus="status">
+                          <c:if test="${not empty goodReceiptDetails}">
+                            <c:forEach var="detail" items="${goodReceiptDetails}" varStatus="status">
                               <tr>
                                 <td>${status.index + 1}</td>
                                 <td>
                                   ${detail.product.productCode}
-                                  <input type="hidden" name="productId" value="${detail.productsID}">
-                                  <input type="hidden" name="detailId" value="${detail.ID}">
+                                  <input type="hidden" name="productId" value="${detail.product.productID}">
+                                  <input type="hidden" name="detailId" value="${detail.goodReceiptDetailID}">
                                 </td>
                                 <td>${detail.product.productName}</td>
                                 <td>
@@ -247,7 +257,7 @@
                               </tr>
                             </c:forEach>
                           </c:if>
-                          <c:if test="${empty details}">
+                          <c:if test="${empty goodReceiptDetails}">
                             <tr id="emptyRow">
                               <td colspan="9" class="text-center">Chưa có sản phẩm nào được thêm</td>
                             </tr>
@@ -264,7 +274,7 @@
                             <div class="summary-label">Tổng số sản phẩm:</div>
                             <div class="summary-value" id="totalProducts">
                               <c:choose>
-                                <c:when test="${not empty details}">${details.size()}</c:when>
+                                <c:when test="${not empty goodReceiptDetails}">${goodReceiptDetails.size()}</c:when>
                                 <c:otherwise>0</c:otherwise>
                               </c:choose>
                             </div>
@@ -273,9 +283,9 @@
                             <div class="summary-label">Tổng số lượng:</div>
                             <div class="summary-value" id="totalQuantity">
                               <c:choose>
-                                <c:when test="${not empty details}">
+                                <c:when test="${not empty goodReceiptDetails}">
                                   <c:set var="totalQuantity" value="0" />
-                                  <c:forEach var="detail" items="${details}">
+                                  <c:forEach var="detail" items="${goodReceiptDetails}">
                                     <c:set var="totalQuantity" value="${totalQuantity + detail.quantityReceived}" />
                                   </c:forEach>
                                   ${totalQuantity}
@@ -290,14 +300,14 @@
                             <div class="summary-label summary-total">Tổng cộng:</div>
                             <div class="summary-value summary-total" id="totalCost">
                               <c:choose>
-                                <c:when test="${not empty goodsReceipt}">
-                                  <fmt:formatNumber value="${goodsReceipt.totalCost}" type="number" groupingUsed="true" />
+                                <c:when test="${not empty goodReceipt}">
+                                  <fmt:formatNumber value="${goodReceipt.totalCost}" type="number" groupingUsed="true" />
                                 </c:when>
                                 <c:otherwise>0</c:otherwise>
                               </c:choose>
                             </div>
                             <input type="hidden" name="totalCost" id="totalCostInput" 
-                                   value="${not empty goodsReceipt ? goodsReceipt.totalCost : 0}">
+                                   value="${not empty goodReceipt ? goodReceipt.totalCost : 0}">
                           </div>
                         </div>
                       </div>
@@ -310,16 +320,6 @@
         </div>
       </section>
     </main>
-
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-      <div class="copyright">
-        &copy; Copyright <strong><span>SLIM</span></strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        Designed by <a href="#">FPT University</a>
-      </div>
-    </footer><!-- End Footer -->
 
     <!-- Vendor JS Files -->
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
@@ -334,52 +334,63 @@
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
     
+    <!-- Khởi tạo danh sách sản phẩm -->
     <script>
-      // Danh sách sản phẩm
-      const products = [
-        <c:forEach var="product" items="${products}" varStatus="status">
-          {
-            id: ${product.productID},
-            code: "${product.productCode}",
-            name: "${product.productName}",
-            price: ${product.unitPrice}
-          }<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-      ];
-      
+      // Khởi tạo danh sách sản phẩm
+      var products = [];
+      <c:forEach var="product" items="${products}" varStatus="status">
+        products.push({
+          id: ${product.productID},
+          code: "${product.productCode}",
+          name: "${product.productName}",
+          price: ${product.unitPrice}
+        });
+      </c:forEach>
+
+      // Thêm sự kiện click cho các sản phẩm trong danh sách
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchResults = document.getElementById('searchResults');
+        const searchItems = searchResults.querySelectorAll('.product-search-item');
+        
+        searchItems.forEach(item => {
+          item.addEventListener('click', function() {
+            const product = {
+              id: parseInt(this.dataset.id),
+              code: this.dataset.code,
+              name: this.dataset.name,
+              price: parseInt(this.dataset.price)
+            };
+            addProduct(product);
+            searchResults.style.display = 'none';
+            document.getElementById('productSearch').value = '';
+          });
+        });
+      });
+
       // Tìm kiếm sản phẩm
       document.getElementById('productSearch').addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         const resultsContainer = document.getElementById('searchResults');
+        const searchItems = resultsContainer.querySelectorAll('.product-search-item');
         
         if (searchTerm.length < 2) {
           resultsContainer.style.display = 'none';
           return;
         }
         
-        const filteredProducts = products.filter(product => 
-          product.code.toLowerCase().includes(searchTerm) || 
-          product.name.toLowerCase().includes(searchTerm)
-        );
+        let hasVisibleItems = false;
+        searchItems.forEach(item => {
+          const code = item.dataset.code.toLowerCase();
+          const name = item.dataset.name.toLowerCase();
+          if (code.includes(searchTerm) || name.includes(searchTerm)) {
+            item.style.display = 'block';
+            hasVisibleItems = true;
+          } else {
+            item.style.display = 'none';
+          }
+        });
         
-        if (filteredProducts.length > 0) {
-          resultsContainer.innerHTML = '';
-          filteredProducts.forEach(product => {
-            const item = document.createElement('div');
-            item.className = 'product-search-item';
-            item.innerHTML = `<strong>${product.code}</strong> - ${product.name}`;
-            item.addEventListener('click', function() {
-              addProduct(product);
-              resultsContainer.style.display = 'none';
-              document.getElementById('productSearch').value = '';
-            });
-            resultsContainer.appendChild(item);
-          });
-          resultsContainer.style.display = 'block';
-        } else {
-          resultsContainer.innerHTML = '<div class="product-search-item">Không tìm thấy sản phẩm</div>';
-          resultsContainer.style.display = 'block';
-        }
+        resultsContainer.style.display = hasVisibleItems ? 'block' : 'none';
       });
       
       document.getElementById('searchButton').addEventListener('click', function() {
@@ -414,35 +425,33 @@
         nextYear.setFullYear(today.getFullYear() + 1);
         
         const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${tableBody.children.length + 1}</td>
-          <td>
-            ${product.code}
-            <input type="hidden" name="productId" value="${product.id}">
-          </td>
-          <td>${product.name}</td>
-          <td>
-            <input type="text" class="form-control" name="batchNumber" required>
-          </td>
-          <td>
-            <input type="date" class="form-control" name="expirationDate" 
-                   value="${nextYear.toISOString().split('T')[0]}" required>
-          </td>
-          <td>
-            <input type="number" class="form-control quantity-input" name="quantity" 
-                   value="1" min="1" required onchange="calculateTotal(this)">
-          </td>
-          <td>
-            <input type="number" class="form-control price-input" name="unitCost" 
-                   value="${product.price}" min="0" required onchange="calculateTotal(this)">
-          </td>
-          <td class="item-total">${product.price}</td>
-          <td>
-            <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        `;
+        row.innerHTML = 
+    "<td>" + (tableBody.children.length + 1) + "</td>" +
+    "<td>" +
+      product.code +
+      "<input type='hidden' name='productId' value='" + product.id + "'>" +
+    "</td>" +
+    "<td>" + product.name + "</td>" +
+    "<td>" +
+      "<input type='text' class='form-control' name='batchNumber' required>" +
+    "</td>" +
+    "<td>" +
+      "<input type='date' class='form-control' name='expirationDate' value='" + nextYear.toISOString().split('T')[0] + "' required>" +
+    "</td>" +
+    "<td>" +
+      "<input type='number' class='form-control quantity-input' name='quantity' " +
+             "value='1' min='1' required onchange='calculateTotal(this)'>" +
+    "</td>" +
+    "<td>" +
+      "<input type='number' class='form-control price-input' name='unitCost' " +
+             "value='" + product.price + "' min='0' required onchange='calculateTotal(this)'>" +
+    "</td>" +
+    "<td class='item-total'>" + product.price + "</td>" +
+    "<td>" +
+      "<button type='button' class='btn btn-danger btn-sm' onclick='removeRow(this)'>" +
+        "<i class='bi bi-trash'></i>" +
+      "</button>" +
+    "</td>";
         
         tableBody.appendChild(row);
         updateRowNumbers();

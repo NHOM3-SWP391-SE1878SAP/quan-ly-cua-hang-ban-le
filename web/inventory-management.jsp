@@ -424,10 +424,15 @@
                 <i class="bi bi-plus-circle"></i>
                 Nhập hàng
               </a>
-              <button class="btn btn-primary">
-                <i class="bi bi-download"></i>
-                Xuất file ▼
-              </button>
+              <div class="dropdown d-inline-block">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-download"></i>
+                  Xuất file
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                  <li><a class="dropdown-item" href="ExportInventoryExcelServlet">Xuất Excel</a></li>
+                </ul>
+              </div>
               <button class="btn btn-primary">
                 <i class="bi bi-grid"></i>
                 ▼
@@ -449,7 +454,6 @@
                           <span class="checkmark"></span>
                         </label>
                       </th>
-                      <th width="30">⭐</th>
                       <th>Mã nhập hàng</th>
                       <th>Thời gian</th>
                       <th>Nhà cung cấp</th>
@@ -459,26 +463,23 @@
                   </thead>
                   <tbody>
                     <c:forEach var="receipt" items="${goodsReceipts}">
-                      <tr onclick="viewReceiptDetails(${receipt.ID})">
+                      <tr onclick="viewReceiptDetails(${receipt.goodReceiptID})">
                         <td>
                           <label class="checkbox-container" style="margin-bottom: 0">
-                            <input type="checkbox" class="receipt-checkbox" value="${receipt.ID}" onclick="event.stopPropagation();" />
+                            <input type="checkbox" class="receipt-checkbox" value="${receipt.goodReceiptID}" onclick="event.stopPropagation();" />
                             <span class="checkmark"></span>
                           </label>
                         </td>
-                        <td>
-                          <i class="bi bi-star${receipt.favorite ? '-fill' : ''}" style="color: ${receipt.favorite ? '#FFD700' : '#ddd'};" onclick="toggleFavorite(${receipt.ID}, event);"></i>
-                        </td>
-                        <td>PN${String.format("%06d", receipt.ID)}</td>
+                        <td>PN${String.format("%06d", receipt.goodReceiptID)}</td>
                         <td><fmt:formatDate value="${receipt.receivedDate}" pattern="dd/MM/yyyy HH:mm" /></td>
                         <td>${receipt.supplier.supplierName}</td>
                         <td><fmt:formatNumber value="${receipt.totalCost}" type="number" groupingUsed="true" /></td>
                         <td>
                           <div class="d-flex gap-2">
-                            <a href="inventory?action=edit&id=${receipt.ID}" class="btn btn-sm btn-primary" onclick="event.stopPropagation();">
+                            <a href="inventory?action=edit&id=${receipt.goodReceiptID}" class="btn btn-sm btn-primary" onclick="event.stopPropagation();">
                               <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="javascript:void(0);" onclick="confirmDelete(${receipt.ID}, event);" class="btn btn-sm btn-danger">
+                            <a href="javascript:void(0);" onclick="confirmDelete(${receipt.goodReceiptID}, event);" class="btn btn-sm btn-danger">
                               <i class="bi bi-trash"></i>
                             </a>
                           </div>
@@ -547,7 +548,7 @@
       
       // Xem chi tiết phiếu nhập hàng
       function viewReceiptDetails(id) {
-        window.location.href = "inventory?action=view&id=" + id;
+        window.location.href = "inventory?action=edit&id=" + id;
       }
       
       // Xác nhận xóa phiếu nhập hàng

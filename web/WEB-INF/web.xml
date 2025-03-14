@@ -20,6 +20,10 @@
         <servlet-name>GenerateVoucherCodeServlet</servlet-name>
         <servlet-class>controller.GenerateVoucherCodeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExportInventoryExcelServlet</servlet-name>
+        <servlet-class>controller.ExportInventoryExcelServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VoucherServlet</servlet-name>
         <url-pattern>/VoucherServlet</url-pattern>
@@ -39,5 +43,9 @@
     <servlet-mapping>
         <servlet-name>GenerateVoucherCodeServlet</servlet-name>
         <url-pattern>/GenerateVoucherCodeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportInventoryExcelServlet</servlet-name>
+        <url-pattern>/ExportInventoryExcelServlet</url-pattern>
     </servlet-mapping>
 </web-app>

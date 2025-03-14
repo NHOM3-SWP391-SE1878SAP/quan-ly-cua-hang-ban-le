@@ -1,7 +1,7 @@
 package controller;
 
 import java.sql.Connection;
-import model.CustomerDAO;
+import dao.CustomerDAO;
 import database.DatabaseConnection;
 import entity.Customer;
 import jakarta.servlet.ServletException;

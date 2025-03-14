@@ -6,8 +6,8 @@ import entity.Role;
 import entity.WeeklySchedule;
 import entity.Shift;
 import entity.WeekDay;
-import model.DAOAccount;
-import model.DAOWeeklySchedule;
+import dao.DAOAccount;
+import dao.DAOWeeklySchedule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +19,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Vector;
-import model.DAOAttendance;
+import dao.DAOAttendance;
 
 @WebServlet(name = "LoginController", urlPatterns = {"/login"})
 public class LoginController extends HttpServlet {

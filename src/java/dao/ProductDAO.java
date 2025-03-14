@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import database.DatabaseConnection;
 import entity.Product;
@@ -102,7 +102,7 @@ public class ProductDAO {
     
     // Thêm sản phẩm mới
     public boolean addProduct(Product product) {
-        String sql = "INSERT INTO Products (ProductName, ProductCode, UnitPrice, StockQuantity, IsAvailable, CategoryID) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Products (ProductName, ProductCode, Price, StockQuantity, IsAvailable, CategoryID) VALUES (?, ?, ?, ?, ?, ?)";
         
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -123,7 +123,7 @@ public class ProductDAO {
     
     // Cập nhật thông tin sản phẩm
     public boolean updateProduct(Product product) {
-        String sql = "UPDATE Products SET ProductName = ?, ProductCode = ?, UnitPrice = ?, StockQuantity = ?, IsAvailable = ?, CategoryID = ? WHERE ID = ?";
+        String sql = "UPDATE Products SET ProductName = ?, ProductCode = ?, Price = ?, StockQuantity = ?, IsAvailable = ?, CategoryID = ? WHERE ID = ?";
         
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

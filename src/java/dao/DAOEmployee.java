@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import entity.Account;
 import entity.Employee;

@@ -14,10 +14,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.DAOSupplier;
-import model.GoodReceiptDAO;
-import model.GoodReceiptDetailDAO;
-import model.ProductDAO;
+import dao.DAOSupplier;
+import dao.GoodReceiptDAO;
+import dao.GoodReceiptDetailDAO;
+import dao.ProductDAO;
 
 @WebServlet(name = "InventoryController", urlPatterns = {"/inventory"})
 public class InventoryController extends HttpServlet {

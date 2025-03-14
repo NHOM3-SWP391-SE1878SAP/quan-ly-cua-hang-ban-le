@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import entity.Role;
 import java.sql.*;

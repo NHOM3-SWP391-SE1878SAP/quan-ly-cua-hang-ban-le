@@ -5,7 +5,7 @@ import entity.WeeklySchedule;
 import entity.Shift;
 import entity.WeekDay;
 import entity.Employee;
-import model.DAOWeeklySchedule;
+import dao.DAOWeeklySchedule;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,8 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.Vector;
-import model.DAOAttendance;
-import model.DAOEmployee;
+import dao.DAOAttendance;
+import dao.DAOEmployee;
 
 @WebServlet(name = "WeeklyScheduleController", urlPatterns = {"/WeeklyScheduleController"})
 public class WeeklyScheduleController extends HttpServlet {

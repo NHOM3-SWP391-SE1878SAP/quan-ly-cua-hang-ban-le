@@ -1,6 +1,6 @@
 package controller;
 
-import model.VoucherDAO;
+import dao.VoucherDAO;
 import database.DatabaseConnection;
 import entity.Voucher;
 import jakarta.servlet.ServletException;

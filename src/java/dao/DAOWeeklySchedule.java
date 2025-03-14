@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import entity.WeeklySchedule;
 import entity.Employee;

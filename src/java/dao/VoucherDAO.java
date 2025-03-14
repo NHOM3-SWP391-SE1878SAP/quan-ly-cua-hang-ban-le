@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import entity.Voucher;
 import java.sql.*;

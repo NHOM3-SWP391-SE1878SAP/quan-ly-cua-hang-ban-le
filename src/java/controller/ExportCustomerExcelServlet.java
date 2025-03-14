@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.util.List;
 import jxl.Workbook;
 import jxl.write.*;
-import model.CustomerDAO;
+import dao.CustomerDAO;
 
 @WebServlet("/ExportCustomerExcelServlet")
 public class ExportCustomerExcelServlet extends HttpServlet {

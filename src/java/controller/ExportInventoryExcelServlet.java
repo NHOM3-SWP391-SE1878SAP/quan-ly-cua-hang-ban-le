@@ -14,7 +14,7 @@ import java.util.List;
 import jxl.Workbook;
 import jxl.write.*;
 import jxl.write.Number;
-import model.GoodReceiptDAO;
+import dao.GoodReceiptDAO;
 
 public class ExportInventoryExcelServlet extends HttpServlet {
 

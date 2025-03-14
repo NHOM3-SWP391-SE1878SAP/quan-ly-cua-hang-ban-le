@@ -13,7 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
-import model.DAOEmployee;
+import dao.DAOEmployee;
 
 @WebServlet(name = "EmployeeController", urlPatterns = {"/EmployeeControllerURL"})
 public class EmployeeController extends HttpServlet {

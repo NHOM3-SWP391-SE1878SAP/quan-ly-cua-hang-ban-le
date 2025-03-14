@@ -19,10 +19,11 @@ import java.util.List;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.Cell;
-import model.DAOSupplier;
-import model.GoodReceiptDAO;
-import model.GoodReceiptDetailDAO;
-import model.ProductDAO;
+import jxl.read.biff.BiffException;
+import dao.DAOSupplier;
+import dao.GoodReceiptDAO;
+import dao.GoodReceiptDetailDAO;
+import dao.ProductDAO;
 
 @WebServlet("/ImportInventoryExcelServlet")
 @MultipartConfig
@@ -195,7 +196,7 @@ public class ImportInventoryExcelServlet extends HttpServlet {
             request.setAttribute("successMessage", "Đã nhập hàng thành công từ file Excel. ID phiếu nhập: " + receiptId);
             request.getRequestDispatcher("inventory").forward(request, response);
             
-        } catch (Exception e) {
+        } catch (ServletException | IOException | IndexOutOfBoundsException | NumberFormatException | BiffException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Lỗi khi nhập hàng từ file Excel: " + e.getMessage());
             request.getRequestDispatcher("inventory").forward(request, response);

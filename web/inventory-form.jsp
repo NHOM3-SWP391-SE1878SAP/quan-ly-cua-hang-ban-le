@@ -166,7 +166,7 @@
                         <select class="form-select" id="supplierId" name="supplierId" required>
                           <option value="">-- Chọn nhà cung cấp --</option>
                           <c:forEach var="supplier" items="${suppliers}">
-                            <option value="${supplier.ID}" ${goodsReceipt.suppliersID == supplier.ID ? 'selected' : ''}>${supplier.supplierName}</option>
+                            <option value="${supplier.id}" ${goodsReceipt.suppliersID == supplier.id ? 'selected' : ''}>${supplier.supplierName}</option>
                           </c:forEach>
                         </select>
                       </div>
@@ -339,7 +339,7 @@
       const products = [
         <c:forEach var="product" items="${products}" varStatus="status">
           {
-            id: ${product.ID},
+            id: ${product.productID},
             code: "${product.productCode}",
             name: "${product.productName}",
             price: ${product.unitPrice}

@@ -1,7 +1,6 @@
 package controller;
 
-import dao.CustomerDAO;
-import model.Customer;
+import entity.Customer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +11,7 @@ import java.io.OutputStream;
 import java.util.List;
 import jxl.Workbook;
 import jxl.write.*;
+import model.CustomerDAO;
 
 @WebServlet("/ExportCustomerExcelServlet")
 public class ExportCustomerExcelServlet extends HttpServlet {
@@ -61,7 +61,7 @@ public class ExportCustomerExcelServlet extends HttpServlet {
             out.flush();
             out.close();
 
-        } catch (Exception e) {
+        } catch (IOException | WriteException e) {
             e.printStackTrace();
             response.getWriter().write("❌ Lỗi khi xuất file Excel: " + e.getMessage());
         }

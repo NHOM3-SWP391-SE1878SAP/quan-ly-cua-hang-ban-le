@@ -7,20 +7,19 @@ public class Product {
     private int price;
     private int stockQuantity;
     private boolean isAvailable;
-    private String imageURL;
+    private int categoryID;
     private Category category;
 
     public Product() {
     }
 
-    public Product(int productID, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, Category category) {
+    public Product(int productID, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, Category category) {
         this.productID = productID;
         this.productName = productName;
         this.productCode = productCode;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.isAvailable = isAvailable;
-        this.imageURL = imageURL;
         this.category = category;
     }
 
@@ -48,11 +47,11 @@ public class Product {
         this.productCode = productCode;
     }
 
-    public int getPrice() {
+    public int getUnitPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setUnitPrice(int price) {
         this.price = price;
     }
 
@@ -72,19 +71,27 @@ public class Product {
         isAvailable = available;
     }
 
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
     public Category getCategory() {
         return category;
     }
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public boolean isIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 }

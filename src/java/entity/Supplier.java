@@ -45,6 +45,14 @@ public class Supplier {
         this.currentDebt = currentDebt;
     }
 
+    public Supplier(int id, String supplierName, String phone, String address, String email) {
+        this.id = id;
+        this.supplierName = supplierName;
+        this.phone = phone;
+        this.address = address;
+        this.email = email;
+    }
+
     // Getters and Setters
     public int getId() {
         return id;

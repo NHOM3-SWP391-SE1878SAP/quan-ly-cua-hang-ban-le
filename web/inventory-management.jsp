@@ -437,58 +437,6 @@
 
           <!-- Main Content -->
           <div class="main-content">
-            <!-- Sidebar -->
-            <div class="sidebar-container">
-              <!-- Time Filter -->
-              <div class="sidebar">
-                <div class="sidebar-title">
-                  Thời gian
-                  <span class="dropdown-icon">▼</span>
-                </div>
-                <div class="sidebar-content">
-                  <form action="inventory" method="get" id="timeFilterForm">
-                    <input type="hidden" name="action" value="list">
-                    <label class="radio-container">Tháng này
-                      <input type="radio" name="timeFilter" value="thisMonth" ${param.timeFilter == 'thisMonth' || param.timeFilter == null ? 'checked' : ''} onchange="document.getElementById('timeFilterForm').submit();">
-                      <span class="radiomark"></span>
-                    </label>
-                    <label class="radio-container">Quý này
-                      <input type="radio" name="timeFilter" value="thisQuarter" ${param.timeFilter == 'thisQuarter' ? 'checked' : ''} onchange="document.getElementById('timeFilterForm').submit();">
-                      <span class="radiomark"></span>
-                    </label>
-                    <label class="radio-container">Năm nay
-                      <input type="radio" name="timeFilter" value="thisYear" ${param.timeFilter == 'thisYear' ? 'checked' : ''} onchange="document.getElementById('timeFilterForm').submit();">
-                      <span class="radiomark"></span>
-                    </label>
-                    <label class="radio-container">Tất cả thời gian
-                      <input type="radio" name="timeFilter" value="allTime" ${param.timeFilter == 'allTime' ? 'checked' : ''} onchange="document.getElementById('timeFilterForm').submit();">
-                      <span class="radiomark"></span>
-                    </label>
-                  </form>
-                </div>
-              </div>
-
-              <!-- Supplier Filter -->
-              <div class="sidebar">
-                <div class="sidebar-title">
-                  Nhà cung cấp
-                  <span class="dropdown-icon">▼</span>
-                </div>
-                <div class="sidebar-content">
-                  <form action="inventory" method="get" id="supplierFilterForm">
-                    <input type="hidden" name="action" value="list">
-                    <input type="hidden" name="timeFilter" value="${param.timeFilter}">
-                    <select class="form-select" name="supplierId" onchange="document.getElementById('supplierFilterForm').submit();">
-                      <option value="">-- Tất cả nhà cung cấp --</option>
-                      <c:forEach var="supplier" items="${suppliers}">
-                        <option value="${supplier.ID}" ${param.supplierId == supplier.ID ? 'selected' : ''}>${supplier.supplierName}</option>
-                      </c:forEach>
-                    </select>
-                  </form>
-                </div>
-              </div>
-            </div>
-
             <!-- Content Area -->
             <div class="content-area">
               <div class="table-container">
@@ -559,7 +507,7 @@
                     <button class="page-btn" onclick="goToPage(${currentPage < totalPages ? currentPage + 1 : totalPages})">▶</button>
                     <button class="page-btn" onclick="goToPage(${totalPages})">▶▶</button>
                   </div>
-                  <div>Hiển thị ${(currentPage-1)*10 + 1} - ${Math.min(currentPage*10, totalItems)} / Tổng số ${totalItems} phiếu nhập hàng</div>
+                  <div>Hiển thị ${(currentPage-1)*10 + 1} - ${Math.min(currentPage*10, totalItems.longValue())} / Tổng số ${totalItems} phiếu nhập hàng</div>
                 </div>
               </div>
             </div>
@@ -567,16 +515,6 @@
         </div>
       </section>
     </main>
-
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-      <div class="copyright">
-        &copy; Copyright <strong><span>SLIM</span></strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        Designed by <a href="#">FPT University</a>
-      </div>
-    </footer><!-- End Footer -->
 
     <!-- Vendor JS Files -->
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>

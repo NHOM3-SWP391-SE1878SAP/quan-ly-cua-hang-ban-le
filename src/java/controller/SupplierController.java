@@ -193,14 +193,38 @@ public class SupplierController extends HttpServlet {
         String ward = request.getParameter("ward");
         String notes = request.getParameter("notes");
         String group = request.getParameter("supplierGroup");
+        String createdDate = request.getParameter("createdDate");
+        String statusParam = request.getParameter("status");
+        boolean status = (statusParam != null); // Checkbox sẽ chỉ gửi giá trị khi được chọn
+        
+        // Xử lý totalPurchase và currentDebt
+        double totalPurchase = 0.0;
+        double currentDebt = 0.0;
+        try {
+            String totalPurchaseParam = request.getParameter("totalPurchase");
+            String currentDebtParam = request.getParameter("currentDebt");
+            if (totalPurchaseParam != null && !totalPurchaseParam.isEmpty()) {
+                totalPurchase = Double.parseDouble(totalPurchaseParam);
+            }
+            if (currentDebtParam != null && !currentDebtParam.isEmpty()) {
+                currentDebt = Double.parseDouble(currentDebtParam);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing number: " + e.getMessage());
+        }
         
         // Get current user from session
         HttpSession session = request.getSession();
-        String createdBy = "Admin"; // Replace with actual user name from session
+        String createdBy = request.getParameter("createdBy");
+        if (createdBy == null || createdBy.isEmpty()) {
+            createdBy = "Admin"; // Giá trị mặc định nếu không có trong form
+        }
         
-        // Get current date time
-        LocalDateTime now = LocalDateTime.now();
-        String createdDate = now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        // Nếu createdDate không được gửi từ form, tạo mới với định dạng yyyy-MM-dd
+        if (createdDate == null || createdDate.isEmpty()) {
+            LocalDateTime now = LocalDateTime.now();
+            createdDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
         
         Supplier supplier = new Supplier();
         supplier.setSupplierCode(code);
@@ -215,10 +239,10 @@ public class SupplierController extends HttpServlet {
         supplier.setCreatedBy(createdBy);
         supplier.setCreatedDate(createdDate);
         supplier.setNotes(notes);
-        supplier.setStatus(true);
+        supplier.setStatus(status);
         supplier.setSupplierGroup(group);
-        supplier.setTotalPurchase(0.0);
-        supplier.setCurrentDebt(0.0);
+        supplier.setTotalPurchase(totalPurchase);
+        supplier.setCurrentDebt(currentDebt);
 
         dao.addSupplier(supplier);
         response.sendRedirect("supplier?action=list");

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=slim10;";
     private static final String USERNAME = "sa";
-    private static final String PASSWORD = "123";
+    private static final String PASSWORD = "Long2002@";
 
     private Connection conn;
 

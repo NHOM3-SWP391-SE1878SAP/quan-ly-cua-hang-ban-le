@@ -24,6 +24,12 @@ public class Voucher {
         this.endDate = endDate;
     }
 
+    public Voucher(int aInt, String string, int aInt0) {
+        this.id = aInt;
+        this.code = string;
+        this.discountRate = aInt0;
+    }
+
     public int getId() {
         return id;
     }

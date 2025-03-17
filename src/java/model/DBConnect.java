@@ -16,14 +16,12 @@ public class DBConnect {
             //connect
             conn=DriverManager.getConnection(URL, userName, password);
             System.out.println("Connected");
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();      
-        } catch (SQLException ex) {
-            ex.printStackTrace();
         }
    }
     public DBConnect() {
-        this("jdbc:sqlserver://localhost:1433;databaseName=SlimDB4",
+        this("jdbc:sqlserver://localhost:1433;databaseName=slim10",
                 "sa","123");
     }
     public ResultSet getData(String sql){

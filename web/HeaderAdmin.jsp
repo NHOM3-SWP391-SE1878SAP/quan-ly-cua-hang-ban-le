@@ -408,6 +408,11 @@
         </a>
         <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="SalesReport">
+              <i class="bi bi-circle"></i><span>Báo cáo bán hàng</span>
+            </a>
+          </li>
+          <li>
             <a href="">
               <i class="bi bi-circle"></i><span>Cuối ngày</span>
             </a>

@@ -80,10 +80,3 @@ Thumbs.db (Windows)
 # Test reports
 test-reports/
 surefire-reports/
-
-nbproject/build-impl.xml
-nbproject/genfiles.properties
-nbproject/project.properties
-nbproject/project.xml
-nbproject/private/private.properties
-nbproject/private/private.xml

@@ -1,203 +1,244 @@
-﻿CREATE DATABASE SlimDB4;
-GO
-USE SlimDB4;
-
--- Bảng 1: Roles
-CREATE TABLE Roles (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    RoleName VARCHAR(255) NOT NULL
+-- T?o b?ng Role
+CREATE TABLE Role (
+                      ID INT IDENTITY(1,1) PRIMARY KEY,
+                      RoleName VARCHAR(255) NOT NULL
 );
 
--- Bảng 2: Accounts
 CREATE TABLE Accounts (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    UserName VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) NOT NULL,
-    Phone VARCHAR(20) NOT NULL,
-    Address VARCHAR(255) NOT NULL,
-    RoleID INT,
-    FOREIGN KEY (RoleID) REFERENCES Roles(ID)
+                          ID INT IDENTITY(1,1) PRIMARY KEY,
+                          UserName VARCHAR(255) NOT NULL,
+                          Password VARCHAR(255) NOT NULL,
+                          Email VARCHAR(255) NOT NULL,
+                          Phone VARCHAR(255) NOT NULL,
+                          Adress VARCHAR(255) NOT NULL,
+                          RoleID INT NOT NULL,
+                          FOREIGN KEY (RoleID) REFERENCES Role(ID)
 );
 
--- Bảng 3: Employees
-CREATE TABLE Employees (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    EmployeeName VARCHAR(255) NOT NULL,
-	DoB Date,
-	Gender VARCHAR(255),
-    Salary INT,
-    CCCD INT,
-    Avatar VARCHAR(255),
-	IsAvailable BIT,
-    AccountsID INT,
-    FOREIGN KEY (AccountsID) REFERENCES Accounts(ID)
-);
-
--- Bảng 4: WorkSchedule
-CREATE TABLE WorkSchedule (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    WorkDate DATE,
-    StartTime TIME,
-    EndTime TIME,
-    CheckIn DATETIME,
-    CheckOut DATETIME,
-    EmployeesID INT,
-    FOREIGN KEY (EmployeesID) REFERENCES Employees(ID)
-);
-
--- Bảng 5: Customer
 CREATE TABLE Customer (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerName VARCHAR(255) NOT NULL,
-    Phone VARCHAR(20) NOT NULL,
-    Address VARCHAR(255) NOT NULL,
-    Points INT NOT NULL
+                          ID INT IDENTITY(1,1) PRIMARY KEY,
+                          CustomerName VARCHAR(255) NOT NULL,
+                          Phone VARCHAR(255) NOT NULL,
+                          Address VARCHAR(255) NOT NULL,
+                          Points INT NOT NULL
 );
 
--- Bảng 6: Payments
-CREATE TABLE Payments (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    PaymentDate DATE,
-    PaymentMethods VARCHAR(255) NOT NULL
-);
-
--- Bảng 7: Vouchers
 CREATE TABLE Vouchers (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Code VARCHAR(50),
-    MinOrder INT,
-    DiscountRate INT,
-    MaxValue INT,
-    StartDate DATE,
-    EndDate DATE
+                          ID INT IDENTITY(1,1) PRIMARY KEY,
+                          Code VARCHAR(255) NOT NULL,
+                          MinOrder INT NOT NULL,
+                          DiscountRate INT NOT NULL,
+                          MaxValue INT NOT NULL,
+                          StartDate DATE NOT NULL,
+                          EndDate DATE NOT NULL
 );
 
--- Bảng 8: Orders
+CREATE TABLE Payments (
+                          ID INT IDENTITY(1,1) PRIMARY KEY,
+                          PaymentDate DATE NOT NULL,
+                          PaymentMethods VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Employees (
+                           ID INT IDENTITY(1,1) PRIMARY KEY,
+                           EmployeeName VARCHAR(255) NOT NULL,
+                           Salary INT NOT NULL,
+                           CCCD VARCHAR(255) NOT NULL,
+                           Avatar VARCHAR(255),
+                           AccountsID INT,
+                           Gender INT NOT NULL,
+                           DoB DATE NOT NULL,
+                           isAvailable INT NOT NULL,
+                           FOREIGN KEY (AccountsID) REFERENCES Accounts(ID)
+);
+
 CREATE TABLE Orders (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    OrderDate DATE,
-    TotalAmount INT,
-    CustomerID INT,
-    EmployeesID INT,
-    PaymentsID INT,
-    VouchersID INT,
-    FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
-    FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
-    FOREIGN KEY (PaymentsID) REFERENCES Payments(ID),
-    FOREIGN KEY (VouchersID) REFERENCES Vouchers(ID)
+                        ID INT IDENTITY(1,1) PRIMARY KEY,
+                        OrderDate DATE NOT NULL,
+                        TotalAmount INT NOT NULL,
+                        CustomerID INT NOT NULL,
+                        EmployeesID INT NOT NULL,
+                        PaymentsID INT NOT NULL,
+                        VouchersID INT,
+                        FOREIGN KEY (CustomerID) REFERENCES Customer(ID),
+                        FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
+                        FOREIGN KEY (PaymentsID) REFERENCES Payments(ID),
+                        FOREIGN KEY (VouchersID) REFERENCES Vouchers(ID)
 );
 
--- Bảng 9: Categories
-CREATE TABLE Categories (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryName VARCHAR(255) NOT NULL,
-    Description VARCHAR(255),
-    Image VARCHAR(255)
-);
-
--- Bảng 10: Products
-CREATE TABLE Products (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    ProductName VARCHAR(255) NOT NULL,
-    ProductCode VARCHAR(255),
-    Price INT,
-    StockQuantity INT,
-    IsAvailable BIT,
-    ImageURL VARCHAR(255),
-    CategoryID INT,
-    FOREIGN KEY (CategoryID) REFERENCES Categories(ID)
-);
-
--- Bảng 11: OrderDetails
-CREATE TABLE OrderDetails (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Quantity INT,
-	Price INT,
-    OrdersID INT,
-    ProductsID INT,
-    FOREIGN KEY (OrdersID) REFERENCES Orders(ID),
-    FOREIGN KEY (ProductsID) REFERENCES Products(ID)
-);
-
--- Bảng 12: Returns
 CREATE TABLE Returns (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Quantity INT,
-    Reason VARCHAR(255),
-    ReturnDate DATE,
-    OrdersID INT,
-    EmployeesID INT,
-    FOREIGN KEY (OrdersID) REFERENCES Orders(ID),
-    FOREIGN KEY (EmployeesID) REFERENCES Employees(ID)
+                         ID INT IDENTITY(1,1) PRIMARY KEY,
+                         Quantity INT NOT NULL,
+                         Reason VARCHAR(255) NOT NULL,
+                         ReturnDate DATE NOT NULL,
+                         OrdersID INT NOT NULL,
+                         EmployeesID INT NOT NULL,
+                         FOREIGN KEY (OrdersID) REFERENCES Orders(ID),
+                         FOREIGN KEY (EmployeesID) REFERENCES Employees(ID)
 );
 
--- Bảng 13: Suppliers
+CREATE TABLE Categories (
+                            ID INT IDENTITY(1,1) PRIMARY KEY,
+                            CategoryName VARCHAR(255) NOT NULL,
+                            Description VARCHAR(255),
+                            Image VARCHAR(255)
+);
+
+CREATE TABLE Products (
+                          ID INT IDENTITY(1,1) PRIMARY KEY,
+                          ProductName VARCHAR(255) NOT NULL,
+                          ProductCode VARCHAR(255) NOT NULL,
+                          Price INT NOT NULL,
+                          StockQuantity INT NOT NULL,
+                          IsAvailable INT NOT NULL,
+                          ImageURL VARCHAR(255),
+                          CategoryID INT NOT NULL,
+                          FOREIGN KEY (CategoryID) REFERENCES Categories(ID)
+);
+
+CREATE TABLE OrderDetails (
+                              ID INT IDENTITY(1,1) PRIMARY KEY,
+                              Quantity INT NOT NULL,
+                              Price INT NOT NULL,
+                              OrdersID INT NOT NULL,
+                              ProductsID INT NOT NULL,
+                              FOREIGN KEY (OrdersID) REFERENCES Orders(ID),
+                              FOREIGN KEY (ProductsID) REFERENCES Products(ID)
+);
+
 CREATE TABLE Suppliers (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    SupplierName VARCHAR(255),
-    Phone VARCHAR(20),
-    Address VARCHAR(255),
-    Email VARCHAR(255)
+                           ID INT IDENTITY(1,1) PRIMARY KEY,
+                           SupplierName VARCHAR(255) NOT NULL,
+                           Phone VARCHAR(255) NOT NULL,
+                           Address VARCHAR(255) NOT NULL,
+                           Email VARCHAR(255) NOT NULL
 );
 
--- Bảng 14: GoodsReceipt
+ALTER TABLE Suppliers ADD
+    SupplierCode VARCHAR(50),
+    CompanyName VARCHAR(255),
+    TaxCode VARCHAR(50),
+    Region VARCHAR(255),
+    Ward VARCHAR(255),
+    CreatedBy VARCHAR(255),
+    CreatedDate DATE,
+    Notes VARCHAR(MAX),
+    Status BIT DEFAULT 1,
+    SupplierGroup VARCHAR(255),
+    TotalPurchase DECIMAL(18,2) DEFAULT 0,
+    CurrentDebt DECIMAL(18,2) DEFAULT 0
+
 CREATE TABLE GoodsReceipt (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    ReceivedDate DATE,
-    TotalCost INT,
-    SuppliersID INT,
-    FOREIGN KEY (SuppliersID) REFERENCES Suppliers(ID)
+                              ID INT IDENTITY(1,1) PRIMARY KEY,
+                              ReceivedDate DATE NOT NULL,
+                              TotalCost INT NOT NULL,
+                              SuppliersID INT NOT NULL,
+                              FOREIGN KEY (SuppliersID) REFERENCES Suppliers(ID)
 );
 
--- Bảng 15: GoodReceiptDetails
 CREATE TABLE GoodReceiptDetails (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    BatchNumber VARCHAR(255),
-    QuantityReceived INT,
-    UnitCost INT,
-    ExpirationDate DATE,
-    GoodsReceiptID INT,
-    ProductsID INT,
-    FOREIGN KEY (GoodsReceiptID) REFERENCES GoodsReceipt(ID),
-    FOREIGN KEY (ProductsID) REFERENCES Products(ID)
+                                    ID INT IDENTITY(1,1) PRIMARY KEY,
+                                    BatchNumber VARCHAR(255) NOT NULL,
+                                    QuantityReceived INT NOT NULL,
+                                    UnitCost INT NOT NULL,
+                                    ExpirationDate DATE NOT NULL,
+                                    GoodsReceiptID INT NOT NULL,
+                                    ProductsID INT NOT NULL,
+                                    FOREIGN KEY (GoodsReceiptID) REFERENCES GoodsReceipt(ID),
+                                    FOREIGN KEY (ProductsID) REFERENCES Products(ID)
 );
 
--- Bảng 16: SupplierPayments
-CREATE TABLE SupplierPayments (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    AmountPaid INT,
-    PaymentDate DATE,
-    PaymentMethod VARCHAR(255),
-    Notes VARCHAR(255),
-    SupplierID INT,
-    FOREIGN KEY (SupplierID) REFERENCES Suppliers(ID)
-);
-
--- Bảng 17: SupplierDebt
 CREATE TABLE SupplierDebt (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    TotalDebt INT,
-    LastUpdate DATE,
-    GoodsReceiptID INT,
-    FOREIGN KEY (GoodsReceiptID) REFERENCES GoodsReceipt(ID)
+                              ID INT IDENTITY(1,1) PRIMARY KEY,
+                              TotalDebt INT NOT NULL,
+                              LastUpdate DATE NOT NULL,
+                              GoodsReceiptID INT NOT NULL,
+                              FOREIGN KEY (GoodsReceiptID) REFERENCES GoodsReceipt(ID)
 );
 
--- Bảng 18: Payroll
+CREATE TABLE SupplierPayments (
+                                  ID INT IDENTITY(1,1) PRIMARY KEY,
+                                  AmountPaid INT NOT NULL,
+                                  PaymentDate DATE NOT NULL,
+                                  PaymentMethod VARCHAR(255) NOT NULL,
+                                  Notes VARCHAR(255),
+                                  SupplierID INT NOT NULL,
+                                  FOREIGN KEY (SupplierID) REFERENCES Suppliers(ID)
+);
+
 CREATE TABLE Payroll (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    MonthYear VARCHAR(255),
-    StartDate DATE,
-    EndDate DATE
+                         ID INT IDENTITY(1,1) PRIMARY KEY,
+                         Month INT NOT NULL,
+                         Year INT NOT NULL,
+                         StartDate DATE NOT NULL,
+                         EndDate DATE NOT NULL
 );
 
--- Bảng 19: EmployeesPayroll
-CREATE TABLE EmployeesPayroll (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    EmployeesID INT,
-    PayRollID INT,
-    WorkDays INT,
-    PayDate DATE,
-    FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
-    FOREIGN KEY (PayRollID) REFERENCES Payroll(ID)
+CREATE TABLE Employees_Payroll (
+                                   EmployeesID INT NOT NULL,
+                                   PayrollID INT NOT NULL,
+                                   WorkDays INT NOT NULL,
+                                   PayDate DATE NOT NULL,
+                                   PRIMARY KEY (EmployeesID, PayrollID),
+                                   FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
+                                   FOREIGN KEY (PayrollID) REFERENCES Payroll(ID)
 );
+
+CREATE TABLE Shifts (
+                        ID INT IDENTITY(1,1) PRIMARY KEY,
+                        ShiftName VARCHAR(255) NOT NULL,
+                        StartTime TIME NOT NULL,
+                        EndTime TIME NOT NULL
+);
+
+CREATE TABLE WeekDays (
+                          ID INT IDENTITY(1,1) PRIMARY KEY,
+                          WeekDay VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE WeeklySchedule (
+                                ID INT IDENTITY(1,1) PRIMARY KEY,
+                                ShiftsID INT NOT NULL,
+                                EmployeesID INT NOT NULL,
+                                WeekDaysID INT NOT NULL,
+                                FOREIGN KEY (ShiftsID) REFERENCES Shifts(ID),
+                                FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
+                                FOREIGN KEY (WeekDaysID) REFERENCES WeekDays(ID)
+);
+
+CREATE TABLE Attendance (
+                            ID INT IDENTITY(1,1) PRIMARY KEY,
+                            WorkDate DATE NOT NULL,
+                            IsPresent INT NOT NULL,
+                            EmployeesID INT NOT NULL,
+                            ShiftsID INT NOT NULL,
+                            FOREIGN KEY (EmployeesID) REFERENCES Employees(ID),
+                            FOREIGN KEY (ShiftsID) REFERENCES Shifts(ID)
+);
+-- Insert Roles
+INSERT INTO Role (RoleName) VALUES ('Admin'), ('Employee');
+
+-- Insert Admin Account
+INSERT INTO Accounts (UserName, Password, Email, Phone, Adress, RoleID) 
+VALUES ('admin', 'admin123', 'admin@example.com', '123456789', '123 Admin St', 1);
+
+-- Insert Employee Accounts
+INSERT INTO Accounts (UserName, Password, Email, Phone, Adress, RoleID) 
+VALUES ('employee1', 'pass123', 'emp1@example.com', '987654321', '456 Worker St', 2),
+       ('employee2', 'pass456', 'emp2@example.com', '654987321', '789 Worker St', 2);
+
+-- Insert Employees
+INSERT INTO Employees (EmployeeName, Salary, CCCD, Avatar, AccountsID, Gender, DoB, isAvailable) 
+VALUES ('John Doe', 50000, '1234567890', NULL, 2, 1, '1990-05-20', 1),
+       ('Jane Smith', 55000, '0987654321', NULL, 3, 2, '1992-07-15', 1);
+
+-- Insert Shifts
+INSERT INTO Shifts (ShiftName, StartTime, EndTime) 
+VALUES ('Morning', '00:00:00', '08:00:00'),
+       ('Afternoon', '08:00:00', '16:00:00'),
+       ('Night', '16:00:00', '00:00:00');
+
+-- Insert WeekDays
+INSERT INTO WeekDays (WeekDay) 
+VALUES ('Monday'), ('Tuesday'), ('Wednesday'), ('Thursday'), ('Friday'), ('Saturday'), ('Sunday');
+

@@ -16,6 +16,11 @@ public class Payment {
         this.paymentMethods = paymentMethods;
     }
 
+    public Payment(int aInt, String string) {
+        this.paymentID = aInt;
+        this.paymentMethods = string;
+    }
+
     public int getPaymentID() {
         return paymentID;
     }

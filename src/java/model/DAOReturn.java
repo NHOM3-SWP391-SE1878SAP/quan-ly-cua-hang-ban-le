@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.Connection;
 
 /**
  * Data Access Object for Return
@@ -32,7 +33,7 @@ public class DAOReturn extends DBConnect {
     public List<Return> getAllReturns() {
         List<Return> returns = new ArrayList<>();
         
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return returns;
         }
@@ -61,7 +62,7 @@ public class DAOReturn extends DBConnect {
      * @return Return object or null if not found
      */
     public Return getReturnById(int returnId) {
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return null;
         }
@@ -87,7 +88,7 @@ public class DAOReturn extends DBConnect {
      * Insert new return and get generated ID
      */
     public int insertReturn(Return returnObj) {
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return -1;
         }
@@ -124,7 +125,7 @@ public class DAOReturn extends DBConnect {
      * Update return information
      */
     public boolean updateReturn(Return returnObj) {
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -155,7 +156,7 @@ public class DAOReturn extends DBConnect {
      * @return true if successful, false if failed
      */
     public boolean deleteReturn(int returnId) {
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -196,4 +197,82 @@ public class DAOReturn extends DBConnect {
             System.out.println(returnObj);
         }
     }
+
+    public List<Return> getReturnsForReport(Date fromDate, Date toDate, String orderIdSearch, String customerSearch, String employeeSearch) {
+        List<Return> returns = new ArrayList<>();
+        
+        // Kiểm tra kết nối
+        if (getConnection() == null) {
+            LOGGER.severe("Error: Cannot connect to database!");
+            return returns;
+        }
+
+        String sql = "SELECT r.* FROM Returns r " +
+                     "LEFT JOIN Orders o ON r.OrdersID = o.ID " +
+                     "LEFT JOIN Customer c ON o.CustomerID = c.ID " +
+                     "LEFT JOIN Employees e ON r.EmployeesID = e.ID " +
+                     "WHERE 1=1 ";
+
+        List<Object> params = new ArrayList<>();
+
+        // Thêm điều kiện tìm kiếm theo ngày
+        if (fromDate != null) {
+            sql += "AND r.ReturnDate >= ? ";
+            params.add(fromDate);
+        }
+        if (toDate != null) {
+            sql += "AND r.ReturnDate <= ? ";
+            params.add(toDate);
+        }
+
+        // Thêm điều kiện tìm kiếm theo ID đơn hàng
+        if (orderIdSearch != null && !orderIdSearch.isEmpty()) {
+            sql += "AND r.OrdersID = ? ";
+            params.add(Integer.parseInt(orderIdSearch));
+        }
+
+        // Thêm điều kiện tìm kiếm theo tên khách hàng
+        if (customerSearch != null && !customerSearch.isEmpty()) {
+            sql += "AND c.CustomerName LIKE ? ";
+            params.add("%" + customerSearch + "%");
+        }
+
+        // Thêm điều kiện tìm kiếm theo tên nhân viên
+        if (employeeSearch != null && !employeeSearch.isEmpty()) {
+            sql += "AND e.EmployeeName LIKE ? ";
+            params.add("%" + employeeSearch + "%");
+        }
+
+        sql += "ORDER BY r.ReturnDate DESC";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            // Set các tham số cho câu query
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof Date) {
+                    ps.setDate(i + 1, new java.sql.Date(((Date) param).getTime()));
+                } else if (param instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) param);
+                } else {
+                    ps.setString(i + 1, param.toString());
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Return returnItem = new Return();
+                returnItem.setReturnID(rs.getInt("ID"));
+                returnItem.setReturnDate(rs.getDate("ReturnDate"));
+                returnItem.setOrderId(rs.getInt("OrdersID"));
+                returnItem.setEmployeeId(rs.getInt("EmployeesID"));
+                returnItem.setRefundAmount(rs.getFloat("RefundAmount"));
+                returns.add(returnItem);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error getting returns for report", ex);
+        }
+
+        return returns;
+    }
+
 } 

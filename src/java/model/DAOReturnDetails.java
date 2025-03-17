@@ -32,7 +32,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "SELECT * FROM ReturnDetails";
 
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return returnDetailsList;
         }
@@ -75,7 +75,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "SELECT * FROM ReturnDetails WHERE ID = ?";
 
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return null;
         }
@@ -116,7 +116,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "SELECT * FROM ReturnDetails WHERE return_id = ?";
 
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return returnDetailsList;
         }
@@ -159,7 +159,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "INSERT INTO ReturnDetails (return_id, order_details_id, quantity) VALUES (?, ?, ?)";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -196,7 +196,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "UPDATE ReturnDetails SET return_id = ?, order_details_id = ?, quantity = ? WHERE ID = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -234,7 +234,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "DELETE FROM ReturnDetails WHERE ID = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -269,7 +269,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "DELETE FROM ReturnDetails WHERE return_id = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -304,7 +304,7 @@ public class DAOReturnDetails extends DBConnect {
         String sql = "INSERT INTO ReturnDetails (return_id, order_details_id, quantity) VALUES (?, ?, ?)";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }

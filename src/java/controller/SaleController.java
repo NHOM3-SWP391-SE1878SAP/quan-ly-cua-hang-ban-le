@@ -3,9 +3,13 @@ package controller;
 import entity.Order;
 import entity.OrderDetail;
 import entity.Product;
+import entity.Customer;
+import entity.Employee;
 import model.DAOOrder;
 import model.DAOOrderDetails;
 import model.DAOProduct;
+import model.DAOCustomer;
+import model.DAOAccount;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,41 +24,63 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
+import java.util.Map;
+import jakarta.servlet.http.HttpSession;
+import model.DAOPayment;
 
 /**
  * Controller for the sales page
  */
 @WebServlet("/sale")
 public class SaleController extends HttpServlet {
-
+    
     private static final Logger LOGGER = Logger.getLogger(SaleController.class.getName());
     private DAOProduct daoProduct;
     private DAOOrder daoOrder;
     private DAOOrderDetails daoOrderDetails;
-
+    private DAOCustomer daoCustomer;
+    private DAOAccount daoAccount;
+    private DAOPayment daoPayment;
+    
+    // Định nghĩa hằng số
+    private static final Integer DEFAULT_CUSTOMER_ID = 1; // ID cho khách hàng mặc định
+    private static final Integer GUEST_CUSTOMER_ID = null; // Khách lẻ không có ID
+    
     @Override
     public void init() throws ServletException {
         super.init();
         daoProduct = new DAOProduct();
         daoOrder = new DAOOrder();
         daoOrderDetails = new DAOOrderDetails();
+        daoCustomer = new DAOCustomer();
+        daoAccount = new DAOAccount();
+        daoPayment = new DAOPayment();
     }
-
+    
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            String action = req.getParameter("action");
+            
+            // Handle AJAX search request
+            if ("searchCustomers".equals(action)) {
+                searchCustomers(req, resp);
+                return;
+            }
+            // Thêm xử lý tìm kiếm sản phẩm
+            else if ("searchProducts".equals(action)) {
+                searchProducts(req, resp);
+                return;
+            }
             // Lấy tất cả sản phẩm từ database
             Vector<Product> products = daoProduct.getAllProducts("SELECT * FROM Products WHERE IsAvailable = 1 ORDER BY ProductName");
-
             // Đặt danh sách sản phẩm vào request attribute
             req.setAttribute("products", products);
-
             // Chuyển hướng đến trang sale.jsp
             req.getRequestDispatcher("/sale.jsp").forward(req, resp);
-
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error retrieving products for sale page", e);
             // Không thể chuyển hướng sau khi đã forward, nên chỉ log lỗi
@@ -64,21 +90,27 @@ public class SaleController extends HttpServlet {
             }
         }
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Xử lý các hành động POST như thêm sản phẩm vào giỏ hàng, thanh toán, v.v.
         String action = req.getParameter("action");
-
+        
         if (action == null) {
             resp.sendRedirect(req.getContextPath() + "/sale");
             return;
         }
-
+        
         try {
             switch (action) {
                 case "addToCart":
                     addToCart(req, resp);
+                    break;
+                case "prepareCheckout":
+                    processCheckout(req, resp);
+                    break;
+                case "showPayment":
+                    showPaymentPage(req, resp);
                     break;
                 case "checkout":
                     processCheckout(req, resp);
@@ -89,12 +121,10 @@ public class SaleController extends HttpServlet {
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing POST request", e);
-            if (!resp.isCommitted()) {
-                resp.sendRedirect(req.getContextPath() + "/error.jsp");
-            }
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Đã xảy ra lỗi khi xử lý yêu cầu: " + e.getMessage());
         }
     }
-
+    
     /**
      * Thêm sản phẩm vào giỏ hàng
      */
@@ -102,11 +132,12 @@ public class SaleController extends HttpServlet {
         try {
             int productId = Integer.parseInt(req.getParameter("productId"));
             int quantity = Integer.parseInt(req.getParameter("quantity"));
-
+            
             // TODO: Thêm logic để thêm sản phẩm vào giỏ hàng (session)
+            
             // Chuyển hướng trở lại trang bán hàng
             resp.sendRedirect(req.getContextPath() + "/sale");
-
+            
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid product ID or quantity", e);
             if (!resp.isCommitted()) {
@@ -114,127 +145,478 @@ public class SaleController extends HttpServlet {
             }
         }
     }
-
+    
+    /**
+     * Hiển thị trang thanh toán với thông tin giỏ hàng và khách hàng
+     */
+    private void showPaymentPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            // Lấy thông tin từ request
+            String cartItemsJson = req.getParameter("cartItems");
+            String customerName = req.getParameter("customerName");
+            String customerPhone = req.getParameter("customerPhone");
+            String customerId = req.getParameter("customerId");
+            
+            // Kiểm tra và xử lý tên khách hàng
+            if (customerName == null || customerName.trim().isEmpty()) {
+                // Nếu không có tên khách hàng, thử lấy từ database nếu có ID
+                if (customerId != null && !customerId.trim().isEmpty() && !customerId.equals("0")) {
+                    try {
+                        int customerIdInt = Integer.parseInt(customerId);
+                        Customer customer = daoCustomer.getCustomerById(customerIdInt);
+                        if (customer != null) {
+                            customerName = customer.getCustomerName();
+                            customerPhone = customer.getPhone();
+                        }
+                    } catch (NumberFormatException e) {
+                        LOGGER.log(Level.WARNING, "Invalid customer ID: " + customerId, e);
+                    }
+                }
+                
+                // Nếu vẫn không có tên khách hàng, đặt là "Khách lẻ"
+                if (customerName == null || customerName.trim().isEmpty()) {
+                    customerName = "Khách lẻ";
+                }
+            }
+            
+            // Parse JSON cart items
+            List<Map<String, Object>> cartItems = new ArrayList<>();
+            double totalAmount = 0;
+            
+            if (cartItemsJson != null && !cartItemsJson.isEmpty()) {
+                try {
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<List<Map<String, Object>>>(){}.getType();
+                    cartItems = gson.fromJson(cartItemsJson, type);
+                    
+                    // Tính tổng tiền
+                    for (Map<String, Object> item : cartItems) {
+                        Object priceObj = item.get("price");
+                        Object quantityObj = item.get("quantity");
+                        
+                        double price = 0;
+                        int quantity = 0;
+                        
+                        if (priceObj instanceof Double) {
+                            price = (Double) priceObj;
+                        } else if (priceObj instanceof String) {
+                            price = Double.parseDouble((String) priceObj);
+                        } else if (priceObj instanceof Integer) {
+                            price = (Integer) priceObj;
+                        }
+                        
+                        if (quantityObj instanceof Double) {
+                            quantity = ((Double) quantityObj).intValue();
+                        } else if (quantityObj instanceof String) {
+                            quantity = Integer.parseInt((String) quantityObj);
+                        } else if (quantityObj instanceof Integer) {
+                            quantity = (Integer) quantityObj;
+                        }
+                        
+                        double itemTotal = price * quantity;
+                        item.put("total", itemTotal);
+                        totalAmount += itemTotal;
+                    }
+                } catch (JsonSyntaxException | NumberFormatException e) {
+                    LOGGER.log(Level.SEVERE, "Error parsing cart items JSON", e);
+                }
+            }
+            
+            // Kiểm tra nếu giỏ hàng trống
+            if (cartItems.isEmpty()) {
+                req.setAttribute("errorMessage", "Giỏ hàng trống, không thể thanh toán");
+                req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+                return;
+            }
+            
+            // Đặt các thuộc tính vào request
+            req.setAttribute("cartItems", cartItems);
+            req.setAttribute("totalAmount", totalAmount);
+            req.setAttribute("customerId", customerId);
+            req.setAttribute("customerName", customerName);
+            req.setAttribute("customerPhone", customerPhone);
+            req.setAttribute("discount", 0); // Mặc định không có giảm giá
+            req.setAttribute("paymentMethods", daoPayment.getAllPaymentMethods());
+            
+            // Chuyển hướng đến trang thanh toán
+            req.getRequestDispatcher("/sale-payment.jsp").forward(req, resp);
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error showing payment page", e);
+            req.setAttribute("errorMessage", "Lỗi hiển thị trang thanh toán: " + e.getMessage());
+            req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+        }
+    }
+    
     /**
      * Xử lý thanh toán
      */
     private void processCheckout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
         try {
-            // Lấy dữ liệu giỏ hàng từ request
-            String cartDataJson = req.getParameter("cartItems");
+            // Lấy thông tin từ request
+            String cartItemsJson = req.getParameter("cartItems");
+            String customerName = req.getParameter("customerName");
+            String customerPhone = req.getParameter("customerPhone");
+            String customerId = req.getParameter("customerId");
             String paymentMethod = req.getParameter("paymentMethod");
-            int customerPaid = Integer.parseInt(req.getParameter("customerPaid"));
-            int totalPayable = Integer.parseInt(req.getParameter("totalPayable"));
-
-            // Parse JSON data sử dụng Gson
-            Gson gson = new Gson();
-            JsonArray cartItems = JsonParser.parseString(cartDataJson).getAsJsonArray();
-
-            // Tạo đơn hàng mới
-//            Order order = Order.builder()
-//                    .orderDate(new Date())
-//                    .totalAmount(totalPayable)
-//                    .customerID(1) // Mặc định là khách lẻ, ID = 1
-//                    .employeeID(11) // Mặc định là nhân viên hiện tại, ID = 1
-//                    .paymentID(getPaymentMethodId(paymentMethod))
-//                    .voucherID(1) // Mặc định không có voucher
-//                    .build();
-            Order order = new Order(new Date(), totalPayable, 1, 11, getPaymentMethodId(paymentMethod), 1);
-
-            // Lưu đơn hàng vào database
-            boolean orderSaved = daoOrder.addOrder(order);
-
-            if (!orderSaved) {
-                throw new Exception("Failed to save order: ");
-            }
-
-            // Lấy ID của đơn hàng vừa tạo (giả sử là đơn hàng mới nhất của khách hàng)
-            List<Order> customerOrders = daoOrder.getOrdersByCustomerId(1);
-            if (customerOrders.isEmpty()) {
-                throw new Exception("Failed to retrieve created order");
-            }
-
-            // Lấy đơn hàng mới nhất (đơn hàng vừa tạo)
-            Order createdOrder = customerOrders.get(customerOrders.size() - 1);
-            int orderId = createdOrder.getOrderID();
-
-            // Lưu chi tiết đơn hàng
-            for (int i = 0; i < cartItems.size(); i++) {
-                JsonObject item = cartItems.get(i).getAsJsonObject();
-
-                int productId = item.get("id").getAsInt();
-                int quantity = item.get("quantity").getAsInt();
-                int price = item.get("price").getAsInt();
-
-//                OrderDetail orderDetail = OrderDetail.builder()
-//                        .quantity(quantity)
-//                        .price(price)
-//                        .orderID(orderId)
-//                        .productID(productId)
-//                        .build();
-                OrderDetail orderDetail = new OrderDetail(orderId, productId, quantity, price);
-
-                // Lưu chi tiết đơn hàng vào database
-                boolean detailSaved = daoOrderDetails.addOrderDetail(orderDetail);
-
-                if (!detailSaved) {
-                    throw new Exception("Failed to save order detail for product ID: " + productId);
+            String totalStr = req.getParameter("total");
+            String customerPaidStr = req.getParameter("customerPaid");
+            
+            
+            // Xử lý số tiền - sửa lỗi NumberFormatException
+            double total = 0;
+            double customerPaid = 0;
+            
+            try {
+                // Xử lý chuỗi số có thể chứa dấu thập phân
+                if (totalStr != null && !totalStr.isEmpty()) {
+                    // Loại bỏ tất cả ký tự không phải số và dấu thập phân
+                    totalStr = totalStr.replaceAll("[^0-9.]", "");
+                    total = Double.parseDouble(totalStr);
                 }
+                
+                if (customerPaidStr != null && !customerPaidStr.isEmpty()) {
+                    // Loại bỏ tất cả ký tự không phải số và dấu thập phân
+                    customerPaidStr = customerPaidStr.replaceAll("[^0-9.]", "");
+                    customerPaid = Double.parseDouble(customerPaidStr);
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Error parsing payment amounts", e);
+                // Sử dụng giá trị mặc định nếu có lỗi
+            }
+            
+            // Chuyển đổi sang int nếu cần
+            int totalInt = (int) Math.round(total);
+            int customerPaidInt = (int) Math.round(customerPaid);
+            
+            // Thêm log chi tiết hơn
 
-                // Cập nhật số lượng sản phẩm trong kho
-                Product product = daoProduct.getProductById(productId);
-                if (product != null) {
+            // Parse JSON cart items
+            List<Map<String, Object>> orderItems = new ArrayList<>();
+            if (cartItemsJson != null && !cartItemsJson.isEmpty()) {
+                try {
+                    // Log trước khi parse
+                    
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<List<Map<String, Object>>>(){}.getType();
+                    orderItems = gson.fromJson(cartItemsJson, type);
+                    
+                    for (int i = 0; i < orderItems.size(); i++) {
+                        Map<String, Object> item = orderItems.get(i);
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Error parsing cart items JSON", e);
+                    throw new Exception("Lỗi xử lý dữ liệu giỏ hàng: " + e.getMessage());
+                }
+            }
+            
+            // Kiểm tra nếu giỏ hàng trống
+            if (orderItems.isEmpty()) {
+                req.setAttribute("errorMessage", "Giỏ hàng trống, không thể thanh toán");
+                req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+                return;
+            }
+            
+            
+            int employeeId = 11; // Mặc định ID nhân viên là 11
+            
+            // Chuyển đổi customerId từ String sang Integer
+            Integer customerIdInt = GUEST_CUSTOMER_ID; // Mặc định là khách lẻ
+            if (customerId != null && !customerId.isEmpty() && !customerId.equals("0")) {
+                try {
+                    customerIdInt = Integer.parseInt(customerId);
+                    // Kiểm tra xem customer có tồn tại không
+                    Customer customer = daoCustomer.getCustomerById(customerIdInt);
+                    if (customer == null) {
+                        LOGGER.warning("Customer with ID " + customerIdInt + " not found. Using guest customer.");
+                        customerIdInt = GUEST_CUSTOMER_ID; // Sử dụng khách lẻ nếu không tìm thấy
+                    } else {
+                        // Nếu tìm thấy customer, lấy thông tin cập nhật
+                        customerName = customer.getCustomerName();
+                        customerPhone = customer.getPhone();
+                    }
+                } catch (NumberFormatException e) {
+                    LOGGER.log(Level.WARNING, "Invalid customer ID format: " + customerId, e);
+                    customerIdInt = GUEST_CUSTOMER_ID; // Sử dụng khách lẻ nếu ID không hợp lệ
+                }
+            }
+            
+            // Xử lý ID nhân viên
+            employeeId = 11;
+            // Kiểm tra xem employee có tồn tại không
+            Employee employee = daoAccount.getEmployeeByID(employeeId);
+            if (employee == null) {
+                throw new Exception("Employee with ID " + employeeId + " not found. Using default employee ID.");
+            } 
+            
+            // Lấy thông tin voucher nếu có
+            String voucherIdStr = req.getParameter("voucherId");
+            Integer voucherId = null; // Mặc định là null (không có voucher)
+            
+            if (voucherIdStr != null && !voucherIdStr.trim().isEmpty()) {
+                try {
+                    voucherId = Integer.parseInt(voucherIdStr);
+                    // Có thể thêm kiểm tra xem voucher có tồn tại không ở đây
+                } catch (NumberFormatException e) {
+                    LOGGER.log(Level.WARNING, "Invalid voucher ID format: " + voucherIdStr, e);
+                    // Nếu không parse được, để voucherId là null
+                }
+            }
+            
+            // Tạo đối tượng Order
+            Order order = Order.builder()
+                    .orderDate(new Date())
+                    .totalAmount(totalInt)
+                    .customerID(customerIdInt)
+                    .employeeID(employeeId)
+                    .paymentID(1)
+                    .voucherID(voucherId) // Sử dụng voucherId đã xử lý
+                    .build();
+            
+            // Thêm đơn hàng vào database và lấy ID
+            int orderId = daoOrder.addOrderAndGetId(order);
+            
+            if (orderId <= 0) {
+                throw new Exception("Cannot create oder: ");
+            }
+            
+            LOGGER.info("Created new order with ID: " + orderId);
+            
+            // Xử lý từng sản phẩm trong giỏ hàng
+            boolean allItemsProcessed = true;
+            
+            for (Map<String, Object> item : orderItems) {
+                try {
+                    // Lấy thông tin sản phẩm từ item - xử lý an toàn các kiểu dữ liệu
+                    int productId = 0;
+                    int price = 0;
+                    int quantity = 0;
+                    String productName = "";
+                    
+                    // Xử lý productId
+                    Object productIdObj = item.get("productId");
+                    if (productIdObj instanceof Double) {
+                        productId = ((Double) productIdObj).intValue();
+                    } else if (productIdObj instanceof String) {
+                        productId = Integer.parseInt((String) productIdObj);
+                    } else if (productIdObj instanceof Integer) {
+                        productId = (Integer) productIdObj;
+                    }
+                    
+                    // Xử lý productName
+                    productName = (String) item.get("productName");
+                    
+                    // Xử lý price
+                    Object priceObj = item.get("price");
+                    if (priceObj instanceof Double) {
+                        price = ((Double) priceObj).intValue();
+                    } else if (priceObj instanceof String) {
+                        price = Integer.parseInt((String) priceObj);
+                    } else if (priceObj instanceof Integer) {
+                        price = (Integer) priceObj;
+                    }
+                    
+                    // Xử lý quantity
+                    Object quantityObj = item.get("quantity");
+                    if (quantityObj instanceof Double) {
+                        quantity = ((Double) quantityObj).intValue();
+                    } else if (quantityObj instanceof String) {
+                        quantity = Integer.parseInt((String) quantityObj);
+                    } else if (quantityObj instanceof Integer) {
+                        quantity = (Integer) quantityObj;
+                    }
+                    
+                    LOGGER.info("Processing product: ID=" + productId + 
+                               ", Name=" + productName +
+                               ", Quantity=" + quantity + 
+                               ", Price=" + price + 
+                               ", OrderID=" + orderId);
+                    
+                    // Kiểm tra tồn kho
+                    Product product = daoProduct.getProductById(productId);
+                    if (product == null || product.getId() <= 0) {
+                        throw new Exception("Không tìm thấy sản phẩm với ID: " + productId);
+                    }
+                    
+                    // Tạo chi tiết đơn hàng
+                    OrderDetail orderDetail = OrderDetail.builder()
+                            .orderID(orderId)
+                            .productID(productId)
+                            .quantity(quantity)
+                            .price(price)
+                            .build();
+                    
+                    LOGGER.info("Saving order detail: " + orderDetail.toString());
+                    
+                    // Lưu chi tiết đơn hàng
+                    boolean detailSaved = daoOrderDetails.addOrderDetail(orderDetail);
+                    if (!detailSaved) {
+                        LOGGER.severe("Failed to save order detail for product: " + productName);
+                        allItemsProcessed = false;
+                        break;
+                    }
+                    
+                    // Cập nhật tồn kho
                     int newStock = product.getStockQuantity() - quantity;
                     if (newStock < 0) {
-                        newStock = 0;
+                        throw new Exception("Sản phẩm '" + product.getProductName() + "' không đủ số lượng trong kho");
                     }
-
+                    
                     product.setStockQuantity(newStock);
-                    daoProduct.updateProduct(product);
+                    boolean stockUpdated = daoProduct.updateProduct(product);
+                    
+                    if (!stockUpdated) {
+                        throw new Exception("Không thể cập nhật tồn kho cho sản phẩm: " + product.getProductName());
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Error processing item", e);
+                    allItemsProcessed = false;
+                    break;
                 }
             }
-
-            // Chuyển hướng đến trang thành công
-            req.setAttribute("successMessage", "Thanh toán thành công! Mã đơn hàng: " + orderId);
-            resp.sendRedirect("sale");
-
+            
+            // Nếu có lỗi xảy ra khi xử lý sản phẩm, xóa đơn hàng
+            if (!allItemsProcessed) {
+                daoOrder.deleteOrder(orderId);
+                throw new Exception("Có lỗi xảy ra khi xử lý sản phẩm trong giỏ hàng");
+            }
+            
+            // Đặt các thuộc tính vào request để hiển thị trên trang hóa đơn
+            req.setAttribute("orderId", orderId);
+            req.setAttribute("orderDate", new Date());
+            req.setAttribute("customerName", customerName);
+            req.setAttribute("customerPhone", customerPhone);
+            req.setAttribute("employeeName", employee.getEmployeeName());
+            req.setAttribute("orderItems", orderItems);
+            req.setAttribute("total", total);
+            req.setAttribute("discount", 0); // Mặc định không có giảm giá
+            req.setAttribute("totalPayable", total);
+            req.setAttribute("customerPaid", customerPaid);
+            req.setAttribute("paymentMethod", paymentMethod);
+            
+            // Chuyển hướng đến trang hóa đơn
+//            req.getRequestDispatcher("report").forward(req, resp);
+            resp.sendRedirect("report");
+            
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing checkout", e);
-            req.setAttribute("errorMessage", "Lỗi khi thanh toán: " + e.getMessage());
+            req.setAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý thanh toán: " + e.getMessage());
             req.getRequestDispatcher("/sale.jsp").forward(req, resp);
         }
     }
-
-    /**
-     * Lấy ID phương thức thanh toán dựa trên tên
-     */
-    private int getPaymentMethodId(String paymentMethod) {
-        switch (paymentMethod) {
-            case "cash":
-                return 1; // ID của phương thức thanh toán tiền mặt
-            case "transfer":
-                return 2; // ID của phương thức thanh toán chuyển khoản
-            case "card":
-                return 3; // ID của phương thức thanh toán thẻ
-            case "vnpay":
-                return 4; // ID của phương thức thanh toán VNPay
-            default:
-                return 1; // Mặc định là tiền mặt
+    
+    // Add this new method for AJAX customer search
+    private void searchCustomers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
+        
+        try {
+            String query = req.getParameter("query");
+            if (query == null) {
+                query = "";
+            }
+            
+            List<Customer> customers = daoCustomer.searchCustomersByName(query);
+            
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("[");
+            
+            for (int i = 0; i < customers.size(); i++) {
+                Customer customer = customers.get(i);
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"id\":").append(customer.getId()).append(",");
+                jsonBuilder.append("\"customerName\":\"").append(customer.getCustomerName().replace("\"", "\\\"")).append("\",");
+                jsonBuilder.append("\"phone\":\"").append(customer.getPhone() != null ? customer.getPhone() : "").append("\"");
+                jsonBuilder.append("}");
+                
+                if (i < customers.size() - 1) {
+                    jsonBuilder.append(",");
+                }
+            }
+            
+            jsonBuilder.append("]");
+            
+            String jsonResponse = jsonBuilder.toString();
+            // System.out.println("JSON Response: " + jsonResponse); // Debug log
+            
+            out.print(jsonResponse);
+            out.flush();
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error searching customers", e);
+            out.print("[]");
+            out.flush();
         }
     }
-
-//    @Override
-//    public void destroy() {
-//        super.destroy();
-//        // Đóng kết nối database khi servlet bị hủy
-//        if (daoProduct != null) {
-//            daoProduct.closeConnection();
-//        }
-//        if (daoOrder != null) {
-//            daoOrder.closeConnection();
-//        }
-//        if (daoOrderDetails != null) {
-//            daoOrderDetails.closeConnection();
-//        }
-//    }
-}
+    
+    // Cập nhật phương thức searchProducts
+    private void searchProducts(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
+        
+        try {
+            String query = req.getParameter("query");
+            
+            if (query == null) {
+                query = "";
+            }
+            
+            List<Product> products = daoProduct.searchProductsByName(query);
+            
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("[");
+            
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"id\":").append(product.getId()).append(",");
+                jsonBuilder.append("\"productName\":\"").append(product.getProductName().replace("\"", "\\\"")).append("\",");
+                jsonBuilder.append("\"productCode\":\"").append(product.getProductCode() != null ? product.getProductCode().replace("\"", "\\\"") : "").append("\",");
+                jsonBuilder.append("\"price\":").append(product.getPrice()).append(",");
+                jsonBuilder.append("\"stockQuantity\":").append(product.getStockQuantity()).append(",");
+                jsonBuilder.append("\"imageURL\":\"").append(product.getImageURL() != null ? product.getImageURL().replace("\"", "\\\"") : "").append("\"");
+                jsonBuilder.append("}");
+                
+                if (i < products.size() - 1) {
+                    jsonBuilder.append(",");
+                }
+            }
+            
+            jsonBuilder.append("]");
+            
+            String jsonResponse = jsonBuilder.toString();
+            
+            out.print(jsonResponse);
+            out.flush();
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error searching products", e);
+            out.print("[]");
+            out.flush();
+        }
+    }
+    
+    @Override
+    public void destroy() {
+        super.destroy();
+        // Đóng kết nối database khi servlet bị hủy
+        if (daoProduct != null) {
+            daoProduct.closeConnection();
+        }
+        if (daoOrder != null) {
+            daoOrder.closeConnection();
+        }
+        if (daoOrderDetails != null) {
+            daoOrderDetails.closeConnection();
+        }
+        if (daoCustomer != null) {
+            daoCustomer.closeConnection();
+        }
+        if (daoAccount != null) {
+            daoAccount.closeConnection();
+        }
+    }
+} 

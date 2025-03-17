@@ -1,4 +1,3 @@
-
 package model;
 
 import entity.OrderDetail;
@@ -32,7 +31,7 @@ public class DAOOrderDetails extends DBConnect {
         List<OrderDetail> orderDetails = new ArrayList<>();
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return orderDetails;
         }
@@ -53,7 +52,14 @@ public class DAOOrderDetails extends DBConnect {
                 Integer orderId = rs.getInt("OrdersID");
                 Integer productId = rs.getInt("ProductsID");
                 
-                OrderDetail orderDetail = new OrderDetail(id, quantity, price, orderId, productId);
+                OrderDetail orderDetail = OrderDetail.builder()
+                        .orderDetailID(id)
+                        .quantity(quantity)
+                        .price(price)
+                        .orderID(orderId)
+                        .productID(productId)
+                        .build();
+                
                 orderDetails.add(orderDetail);
             }
 
@@ -83,7 +89,7 @@ public class DAOOrderDetails extends DBConnect {
         String sql = "SELECT * FROM OrderDetails WHERE ID = ?";
 
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return null;
         }
@@ -103,7 +109,13 @@ public class DAOOrderDetails extends DBConnect {
                 Integer orderId = rs.getInt("OrdersID");
                 Integer productId = rs.getInt("ProductsID");
                 
-                orderDetail = new OrderDetail(id, quantity, price, orderId, productId);
+                orderDetail = OrderDetail.builder()
+                        .orderDetailID(id)
+                        .quantity(quantity)
+                        .price(price)
+                        .orderID(orderId)
+                        .productID(productId)
+                        .build();
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error retrieving order detail with ID: " + orderDetailId, ex);
@@ -130,7 +142,7 @@ public class DAOOrderDetails extends DBConnect {
                    + "VALUES (?, ?, ?, ?)";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -170,7 +182,7 @@ public class DAOOrderDetails extends DBConnect {
                    + "ProductsID = ? WHERE ID = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -210,7 +222,7 @@ public class DAOOrderDetails extends DBConnect {
         String sql = "DELETE FROM OrderDetails WHERE ID = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
@@ -246,7 +258,7 @@ public class DAOOrderDetails extends DBConnect {
         String sql = "SELECT * FROM OrderDetails WHERE OrdersID = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return orderDetails;
         }
@@ -266,7 +278,14 @@ public class DAOOrderDetails extends DBConnect {
                 Integer price = rs.getInt("Price");
                 Integer productId = rs.getInt("ProductsID");
                 
-                OrderDetail orderDetail = new OrderDetail(id, quantity, price, orderId, productId);
+                OrderDetail orderDetail = OrderDetail.builder()
+                        .orderDetailID(id)
+                        .quantity(quantity)
+                        .price(price)
+                        .orderID(orderId)
+                        .productID(productId)
+                        .build();
+                
                 orderDetails.add(orderDetail);
             }
             
@@ -285,7 +304,7 @@ public class DAOOrderDetails extends DBConnect {
         
         return orderDetails;
     }
-
+    
     /**
      * Get order details by product ID
      * @param productId ID of the product
@@ -296,7 +315,7 @@ public class DAOOrderDetails extends DBConnect {
         String sql = "SELECT * FROM OrderDetails WHERE ProductsID = ?";
         
         // Ensure connection is open
-        if (conn == null) {
+        if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return orderDetails;
         }
@@ -316,7 +335,14 @@ public class DAOOrderDetails extends DBConnect {
                 Integer price = rs.getInt("Price");
                 Integer orderId = rs.getInt("OrdersID");
                 
-                OrderDetail orderDetail = new OrderDetail(id, quantity, price, orderId, productId);
+                OrderDetail orderDetail = OrderDetail.builder()
+                        .orderDetailID(id)
+                        .quantity(quantity)
+                        .price(price)
+                        .orderID(orderId)
+                        .productID(productId)
+                        .build();
+                
                 orderDetails.add(orderDetail);
             }
             
@@ -335,7 +361,7 @@ public class DAOOrderDetails extends DBConnect {
         
         return orderDetails;
     }
-    
+
     /**
      * Main method to test the DAO
      */
@@ -345,5 +371,10 @@ public class DAOOrderDetails extends DBConnect {
         for (OrderDetail orderDetail : orderDetails) {
             System.out.println(orderDetail);
         }
+    }
+
+    public void createOrderDetail(OrderDetail detail) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'createOrderDetail'");
     }
 }

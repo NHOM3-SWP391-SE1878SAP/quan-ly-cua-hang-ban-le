@@ -5,6 +5,8 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -238,6 +240,50 @@ public class DAOProduct extends DBConnect {
                 LOGGER.log(Level.SEVERE, "Error closing PreparedStatement", ex);
             }
         }
+    }
+    
+    /**
+     * Tìm kiếm sản phẩm theo tên
+     * @param query Từ khóa tìm kiếm
+     * @return Danh sách sản phẩm tìm thấy
+     */
+    public List<Product> searchProductsByName(String query) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Products WHERE ProductName LIKE ? AND IsAvailable = 1 AND StockQuantity > 0";
+        
+        // Ensure connection is open
+        if (getConnection() == null) {
+            LOGGER.severe("Error: Cannot connect to database!");
+            return products;
+        }
+        
+        LOGGER.info("Executing SQL: " + sql + " with parameter: %" + query + "%"); // Debug log
+        
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, "%" + query + "%");
+            
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product(
+                        rs.getInt("ID"),
+                        rs.getString("ProductName"),
+                        rs.getString("ProductCode"),
+                        rs.getInt("Price"),
+                        rs.getInt("StockQuantity"),
+                        rs.getBoolean("IsAvailable"),
+                        rs.getString("ImageURL"),
+                        rs.getInt("CategoryID")
+                    );
+                    products.add(product);
+                    LOGGER.info("Found product: " + product.getProductName() + ", ID: " + product.getId()); // Debug log
+                }
+            }
+            LOGGER.info("Found " + products.size() + " products matching query: " + query);
+            
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error searching products with query: " + query, ex);
+        }
+        return products;
     }
 
     /**

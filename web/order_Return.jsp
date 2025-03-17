@@ -119,24 +119,35 @@
             <div class="col-md-4">
                 <div class="customer-info mb-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>Nguyễn Hoàng <i class="bi bi-chevron-down"></i></div>
+                        <div>
+                            <c:set var="employee" value="${accountDAO.getAccountById(selectedOrder.employeeID)}" />
+                            <c:choose>
+                                <c:when test="${not empty employee}">${employee.userName}</c:when>
+                                <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
+                            </c:choose>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
                         <div>
                             <i class="bi bi-arrow-up"></i>
                             <i class="bi bi-chevron-right"></i>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <i class="bi bi-person"></i> Anh Giang - Kím Mã
+                        <i class="bi bi-person"></i> 
+                        <c:set var="customer" value="${customerDAO.getCustomerById(selectedOrder.customerID)}" />
+                        <c:choose>
+                            <c:when test="${not empty customer}">${customer.customerName}</c:when>
+                            <c:otherwise>Khách hàng #${selectedOrder.customerID}</c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
                 
                 <div class="summary-panel">
                     <div class="return-title">
                         <span>Trả hàng / HD${String.format("%06d", selectedOrder.orderID)} - 
+                            <c:set var="employee" value="${accountDAO.getAccountById(selectedOrder.employeeID)}" />
                             <c:choose>
-                                <c:when test="${selectedOrder.employeeID == 1}">Hương - Kế Toán</c:when>
-                                <c:when test="${selectedOrder.employeeID == 2}">Nguyễn Hoàng</c:when>
-                                <c:when test="${selectedOrder.employeeID == 3}">Hoàng - Kinh Doanh</c:when>
+                                <c:when test="${not empty employee}">${employee.userName}</c:when>
                                 <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
                             </c:choose>
                         </span>
@@ -146,10 +157,9 @@
                     <div class="customer-info mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
+                                <c:set var="employee" value="${accountDAO.getAccountById(selectedOrder.employeeID)}" />
                                 <c:choose>
-                                    <c:when test="${selectedOrder.employeeID == 1}">Hương - Kế Toán</c:when>
-                                    <c:when test="${selectedOrder.employeeID == 2}">Nguyễn Hoàng</c:when>
-                                    <c:when test="${selectedOrder.employeeID == 3}">Hoàng - Kinh Doanh</c:when>
+                                    <c:when test="${not empty employee}">${employee.userName}</c:when>
                                     <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
                                 </c:choose>
                                 <i class="bi bi-chevron-down"></i>
@@ -161,10 +171,9 @@
                         </div>
                         <div class="mt-2">
                             <i class="bi bi-person"></i> 
+                            <c:set var="customer" value="${customerDAO.getCustomerById(selectedOrder.customerID)}" />
                             <c:choose>
-                                <c:when test="${selectedOrder.customerID == 1}">Anh Giang - Kim Mã</c:when>
-                                <c:when test="${selectedOrder.customerID == 2}">Phạm Thu Hương</c:when>
-                                <c:when test="${selectedOrder.customerID == 3}">Anh Hoàng - Sài Gòn</c:when>
+                                <c:when test="${not empty customer}">${customer.customerName}</c:when>
                                 <c:otherwise>Khách hàng #${selectedOrder.customerID}</c:otherwise>
                             </c:choose>
                         </div>

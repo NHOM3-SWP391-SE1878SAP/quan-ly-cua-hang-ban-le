@@ -337,3 +337,23 @@ body {
     font-size: 20px;
     z-index: 2000;
 } 
+
+#customerSearchResults {
+    max-height: 300px;
+    overflow-y: auto;
+    position: absolute;
+    top: 100%;
+    z-index: 1000;
+}
+
+#customerSearchResults .dropdown-item {
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+#customerSearchResults .dropdown-item:hover {
+    background-color: #f8f9fa;
+}

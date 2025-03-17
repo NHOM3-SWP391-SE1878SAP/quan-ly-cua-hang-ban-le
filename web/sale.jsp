@@ -10,6 +10,154 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="sale-css.css">
+    <style>
+        .product-search {
+            position: relative;
+        }
+
+        #customerSearchResults, #productSearchResults {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            margin-top: 2px;
+            width: 100%;
+        }
+
+        #customerSearchResults.show, #productSearchResults.show {
+            display: block !important;
+        }
+
+        .customer-item, .product-item {
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .customer-item:hover, .product-item:hover {
+            background-color: #f0f8ff;
+        }
+
+        .customer-item:last-child, .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .customer-name, .product-name {
+            color: #000;
+            font-weight: 500;
+        }
+
+        .customer-phone, .product-code {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .product-price {
+            color: #0d6efd;
+            min-width: 70px;
+            text-align: right;
+        }
+        
+        .product-stock {
+            color: #28a745;
+            font-size: 0.85em;
+        }
+        
+        .product-image img {
+            object-fit: contain;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        /* Đảm bảo dropdown hiển thị đúng vị trí */
+        .search-container {
+            position: relative;
+        }
+        
+        /* Styles cho giỏ hàng */
+        #cartItems {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        #cartItems li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .cart-item-name {
+            font-weight: 500;
+            color: #000;
+        }
+        
+        .cart-item-price {
+            color: #0d6efd;
+        }
+        
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-control button {
+            width: 30px;
+            height: 30px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .quantity-control button:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .quantity-control button:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .quantity-control input {
+            width: 40px;
+            height: 30px;
+            border: 1px solid #dee2e6;
+            border-left: none;
+            border-right: none;
+            text-align: center;
+        }
+        
+        .remove-item {
+            color: #dc3545;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
     <!-- Header with search bar -->
@@ -17,6 +165,7 @@
         <div class="search-container">
             <i class="bi bi-search"></i>
             <input type="text" placeholder="Tìm hàng hóa (F3)" id="productSearchInput">
+            <div id="productSearchResults"></div>
         </div>
         
         <div class="tab-container">
@@ -58,24 +207,39 @@
                     <i class="bi bi-lightning me-1"></i> Bán nhanh
                 </button>
                 
-                <button class="btn btn-primary me-2 d-flex align-items-center">
+                <button class="btn btn-primary me-2 d-flex align-items-center" id="checkoutBtn2">
                     <i class="bi bi-bag me-1"></i> Bán thường
                 </button>
                 
                 <button class="btn btn-outline-secondary d-flex align-items-center">
                     <i class="bi bi-truck me-1"></i> Bán giao hàng
                 </button>
+                
+                <!-- Thêm form ẩn để gửi dữ liệu thanh toán -->
+                <form id="checkoutForm2" action="sale" method="post" style="display: none;">
+                    <input type="hidden" name="action" value="showPayment">
+                    <input type="hidden" name="cartItems" id="cartItemsData">
+                    <input type="hidden" name="customerName" id="customerNameData">
+                    <input type="hidden" name="customerPhone" id="customerPhoneData">
+                    <input type="hidden" name="customerId" id="customerIdData">
+                    <input type="hidden" name="total" id="totalData">
+                </form>
             </div>
         </div>
         
         <!-- Right panel - Product selection -->
         <div class="right-panel">
-            <div class="product-search">
+            <div class="product-search position-relative">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-0">
                         <i class="bi bi-search"></i>
                     </span>
-                    <input type="text" class="form-control" placeholder="Tìm khách hàng (F4)">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Tìm khách hàng (F4)" 
+                           id="customerSearchInput" 
+                           autocomplete="off">
+                    <div id="customerSearchResults"></div>
                     <button class="btn btn-outline-secondary">
                         <i class="bi bi-plus"></i>
                     </button>
@@ -102,12 +266,12 @@
                         <img src="${not empty product.imageURL ? product.imageURL : 'https://via.placeholder.com/60'}" 
                              alt="${product.productName}">
                         <div class="product-card-name">${product.productName}</div>
-                        <div class="product-card-price">${product.price}</div>
+                        <div class="product-card-price">
+                            <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
-            
-            <button class="checkout-btn" id="checkoutBtn">THANH TOÁN</button>
             
             <div class="d-flex justify-content-between mt-3">
                 <div class="d-flex align-items-center">
@@ -122,97 +286,8 @@
         </div>
     </div>
     
-    <!-- Modal Thanh Toán -->
-    <div class="payment-modal" id="paymentModal">
-        <div class="payment-modal-content">
-            <div class="payment-modal-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5>Khách lẻ</h5>
-                    <button type="button" class="btn-close" id="closePaymentModal"></button>
-                </div>
-            </div>
-            <form id="checkoutForm" action="sale" method="post">
-                <input type="hidden" name="action" value="checkout">
-                <input type="hidden" name="cartItems" id="cartItemsInput">
-                <input type="hidden" name="totalPayable" id="totalPayableInput">
-                <input type="hidden" name="customerPaid" id="customerPaidInput">
-                
-                <div class="payment-modal-body">
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Tổng tiền hàng</span>
-                            <span id="modalCartTotal">0</span>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Giảm giá</span>
-                            <span id="modalDiscount">0</span>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Khách cần trả</span>
-                            <span id="modalTotalPayable" class="text-primary fw-bold">0</span>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Khách thanh toán</span>
-                            <span id="modalCustomerPaid" class="fw-bold">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="payment-methods mb-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="cashPayment" value="cash" checked>
-                            <label class="form-check-label" for="cashPayment">Tiền mặt</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="transferPayment" value="transfer">
-                            <label class="form-check-label" for="transferPayment">Chuyển khoản</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="cardPayment" value="card">
-                            <label class="form-check-label" for="cardPayment">Thẻ</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="vnpayPayment" value="vnpay">
-                            <label class="form-check-label" for="vnpayPayment">VNPay</label>
-                        </div>
-                    </div>
-                    
-                    <div class="payment-amounts">
-                        <div class="row">
-                            <div class="col-3 mb-2">
-                                <button type="button" class="btn btn-outline-secondary w-100 payment-amount-btn" data-amount="95000">95,000</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button type="button" class="btn btn-outline-secondary w-100 payment-amount-btn" data-amount="96000">96,000</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button type="button" class="btn btn-outline-secondary w-100 payment-amount-btn" data-amount="100000">100,000</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button type="button" class="btn btn-outline-secondary w-100 payment-amount-btn" data-amount="200000">200,000</button>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <button type="button" class="btn btn-outline-secondary w-100 payment-amount-btn" data-amount="500000">500,000</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="payment-modal-footer">
-                    <button type="submit" class="btn btn-primary w-100 py-3" id="confirmPaymentBtn">THANH TOÁN</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Modal Overlay -->
-    <div class="modal-overlay" id="modalOverlay"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="sale-script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@
         <group>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Attendance.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Role.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/PayrollController.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/attendance.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Voucher.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/VoucherServlet.java</file>
@@ -12,12 +13,14 @@
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/VoucherDAO.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/Login.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOSupplier.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOEmployeePayroll.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/SupplierDebt.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Account.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Shift.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/META-INF/context.xml</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Employee.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/EmployeeController.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/Payroll.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/EmployeeManagement.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/CustomerServlet.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Payroll.java</file>

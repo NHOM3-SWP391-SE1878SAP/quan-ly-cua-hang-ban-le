@@ -383,18 +383,8 @@
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="PayrollController">
               <i class="bi bi-circle"></i><span>Bảng tính lương</span>
-            </a>
-          </li>
-          <li>
-            <a href="">
-              <i class="bi bi-circle"></i><span>Thiết lập hoa hồng</span>
-            </a>
-          </li>
-          <li>
-            <a href="">
-              <i class="bi bi-circle"></i><span>Thiết lập nhân viên</span>
             </a>
           </li>
         </ul>

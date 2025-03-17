@@ -4,16 +4,18 @@ import java.util.Date;
 
 public class Payroll {
     private int payrollID;
-    private String monthYear;
+    private int month;
+    private int year;
     private Date startDate;
     private Date endDate;
 
     public Payroll() {
     }
 
-    public Payroll(int payrollID, String monthYear, Date startDate, Date endDate) {
+    public Payroll(int payrollID, int month, int year, Date startDate, Date endDate) {
         this.payrollID = payrollID;
-        this.monthYear = monthYear;
+        this.month = month;
+        this.year = year;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -26,12 +28,20 @@ public class Payroll {
         this.payrollID = payrollID;
     }
 
-    public String getMonthYear() {
-        return monthYear;
+    public int getMonth() {
+        return month;
     }
 
-    public void setMonthYear(String monthYear) {
-        this.monthYear = monthYear;
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public Date getStartDate() {
@@ -49,4 +59,6 @@ public class Payroll {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+
+    
 }

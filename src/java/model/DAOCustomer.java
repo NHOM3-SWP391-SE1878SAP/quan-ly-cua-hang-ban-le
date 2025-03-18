@@ -310,6 +310,47 @@ public class DAOCustomer extends DBConnect {
         
         return customers;
     }
+    public String getCustomerName(int customerID) {
+    // Truy vấn để lấy tên khách hàng từ cơ sở dữ liệu
+    String sql = "SELECT CustomerName FROM Customer WHERE ID = ?";
+    String customerName = null;
+
+    // Đảm bảo kết nối đã được mở
+    if (getConnection() == null) {
+        LOGGER.severe("Error: Cannot connect to database!");
+        return "Khách hàng không xác định"; // Trả về tên mặc định nếu không có kết nối
+    }
+
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+
+    try {
+        // Thực hiện truy vấn
+        pst = conn.prepareStatement(sql);
+        pst.setInt(1, customerID); // Gắn giá trị customerID vào câu truy vấn
+        
+        rs = pst.executeQuery();
+        
+        // Nếu tìm thấy khách hàng, lấy tên
+        if (rs.next()) {
+            customerName = rs.getString("CustomerName");
+        }
+    } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Error retrieving customer name for ID: " + customerID, ex);
+    } finally {
+        // Đóng ResultSet và PreparedStatement
+        try {
+            if (rs != null) rs.close();
+            if (pst != null) pst.close();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error closing ResultSet or PreparedStatement", ex);
+        }
+    }
+
+    // Nếu không tìm thấy tên khách hàng, trả về tên mặc định
+    return customerName != null ? customerName : "Khách hàng #" + customerID;
+}
+
 
     /**
      * Main method to test the DAO

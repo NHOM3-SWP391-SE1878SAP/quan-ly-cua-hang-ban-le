@@ -9,6 +9,7 @@
     <title>Báo cáo - Hệ thống quản lý</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
             background-color: #f5f5f5;
@@ -26,63 +27,26 @@
 </head>
 <body>
     <!-- Header/Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Hệ thống quản lý</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="products">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="orders">Đơn hàng</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="order-return">Trả hàng</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="customers">Khách hàng</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="reports">Báo cáo</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile">
-                            <i class="bi bi-person-circle"></i> Tài khoản
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout">
-                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
-                        </a>
-                    </li>
+    <div class="search-bar d-flex justify-content-end align-items-center">
+        
+        <div class="header-icons">
+            <span class="header-icon">0912345678</span>
+            <div class="dropdown d-inline-block">
+                <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="/Slim/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
+                    <li><a class="dropdown-item" href="/Slim/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
+                    <li><a class="dropdown-item" href="/Slim/order-return"><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
                 </ul>
             </div>
         </div>
-    </nav>
+    </div>
 
     <!-- Main Content -->
     <div class="container-fluid py-4">
-        <div class="row mb-4">
-            <div class="col">
-                <h2 class="mb-0">Báo cáo doanh thu</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="dashboard">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Báo cáo doanh thu</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-
         <div class="row">
             <!-- Left sidebar with search options -->
             <div class="col-md-3 mb-4">

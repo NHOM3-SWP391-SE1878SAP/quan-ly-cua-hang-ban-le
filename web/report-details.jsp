@@ -10,6 +10,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
     <style>
         .card {
             border-radius: 10px;
@@ -27,6 +28,23 @@
         }
     </style>
 </head>
+<div class="search-bar d-flex justify-content-end align-items-center">
+        
+        <div class="header-icons">
+            <span class="header-icon">0912345678</span>
+            <div class="dropdown d-inline-block">
+                <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="/Slim/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
+                    <li><a class="dropdown-item" href="/Slim/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
+                    <li><a class="dropdown-item" href="/Slim/order-return" ><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 <body class="bg-light">
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">

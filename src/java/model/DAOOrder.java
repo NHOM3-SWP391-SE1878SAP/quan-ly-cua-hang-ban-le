@@ -447,4 +447,66 @@ public class DAOOrder extends DBConnect {
         
         return generatedId;
     }
+
+    /**
+     * Insert order into database and return the generated ID
+     * @param order Order object to insert
+     * @return ID of the inserted order, or 0 if insertion failed
+     */
+    public int insertOrder(Order order) {
+        int generatedId = 0;
+        String sql = "INSERT INTO Orders (OrderDate, TotalAmount, CustomerID, EmployeesID, PaymentsID, VouchersID) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
+        
+        // Ensure connection is open
+        if (getConnection() == null) {
+            LOGGER.severe("Error: Cannot connect to database!");
+            return 0;
+        }
+        
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        
+        try {
+            pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            
+            // Convert java.util.Date to java.sql.Date
+            java.sql.Date sqlDate = new java.sql.Date(order.getOrderDate().getTime());
+            
+            pst.setDate(1, sqlDate);
+            pst.setInt(2, order.getTotalAmount());
+            pst.setInt(3, order.getCustomerID());
+            pst.setInt(4, order.getEmployeeID());
+            pst.setInt(5, order.getPaymentID());
+            
+            // Handle null VoucherID
+            if (order.getVoucherID() != null) {
+                pst.setInt(6, order.getVoucherID());
+            } else {
+                pst.setNull(6, java.sql.Types.INTEGER);
+            }
+            
+            int affectedRows = pst.executeUpdate();
+            
+            if (affectedRows > 0) {
+                rs = pst.getGeneratedKeys();
+                if (rs.next()) {
+                    generatedId = rs.getInt(1);
+                    order.setOrderID(generatedId);
+                }
+            }
+            
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error inserting order", ex);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pst != null) pst.close();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Error closing ResultSet or PreparedStatement", ex);
+            }
+        }
+        
+        return generatedId;
+    }
 }

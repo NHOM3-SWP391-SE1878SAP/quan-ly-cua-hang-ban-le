@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="sale-css.css">
+    <link rel="stylesheet" href="style.css">
     <style>
         .product-search {
             position: relative;
@@ -161,25 +162,26 @@
 </head>
 <body>
     <!-- Header with search bar -->
-    <div class="top-header">
-        <div class="search-container">
+    <div class="search-bar d-flex justify-content-between align-items-center">
+        <div class="search-container" style="width: 30%;">
             <i class="bi bi-search"></i>
             <input type="text" placeholder="Tìm hàng hóa (F3)" id="productSearchInput">
             <div id="productSearchResults"></div>
         </div>
         
-        <div class="tab-container">
-            <span>Hóa đơn 1</span>
-            <span class="tab-close">×</span>
-        </div>
-        
         <div class="header-icons">
-            <a href="#" class="header-icon"><i class="bi bi-cart"></i></a>
-            <a href="#" class="header-icon"><i class="bi bi-arrow-left"></i></a>
-            <a href="#" class="header-icon"><i class="bi bi-arrow-clockwise"></i></a>
-            <a href="#" class="header-icon"><i class="bi bi-printer"></i></a>
             <span class="header-icon">0912345678</span>
-            <a href="#" class="header-icon"><i class="bi bi-list"></i></a>
+            <div class="dropdown d-inline-block">
+                <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="/Slim/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
+                    <li><a class="dropdown-item" href="/Slim/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
+                    <li><a class="dropdown-item" href="/Slim/order-return"><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -242,15 +244,6 @@
                     <div id="customerSearchResults"></div>
                     <button class="btn btn-outline-secondary">
                         <i class="bi bi-plus"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary">
-                        <i class="bi bi-funnel"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary">
-                        <i class="bi bi-grid"></i>
                     </button>
                 </div>
             </div>

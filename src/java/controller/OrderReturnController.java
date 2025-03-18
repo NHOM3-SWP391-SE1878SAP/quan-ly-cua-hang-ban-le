@@ -19,6 +19,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ public class OrderReturnController extends HttpServlet {
     private DAOProduct daoProduct;
     private DAOReturn daoReturn;
     private DAOReturnDetails daoReturnDetails;
+    private DAOCustomer daoCustomer;
+    
 
     @Override
     public void init() throws ServletException {
@@ -47,6 +51,7 @@ public class OrderReturnController extends HttpServlet {
         daoProduct = new DAOProduct();
         daoReturn = new DAOReturn();
         daoReturnDetails = new DAOReturnDetails();
+        daoCustomer = new DAOCustomer();
     }
 
     @Override
@@ -153,7 +158,7 @@ public class OrderReturnController extends HttpServlet {
      * Lấy danh sách đơn hàng đã lọc theo các tiêu chí tìm kiếm
      */
     private List<Order> getFilteredOrders(String orderIdSearch, String orderCodeSearch, String customerSearch,
-                                          String productIdSearch, String productNameSearch, String fromDateStr, String toDateStr) {
+            String productIdSearch, String productNameSearch, String fromDateStr, String toDateStr) {
         // Lấy tất cả đơn hàng
         List<Order> allOrders = daoOrder.getAllOrders();
 
@@ -168,27 +173,53 @@ public class OrderReturnController extends HttpServlet {
         if (customerSearch != null && !customerSearch.isEmpty()) {
             // Giả sử có phương thức getCustomerName() trong Order
             filteredOrders.removeIf(order -> {
-                String customerName = getCustomerName(order.getCustomerID());
+                String customerName = daoCustomer.getCustomerName(order.getCustomerID());
                 return customerName == null || !customerName.toLowerCase().contains(customerSearch.toLowerCase());
             });
         }
 
-        // Thêm các điều kiện lọc khác tương tự
-
-        return filteredOrders;
-    }
-
-    /**
-     * Lấy tên khách hàng từ ID
-     */
-    private String getCustomerName(int customerID) {
-        // TODO: Thực hiện truy vấn để lấy tên khách hàng từ ID
-        switch (customerID) {
-            case 1: return "Anh Giang - Kim Mã";
-            case 2: return "Phạm Thu Hương";
-            case 3: return "Anh Hoàng - Sài Gòn";
-            default: return "Khách hàng #" + customerID;
+        // Lọc theo ID sản phẩm trong đơn hàng (nếu có)
+        if (productIdSearch != null && !productIdSearch.isEmpty()) {
+            filteredOrders.removeIf(order -> {
+                // Kiểm tra nếu đơn hàng có sản phẩm với ID này
+                List<OrderDetail> orderDetails = daoOrderDetails.getOrderDetailsByOrderId(order.getOrderID());
+                return orderDetails.stream().noneMatch(detail -> String.valueOf(detail.getProductID()).contains(productIdSearch));
+            });
         }
+
+        // Lọc theo tên sản phẩm trong đơn hàng (nếu có)
+        if (productNameSearch != null && !productNameSearch.isEmpty()) {
+            filteredOrders.removeIf(order -> {
+                List<OrderDetail> orderDetails = daoOrderDetails.getOrderDetailsByOrderId(order.getOrderID());
+                return orderDetails.stream().noneMatch(detail -> {
+                    Product product = daoProduct.getProductById(detail.getProductID());
+                    return product != null && product.getProductName().toLowerCase().contains(productNameSearch.toLowerCase());
+                });
+            });
+        }
+
+        // Lọc theo ngày từ
+        if (fromDateStr != null && !fromDateStr.isEmpty()) {
+            try {
+                Date fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromDateStr);
+                filteredOrders.removeIf(order -> order.getOrderDate().before(fromDate));
+            } catch (ParseException e) {
+                LOGGER.log(Level.WARNING, "Invalid fromDate format: " + fromDateStr, e);
+            }
+        }
+
+        // Lọc theo ngày đến
+        if (toDateStr != null && !toDateStr.isEmpty()) {
+            try {
+                Date toDate = new SimpleDateFormat("yyyy-MM-dd").parse(toDateStr);
+                filteredOrders.removeIf(order -> order.getOrderDate().after(toDate));
+            } catch (ParseException e) {
+                LOGGER.log(Level.WARNING, "Invalid toDate format: " + toDateStr, e);
+            }
+        }
+
+        // Thêm các điều kiện lọc khác tương tự
+        return filteredOrders;
     }
 
     /**
@@ -206,19 +237,19 @@ public class OrderReturnController extends HttpServlet {
         int startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
         int endIndex = Math.min(startIndex + ORDERS_PER_PAGE, totalOrders);
 
-        return startIndex < totalOrders ?
-                filteredOrders.subList(startIndex, endIndex) :
-                new ArrayList<>();
+        return startIndex < totalOrders
+                ? filteredOrders.subList(startIndex, endIndex)
+                : new ArrayList<>();
     }
 
     /**
      * Đặt các thuộc tính vào request
      */
     private void setRequestAttributes(HttpServletRequest req, List<Order> ordersForCurrentPage,
-                                      int currentPage, int totalPages, int totalOrders,
-                                      String orderIdSearch, String orderCodeSearch, String customerSearch,
-                                      String productIdSearch, String productNameSearch,
-                                      String fromDateStr, String toDateStr) {
+            int currentPage, int totalPages, int totalOrders,
+            String orderIdSearch, String orderCodeSearch, String customerSearch,
+            String productIdSearch, String productNameSearch,
+            String fromDateStr, String toDateStr) {
         req.setAttribute("orders", ordersForCurrentPage);
         req.setAttribute("currentPage", currentPage);
         req.setAttribute("totalPages", totalPages);
@@ -463,22 +494,6 @@ public class OrderReturnController extends HttpServlet {
                     }
                 }
             }
-
-            // Validate có sản phẩm trả
-//            if (!hasReturnItems) {
-//                LOGGER.warning("No items selected for return");
-//                daoReturn.deleteReturn(returnId);
-//                resp.sendRedirect(req.getContextPath() + "/order-return?error=no_items");
-//                return;
-//            }
-
-            // Validate tổng tiền
-//            if (Math.abs(calculatedTotal - totalAmount) > 0.01) {
-//                LOGGER.warning("Total amount mismatch. Expected: " + calculatedTotal + ", Got: " + totalAmount);
-//                daoReturn.deleteReturn(returnId);
-//                resp.sendRedirect(req.getContextPath() + "/order-return?error=amount_mismatch");
-//                return;
-//            }
 
             // Lưu chi tiết trả hàng
             boolean success = daoReturnDetails.insertReturnDetails(returnDetailsList);

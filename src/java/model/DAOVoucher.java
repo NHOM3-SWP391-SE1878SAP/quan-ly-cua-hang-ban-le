@@ -36,6 +36,9 @@ public class DAOVoucher extends DBConnect {
                 .minOrder(rs.getInt("MinOrder"))
                 .discountRate(rs.getInt("DiscountRate"))
                 .maxValue(rs.getInt("MaxValue"))
+                .usage_limit(rs.getInt("Usage_limit"))
+                .usage_count(rs.getInt("Usage_count"))
+                .status(rs.getBoolean("Status"))
                 .startDate(rs.getDate("StartDate"))
                 .endDate(rs.getDate("EndDate"))
                 .build();
@@ -169,7 +172,8 @@ public class DAOVoucher extends DBConnect {
      * @return true if successful, false if failed
      */
     public boolean addVoucher(Voucher voucher) {
-        String sql = "INSERT INTO Vouchers (Code, MinOrder, DiscountRate, MaxValue, StartDate, EndDate) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Vouchers (Code, MinOrder, DiscountRate, MaxValue, Usage_limit, Usage_count, Status, StartDate, EndDate) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         // Ensure connection is open
         if (getConnection() == null) {
@@ -185,8 +189,11 @@ public class DAOVoucher extends DBConnect {
             pst.setInt(2, voucher.getMinOrder());
             pst.setInt(3, voucher.getDiscountRate());
             pst.setInt(4, voucher.getMaxValue());
-            pst.setDate(5, new java.sql.Date(voucher.getStartDate().getTime()));
-            pst.setDate(6, new java.sql.Date(voucher.getEndDate().getTime()));
+            pst.setInt(5, voucher.getUsage_limit());
+            pst.setInt(6, voucher.getUsage_count());
+            pst.setBoolean(7, voucher.getStatus());
+            pst.setDate(8, new java.sql.Date(voucher.getStartDate().getTime()));
+            pst.setDate(9, new java.sql.Date(voucher.getEndDate().getTime()));
             
             int rowsAffected = pst.executeUpdate();
             return rowsAffected > 0;
@@ -209,7 +216,8 @@ public class DAOVoucher extends DBConnect {
      * @return true if successful, false if failed
      */
     public boolean updateVoucher(Voucher voucher) {
-        String sql = "UPDATE Vouchers SET Code = ?, MinOrder = ?, DiscountRate = ?, MaxValue = ?, StartDate = ?, EndDate = ? WHERE ID = ?";
+        String sql = "UPDATE Vouchers SET Code = ?, MinOrder = ?, DiscountRate = ?, MaxValue = ?, " +
+                     "Usage_limit = ?, Usage_count = ?, Status = ?, StartDate = ?, EndDate = ? WHERE ID = ?";
         
         // Ensure connection is open
         if (getConnection() == null) {
@@ -225,9 +233,12 @@ public class DAOVoucher extends DBConnect {
             pst.setInt(2, voucher.getMinOrder());
             pst.setInt(3, voucher.getDiscountRate());
             pst.setInt(4, voucher.getMaxValue());
-            pst.setDate(5, new java.sql.Date(voucher.getStartDate().getTime()));
-            pst.setDate(6, new java.sql.Date(voucher.getEndDate().getTime()));
-            pst.setInt(7, voucher.getId());
+            pst.setInt(5, voucher.getUsage_limit());
+            pst.setInt(6, voucher.getUsage_count());
+            pst.setBoolean(7, voucher.getStatus());
+            pst.setDate(8, new java.sql.Date(voucher.getStartDate().getTime()));
+            pst.setDate(9, new java.sql.Date(voucher.getEndDate().getTime()));
+            pst.setInt(10, voucher.getId());
             
             int rowsAffected = pst.executeUpdate();
             return rowsAffected > 0;
@@ -295,7 +306,8 @@ public class DAOVoucher extends DBConnect {
         
         PreparedStatement pst = null;
         ResultSet rs = null;
-        String sql = "SELECT * FROM Vouchers WHERE MinOrder <= ? AND StartDate <= GETDATE() AND EndDate >= GETDATE()";
+        String sql = "SELECT * FROM Vouchers WHERE MinOrder <= ? AND StartDate <= GETDATE() AND EndDate >= GETDATE() " +
+                     "AND Status = 1 AND (Usage_limit > Usage_count OR Usage_limit = 0)";
         
         try {
             pst = conn.prepareStatement(sql);
@@ -329,7 +341,8 @@ public class DAOVoucher extends DBConnect {
      * @return The discount amount
      */
     public int calculateDiscount(Voucher voucher, int orderAmount) {
-        if (voucher == null || orderAmount < voucher.getMinOrder()) {
+        if (voucher == null || orderAmount < voucher.getMinOrder() || !voucher.getStatus() || 
+            (voucher.getUsage_limit() > 0 && voucher.getUsage_count() >= voucher.getUsage_limit())) {
             return 0;
         }
         
@@ -341,6 +354,65 @@ public class DAOVoucher extends DBConnect {
         }
         
         return discountAmount;
+    }
+    
+    /**
+     * Increment usage count for a voucher
+     * @param voucherId ID of the voucher to update
+     * @return true if successful, false if failed
+     */
+    public boolean incrementUsageCount(int voucherId) {
+        String sql = "UPDATE Vouchers SET Usage_count = Usage_count + 1 WHERE ID = ?";
+        
+        // Ensure connection is open
+        if (getConnection() == null) {
+            LOGGER.severe("Error: Cannot connect to database!");
+            return false;
+        }
+        
+        PreparedStatement pst = null;
+        
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, voucherId);
+            
+            int rowsAffected = pst.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error incrementing usage count for voucher ID: " + voucherId, ex);
+            return false;
+        } finally {
+            // Close PreparedStatement
+            try {
+                if (pst != null) pst.close();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Error closing PreparedStatement", ex);
+            }
+        }
+    }
+    
+    /**
+     * Check if a voucher is valid for use
+     * @param code Voucher code
+     * @param orderAmount Order amount
+     * @return Voucher object if valid, null if invalid
+     */
+    public Voucher validateVoucher(String code, int orderAmount) {
+        Voucher voucher = getVoucherByCode(code);
+        
+        if (voucher == null) {
+            return null; // Voucher not found
+        }
+        
+        // Check if voucher is active and valid
+        java.util.Date currentDate = new java.util.Date();
+        boolean isValid = voucher.getStatus() && 
+                          voucher.getStartDate().before(currentDate) && 
+                          voucher.getEndDate().after(currentDate) &&
+                          voucher.getMinOrder() <= orderAmount &&
+                          (voucher.getUsage_limit() == 0 || voucher.getUsage_count() < voucher.getUsage_limit());
+        
+        return isValid ? voucher : null;
     }
     
     /**

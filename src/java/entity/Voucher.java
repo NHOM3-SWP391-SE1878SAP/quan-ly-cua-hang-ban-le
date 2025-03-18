@@ -17,6 +17,9 @@ public class Voucher {
     private Integer minOrder;
     private Integer discountRate;
     private Integer maxValue;
+    private Integer usage_limit;
+    private Integer usage_count;
+    private Boolean status;
     private Date startDate;
     private Date endDate;
 }

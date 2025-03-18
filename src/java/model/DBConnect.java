@@ -14,7 +14,7 @@ public class DBConnect {
     protected Connection conn = null;
     private static final Logger LOGGER = Logger.getLogger(DBConnect.class.getName());
     
-    private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=SlimDemo2;encrypt=true;trustServerCertificate=true";
+    private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=SlimDemo3;encrypt=true;trustServerCertificate=true";
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "123456";
 

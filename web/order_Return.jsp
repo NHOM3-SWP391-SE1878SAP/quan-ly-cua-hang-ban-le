@@ -13,31 +13,18 @@
 </head>
 <body>
     <!-- Header with search bar -->
-    <div class="search-bar d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center" style="width: 30%;">
-            <i class="bi bi-search me-2"></i>
-            <input type="text" class="search-input" placeholder="Tìm hàng trả (F3)">
-        </div>
+    <div class="search-bar d-flex justify-content-end align-items-center">
         
         <div class="header-icons">
-            <a href="#" class="header-icon"><i class="bi bi-circle"></i></a>
-            <a href="#" class="header-icon"><i class="bi bi-arrow-left"></i></a>
-            <a href="#" class="header-icon"><i class="bi bi-arrow-clockwise"></i></a>
-            <a href="#" class="header-icon"><i class="bi bi-printer"></i></a>
             <span class="header-icon">0912345678</span>
             <div class="dropdown d-inline-block">
                 <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-list"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-bag"></i> Xử lý đặt hàng</a></li>
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderSelectionModal"><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-receipt"></i> Lập phiếu thu</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-file-earmark-arrow-up"></i> Import file</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-eye"></i> Tùy chọn hiển thị</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-keyboard"></i> Phím tắt</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-grid-3x3-gap"></i> Quản lý</a></li>
+                    <li><a class="dropdown-item" href="/Slim/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
+                    <li><a class="dropdown-item" href="/Slim/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
+                    <li><a class="dropdown-item" href="/Slim/order-return" ><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
                     <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
                 </ul>
             </div>

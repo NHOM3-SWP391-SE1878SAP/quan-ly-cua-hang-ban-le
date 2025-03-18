@@ -523,7 +523,7 @@ public class OrderReturnController extends HttpServlet {
         // TODO: Implement logic to get current employee from session
         // Temporary return dummy employee
         Employee employee = new Employee();
-        employee.setEmployeeID(11); // Set appropriate employee ID
+        employee.setEmployeeID(1); // Set appropriate employee ID
         return employee;
     }
 }

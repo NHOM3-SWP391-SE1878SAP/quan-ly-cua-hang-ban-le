@@ -107,9 +107,9 @@
                 <div class="customer-info mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <c:set var="employee" value="${accountDAO.getAccountById(selectedOrder.employeeID)}" />
+                            <c:set var="employee" value="${accountDAO.getEmployeeByID(selectedOrder.employeeID)}" />
                             <c:choose>
-                                <c:when test="${not empty employee}">${employee.userName}</c:when>
+                                <c:when test="${not empty employee}">${employee.employeeName}</c:when>
                                 <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
                             </c:choose>
                             <i class="bi bi-chevron-down"></i>
@@ -132,9 +132,9 @@
                 <div class="summary-panel">
                     <div class="return-title">
                         <span>Trả hàng / HD${String.format("%06d", selectedOrder.orderID)} - 
-                            <c:set var="employee" value="${accountDAO.getAccountById(selectedOrder.employeeID)}" />
+                            <c:set var="employee" value="${accountDAO.getEmployeeByID(selectedOrder.employeeID)}" />
                             <c:choose>
-                                <c:when test="${not empty employee}">${employee.userName}</c:when>
+                                <c:when test="${not empty employee}">${employee.employeeName}</c:when>
                                 <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
                             </c:choose>
                         </span>
@@ -144,9 +144,9 @@
                     <div class="customer-info mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <c:set var="employee" value="${accountDAO.getAccountById(selectedOrder.employeeID)}" />
+                                <c:set var="employee" value="${accountDAO.getEmployeeByID(selectedOrder.employeeID)}" />
                                 <c:choose>
-                                    <c:when test="${not empty employee}">${employee.userName}</c:when>
+                                    <c:when test="${not empty employee}">${employee.employeeName}</c:when>
                                     <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
                                 </c:choose>
                                 <i class="bi bi-chevron-down"></i>
@@ -171,31 +171,11 @@
                         <span>Tổng giá gốc hàng mua</span>
                         <span><fmt:formatNumber value="${selectedOrder.totalAmount}" pattern="#,###" /></span>
                     </div>
-                    
-                    <div class="summary-row">
-                        <span></span>
-                        <span>0</span>
-                    </div>
-                    
+                                       
                     <div class="summary-row">
                         <span>Tổng tiền hàng trả</span>
                         <span id="subtotal">0</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span></span>
-                        <span>0</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span>Giảm giá</span>
-                        <span>0</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span>Phí trả hàng</span>
-                        <span>0</span>
-                    </div>
+                    </div>                 
                     
                     <div class="summary-row">
                         <span>Cần trả khách</span>

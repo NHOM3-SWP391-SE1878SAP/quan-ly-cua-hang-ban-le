@@ -352,7 +352,7 @@ public class SaleController extends HttpServlet {
             }
             
             
-            int employeeId = 11; // Mặc định ID nhân viên là 11
+            int employeeId = 1; // Mặc định ID nhân viên là 11
             
             // Chuyển đổi customerId từ String sang Integer
             Integer customerIdInt = GUEST_CUSTOMER_ID; // Mặc định là khách lẻ
@@ -376,7 +376,7 @@ public class SaleController extends HttpServlet {
             }
             
             // Xử lý ID nhân viên
-            employeeId = 11;
+            employeeId = 1;
             // Kiểm tra xem employee có tồn tại không
             Employee employee = daoAccount.getEmployeeByID(employeeId);
             if (employee == null) {
@@ -544,7 +544,7 @@ public class SaleController extends HttpServlet {
             
             // Chuyển hướng đến trang hóa đơn
 //            req.getRequestDispatcher("report").forward(req, resp);
-            resp.sendRedirect("report");
+            resp.sendRedirect("sale");
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing checkout", e);

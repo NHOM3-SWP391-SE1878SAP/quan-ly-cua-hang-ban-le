@@ -192,7 +192,7 @@ public class ReportController extends HttpServlet {
             // Lấy thông tin nhân viên
             Employee employee = null;
             if (order.getEmployeeID() > 0) {
-                employee = daoAccount.getEmployeeByAccountID(order.getEmployeeID());
+                employee = daoAccount.getEmployeeByID(order.getEmployeeID());
             }
             
             // Lấy thông tin voucher nếu có
@@ -246,7 +246,7 @@ public class ReportController extends HttpServlet {
             // Lấy thông tin nhân viên
             Employee employee = null;
             if (returnOrder.getEmployeeId() > 0) {
-                employee = daoAccount.getEmployeeByAccountID(returnOrder.getEmployeeId());
+                employee = daoAccount.getEmployeeByID(returnOrder.getEmployeeId());
             }
             
             // Đặt các thuộc tính vào request

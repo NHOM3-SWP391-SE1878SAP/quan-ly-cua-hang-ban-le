@@ -132,7 +132,7 @@
                                                 <c:set var="employee" value="${accountDAO.getEmployeeByID(order.employeeID)}" />
                                                 <c:choose>
                                                     <c:when test="${not empty employee and not empty employee.account}">
-                                                        ${employee.account.userName}
+                                                        ${employee.employeeName}
                                                     </c:when>
                                                     <c:otherwise>
                                                         Nhân viên #${order.employeeID}

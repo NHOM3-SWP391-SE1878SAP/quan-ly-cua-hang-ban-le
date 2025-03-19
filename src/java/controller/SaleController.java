@@ -119,9 +119,6 @@ public class SaleController extends HttpServlet {
                 case "checkout":
                     processCheckout(req, resp);
                     break;
-                case "applyDiscount":
-                    applyDiscountCode(req, resp);
-                    break;
                 case "applyDiscountAjax":
                     applyDiscountCodeAjax(req, resp);
                     break;
@@ -375,13 +372,6 @@ public class SaleController extends HttpServlet {
                 }
             }
 
-//            // Xử lý ID nhân viên
-//            employeeId = 1;
-//            // Kiểm tra xem employee có tồn tại không
-//            Employee employee = daoAccount.getEmployeeByID(employeeId);
-//            if (employee == null) {
-//                throw new Exception("Employee with ID " + employeeId + " not found. Using default employee ID.");
-//            } 
             // Lấy thông tin voucher nếu có
             Integer voucherId = null; // Mặc định là null (không có voucher)
 
@@ -394,7 +384,13 @@ public class SaleController extends HttpServlet {
                         voucherId = null;
                     } else {
                         voucherId = voucher.getId();
-                        totalInt = totalInt - (int) (totalInt * voucher.getDiscountRate() / 100);
+                        double discount = totalInt * voucher.getDiscountRate() / 100;
+                        // Kiểm tra nếu tổng giảm giá vượt quá MaxValue
+                        if (discount > voucher.getMaxValue()) {
+                            discount = voucher.getMaxValue();  // Áp dụng MaxValue nếu giảm giá vượt quá
+                        } // Áp dụng giảm giá vào tổng tiền
+                        totalInt = totalInt - (int) discount;
+//                        totalInt = totalInt - (int) (totalInt * voucher.getDiscountRate() / 100);
                     }
 
                 } catch (NumberFormatException e) {
@@ -516,20 +512,6 @@ public class SaleController extends HttpServlet {
                 daoVoucher.incrementUsageCount(voucherId);
             }
 
-            // Đặt các thuộc tính vào request để hiển thị trên trang hóa đơn
-//            req.setAttribute("orderId", orderId);
-//            req.setAttribute("orderDate", new Date());
-//            req.setAttribute("customerName", customerName);
-//            req.setAttribute("customerPhone", customerPhone);
-//            req.setAttribute("employeeName", employee.getEmployeeName());
-//            req.setAttribute("orderItems", orderItems);
-//            req.setAttribute("total", total);
-//            req.setAttribute("discount", 0); // Mặc định không có giảm giá
-//            req.setAttribute("totalPayable", total);
-//            req.setAttribute("customerPaid", customerPaid);
-//            req.setAttribute("paymentMethod", paymentMethod);
-            // Chuyển hướng đến trang hóa đơn
-//            req.getRequestDispatcher("report").forward(req, resp);
             resp.sendRedirect("sale");
 
         } catch (Exception e) {
@@ -539,138 +521,7 @@ public class SaleController extends HttpServlet {
         }
     }
 
-    /**
-     * Xử lý áp dụng mã giảm giá
-     */
-    private void applyDiscountCode(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            HttpSession session = req.getSession();
-
-            // Lấy thông tin từ request hoặc session nếu không có
-            String discountCode = req.getParameter("discountCode");
-            String cartItemsJson = req.getParameter("cartItems");
-            String customerName = req.getParameter("customerName");
-            String customerPhone = req.getParameter("customerPhone");
-            String customerId = req.getParameter("customerId");
-
-            // Sử dụng dữ liệu từ session nếu request không có
-            if (cartItemsJson == null || cartItemsJson.trim().isEmpty()) {
-                cartItemsJson = (String) session.getAttribute("cartItemsJson");
-            }
-            if (customerName == null || customerName.trim().isEmpty()) {
-                customerName = (String) session.getAttribute("customerName");
-            }
-            if (customerPhone == null || customerPhone.trim().isEmpty()) {
-                customerPhone = (String) session.getAttribute("customerPhone");
-            }
-            if (customerId == null || customerId.trim().isEmpty()) {
-                customerId = (String) session.getAttribute("customerId");
-            }
-
-            // Cập nhật lại session với dữ liệu mới nhất
-            session.setAttribute("cartItemsJson", cartItemsJson);
-            session.setAttribute("customerName", customerName);
-            session.setAttribute("customerPhone", customerPhone);
-            session.setAttribute("customerId", customerId);
-            session.setAttribute("discountCode", discountCode);
-
-            // Tính tổng tiền từ giỏ hàng
-            List<Map<String, Object>> cartItems = new ArrayList<>();
-            double totalAmount = 0;
-
-            if (cartItemsJson != null && !cartItemsJson.isEmpty()) {
-                try {
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<List<Map<String, Object>>>() {
-                    }.getType();
-                    cartItems = gson.fromJson(cartItemsJson, type);
-
-                    // Tính tổng tiền
-                    for (Map<String, Object> item : cartItems) {
-                        Object priceObj = item.get("price");
-                        Object quantityObj = item.get("quantity");
-
-                        double price = 0;
-                        int quantity = 0;
-
-                        if (priceObj instanceof Double) {
-                            price = (Double) priceObj;
-                        } else if (priceObj instanceof String) {
-                            price = Double.parseDouble((String) priceObj);
-                        } else if (priceObj instanceof Integer) {
-                            price = (Integer) priceObj;
-                        }
-
-                        if (quantityObj instanceof Double) {
-                            quantity = ((Double) quantityObj).intValue();
-                        } else if (quantityObj instanceof String) {
-                            quantity = Integer.parseInt((String) quantityObj);
-                        } else if (quantityObj instanceof Integer) {
-                            quantity = (Integer) quantityObj;
-                        }
-
-                        double itemTotal = price * quantity;
-                        item.put("total", itemTotal);
-                        totalAmount += itemTotal;
-                    }
-                } catch (JsonSyntaxException | NumberFormatException e) {
-                    LOGGER.log(Level.SEVERE, "Error parsing cart items JSON", e);
-                }
-            }
-
-            // Kiểm tra mã giảm giá
-            int totalAmountInt = (int) Math.round(totalAmount);
-            DAOVoucher daoVoucher = new DAOVoucher();
-            Voucher voucher = daoVoucher.validateVoucher(discountCode, totalAmountInt);
-
-            String message;
-            int discountAmount = 0;
-            int voucherId = 0;
-
-            if (voucher != null) {
-                // Tính số tiền giảm giá
-                discountAmount = daoVoucher.calculateDiscount(voucher, totalAmountInt);
-                voucherId = voucher.getId();
-                message = "Áp dụng mã giảm giá thành công: Giảm " + voucher.getDiscountRate() + "% (tối đa " + voucher.getMaxValue() + " VNĐ)";
-            } else {
-                // Kiểm tra lý do mã không hợp lệ
-                Voucher invalidVoucher = daoVoucher.getVoucherByCode(discountCode);
-                if (invalidVoucher == null) {
-                    message = "Mã giảm giá không tồn tại";
-                } else if (!invalidVoucher.getStatus()) {
-                    message = "Mã giảm giá đã bị vô hiệu hóa";
-                } else if (invalidVoucher.getMinOrder() > totalAmountInt) {
-                    message = "Đơn hàng chưa đạt giá trị tối thiểu " + invalidVoucher.getMinOrder() + " VNĐ để áp dụng mã này";
-                } else if (invalidVoucher.getUsage_limit() > 0 && invalidVoucher.getUsage_count() >= invalidVoucher.getUsage_limit()) {
-                    message = "Mã giảm giá đã hết lượt sử dụng";
-                } else {
-                    message = "Mã giảm giá không hợp lệ hoặc đã hết hạn";
-                }
-            }
-
-            // Đặt các thuộc tính vào request
-            req.setAttribute("cartItems", cartItems);
-            req.setAttribute("cartItemsJson", cartItemsJson);  // Pass the JSON back to the page
-            req.setAttribute("totalAmount", totalAmount);
-            req.setAttribute("customerId", customerId);
-            req.setAttribute("customerName", customerName);
-            req.setAttribute("customerPhone", customerPhone);
-            req.setAttribute("discount", discountAmount);
-            req.setAttribute("voucherId", voucherId);
-            req.setAttribute("discountCode", discountCode);
-            req.setAttribute("discountMessage", message);
-            req.setAttribute("paymentMethods", daoPayment.getAllPaymentMethods());
-
-            // Chuyển hướng đến trang thanh toán
-            req.getRequestDispatcher("/PaymentManagement.jsp").forward(req, resp);
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error applying discount code", e);
-            req.setAttribute("errorMessage", "Lỗi khi áp dụng mã giảm giá: " + e.getMessage());
-            req.getRequestDispatcher("/PaymentManagement.jsp").forward(req, resp);
-        }
-    }
-
+    
     /**
      * Xử lý áp dụng mã giảm giá qua AJAX
      */

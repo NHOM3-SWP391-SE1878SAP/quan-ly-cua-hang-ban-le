@@ -15,32 +15,6 @@ import java.util.logging.Logger;
 
 public class DAOProduct extends DBConnect {
 
-    // Nguyen
-    public Vector<Product> getAllProducts() {
-        Vector<Product> vector = new Vector<>();
-        String sql = "SELECT * FROM Products";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("ID");
-                String productName = rs.getString("productName");
-                String productCode = rs.getString("productCode");
-                int price = rs.getInt("price");
-                int stockQuantity = rs.getInt("stockQuantity");
-                boolean isAvailable = rs.getBoolean("isAvailable");
-                String imageURL = rs.getString("imageURL");
-                int categoryId = rs.getInt("categoryID");
-
-                Product p = new Product(id, productName, productCode, price, stockQuantity, isAvailable, imageURL, categoryId);
-                vector.add(p);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return vector;
-    }
-
     public Vector<Product> getAllProducts1() {
         Vector<Product> vector = new Vector<>();
 
@@ -132,8 +106,8 @@ public class DAOProduct extends DBConnect {
             Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, "Error resuming product sale", ex);
             return false;
         }
-    }   
-    
+    }
+
     public boolean updateProductStatus(int productId, boolean isAvailable) {
         String sql = "UPDATE Products SET IsAvailable = ? WHERE ID = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -156,12 +130,10 @@ public class DAOProduct extends DBConnect {
             pre.setString(2, product.getProductCode());
             pre.setInt(3, product.getPrice());
             pre.setInt(4, product.getStockQuantity());
-
-            // Tự động đặt isAvailable dựa trên stockQuantity
-            pre.setBoolean(5, product.getStockQuantity() > 0);
-
+            pre.setBoolean(5, product.isIsAvailable()); // Đặt isAvailable
             pre.setString(6, product.getImageURL());
-            pre.setInt(7, product.getCategory().getCategoryID());
+            pre.setInt(7, product.getCategory().getCategoryID()); // Lấy categoryID từ đối tượng Category
+
             pre.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
@@ -286,6 +258,50 @@ public class DAOProduct extends DBConnect {
         return products;
     }
 
+    public Vector<Product> getProductsStockTakes() {
+        Vector<Product> products = new Vector<>();
+        // Câu lệnh SQL mới với JOIN bảng Categories để lấy thêm tên danh mục
+        String sql = "SELECT p.id, p.ProductCode, p.ProductName, p.StockQuantity, p.IsAvailable, p.Price, p.ImageURL, c.CategoryName "
+                + "FROM Products p "
+                + "LEFT JOIN GoodReceiptDetails grd ON p.ID = grd.ProductsID "
+                + "LEFT JOIN Categories c ON p.CategoryID = c.ID "
+                + "WHERE grd.ProductsID IS NULL"; // Chỉ lấy những sản phẩm chưa có thông tin phiếu nhập kho
+
+        try (PreparedStatement pre = conn.prepareStatement(sql); ResultSet rs = pre.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("ID");
+                String productCode = rs.getString("ProductCode");
+                String productName = rs.getString("ProductName");
+                int price = rs.getInt("Price");
+                int stockQuantity = rs.getInt("StockQuantity");
+                boolean isAvailable = rs.getBoolean("IsAvailable");
+                String imageURL = rs.getString("ImageURL");
+                String categoryName = rs.getString("CategoryName");  // Lấy tên danh mục
+
+                // Tạo đối tượng Product chỉ với các thông tin cần thiết
+                Product product = new Product();
+                product.setId(id);
+                product.setProductCode(productCode);
+                product.setProductName(productName);
+                product.setPrice(price);
+                product.setStockQuantity(stockQuantity);
+                product.setIsAvailable(isAvailable);
+                product.setImageURL(imageURL);
+
+                // Tạo đối tượng Category và gán vào sản phẩm
+                Category category = new Category();
+                category.setCategoryName(categoryName); // Gán tên danh mục vào sản phẩm
+                product.setCategory(category);
+
+                products.add(product);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return products;
+    }
+
     public boolean updateProductsPriceBatch(List<Product> products) {
         String sql = "UPDATE Products SET price = ? WHERE ID = ?";
         try {
@@ -338,5 +354,140 @@ public class DAOProduct extends DBConnect {
         }
 
         return product;
+    }
+
+    public Vector<Product> getFilteredProducts(Integer categoryId, String stockStatus) {
+        Vector<Product> products = new Vector<>();
+        String sql = "SELECT p.*, c.CategoryName FROM Products p "
+                + "LEFT JOIN Categories c ON p.CategoryID = c.ID WHERE 1=1";
+
+        // Thêm điều kiện lọc theo categoryId nếu có
+        if (categoryId != null) {
+            sql += " AND p.CategoryID = ?";
+        }
+
+        // Thêm điều kiện lọc theo stockStatus nếu có
+        if ("outofstock".equals(stockStatus)) {
+            sql += " AND p.StockQuantity = 0";
+        } else if ("inStock".equals(stockStatus)) {
+            sql += " AND p.StockQuantity > 0";
+        }
+
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
+
+            // Gán categoryId vào câu lệnh SQL nếu có
+            if (categoryId != null) {
+                pre.setInt(paramIndex++, categoryId);
+            }
+
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                // Tạo đối tượng Category
+                Category category = new Category(rs.getInt("CategoryID"), rs.getString("CategoryName"), "", "");
+
+                // Tạo đối tượng Product
+                Product product = new Product(
+                        rs.getInt("ID"),
+                        rs.getString("ProductName"),
+                        rs.getString("ProductCode"),
+                        rs.getInt("Price"),
+                        rs.getInt("StockQuantity"),
+                        rs.getBoolean("IsAvailable"),
+                        rs.getString("ImageURL"),
+                        category // Gán Category vào Product
+                );
+
+                products.add(product);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return products;
+    }
+
+    public Vector<Category> getAllCategories() {
+        Vector<Category> categories = new Vector<>();
+        String sql = "SELECT * FROM Categories";
+        try (PreparedStatement pre = conn.prepareStatement(sql); ResultSet rs = pre.executeQuery()) {
+            while (rs.next()) {
+                categories.add(new Category(rs.getInt("ID"), rs.getString("CategoryName"), "", ""));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return categories;
+    }
+
+    public boolean isProductCodeExist(String productCode) {
+        String sql = "SELECT COUNT(*) FROM Products WHERE ProductCode = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, productCode);  // Set mã sản phẩm cần kiểm tra
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);  // Lấy kết quả đếm số dòng trùng mã sản phẩm
+                return count > 0;  // Nếu count > 0 thì có sản phẩm trùng mã
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;  // Không có sản phẩm trùng mã
+    }
+
+    public boolean isProductCodeExist(String productCode, int productId) {
+        String sql = "SELECT COUNT(*) FROM Products WHERE ProductCode = ? AND ID != ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, productCode);  // Set mã sản phẩm cần kiểm tra
+            pre.setInt(2, productId);  // Loại trừ sản phẩm hiện tại
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);  // Lấy kết quả đếm số dòng trùng mã sản phẩm
+                return count > 0;  // Nếu count > 0 thì có sản phẩm trùng mã
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;  // Không có sản phẩm trùng mã
+    }
+
+    public Vector<Product> getProductByCategory(int categoryID) {
+        Vector<Product> products = new Vector<>();
+        String sql = "SELECT p.ID, p.ProductName, p.ProductCode, p.Price, p.StockQuantity, "
+                + "p.IsAvailable, p.ImageURL, c.ID as CategoryID, c.CategoryName, c.Description, c.Image "
+                + "FROM Products p "
+                + "JOIN Categories c ON p.CategoryID = c.ID "
+                + "WHERE p.CategoryID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, categoryID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Category category = new Category(
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getString("Description"),
+                            rs.getString("Image")
+                    );
+                    Product product = new Product(
+                            rs.getInt("ID"),
+                            rs.getString("ProductName"),
+                            rs.getString("ProductCode"),
+                            rs.getInt("Price"),
+                            rs.getInt("StockQuantity"),
+                            rs.getBoolean("IsAvailable"),
+                            rs.getString("ImageURL"),
+                            category
+                    );
+                    products.add(product);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.SEVERE, "Lỗi truy vấn SQL", ex);
+            throw new RuntimeException("Lỗi truy vấn cơ sở dữ liệu", ex);
+        }
+        if (products.isEmpty()) {
+            Logger.getLogger(DAOProduct.class.getName()).log(Level.INFO, "Không có sản phẩm nào trong danh mục ID: " + categoryID);
+        }
+        return products;
     }
 }

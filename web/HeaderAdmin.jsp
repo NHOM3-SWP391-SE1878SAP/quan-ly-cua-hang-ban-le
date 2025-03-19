@@ -287,11 +287,15 @@
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="ProductsControllerURL?service=stockTakes">
               <i class="bi bi-circle"></i><span>Kiểm kho</span>
             </a>
           </li>
-          
+          <li>
+            <a href="CategoryControllerURL?service=listAll">
+              <i class="bi bi-circle"></i><span>Loại hàng</span>
+            </a>
+          </li>
         </ul>
       </li>
 

@@ -35,7 +35,6 @@
                             <table class="table table-borderless datatable mt-3">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Mã hàng</th>
                                         <th scope="col">Tên hàng</th>
                                         <th scope="col">Giá vốn (VNĐ)</th>
@@ -50,7 +49,6 @@
                                                 int unitCost = (p.getGoodReceiptDetail() != null) ? p.getGoodReceiptDetail().getUnitCost() : 0;
                                     %>
                                     <tr>
-                                        <td><%= p.getId() %></td>
                                         <td><%= p.getProductCode() %></td>
                                         <td><%= p.getProductName() %></td>
                                         <td><%= String.format("%,d", unitCost) %></td>

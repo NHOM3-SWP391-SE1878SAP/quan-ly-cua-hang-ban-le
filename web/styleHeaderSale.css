@@ -9,19 +9,6 @@ body {
     color: white;
 }
 
-.search-input {
-    border-radius: 5px;
-    border: none;
-    padding: 6px 12px;
-    width: 100%;
-}
-
-.tab-bar {
-    background-color: #007bff;
-    color: white;
-    padding: 0;
-}
-
 .product-table {
     background-color: white;
     border-radius: 5px;
@@ -59,17 +46,6 @@ body {
     color: #007bff;
 }
 
-.action-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 12px;
-    width: 100%;
-    font-weight: bold;
-    margin-top: 15px;
-}
-
 .header-icons {
     font-size: 1.2rem;
 }
@@ -86,11 +62,6 @@ body {
     margin-bottom: 10px;
 }
 
-.return-title {
-    color: #28a745;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
 
 /* Quantity controls styling */
 .quantity-container {

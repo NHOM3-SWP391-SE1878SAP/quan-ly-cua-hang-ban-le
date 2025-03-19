@@ -18,6 +18,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -472,8 +473,14 @@ public class OrderReturnController extends HttpServlet {
     private Employee getCurrentEmployee(HttpServletRequest req) {
         // TODO: Implement logic to get current employee from session
         // Temporary return dummy employee
-        Employee employee = new Employee();
-        employee.setEmployeeID(2); // Set appropriate employee ID
+        HttpSession session = req.getSession();
+        Employee employee = (Employee) session.getAttribute("employee");
+        int employeeId = 0; // Mặc định là 0 nếu không tìm thấy thông tin nhân viên
+        if (employee != null) {
+            employeeId = employee.getEmployeeID(); // Giả sử bạn đã có phương thức getId() trong đối tượng Employee
+        }
+//        Employee employee = new Employee();
+//        employee.setEmployeeID(2); // Set appropriate employee ID
         return employee;
     }
 }

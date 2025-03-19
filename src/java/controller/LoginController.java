@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.DAOAccount;
 import entity.Account;
+import entity.Employee;
 import entity.Role;
 
 /**
@@ -36,7 +37,11 @@ public class LoginController extends HttpServlet {
                 if ("Admin".equalsIgnoreCase(roleName)) {
                     response.sendRedirect("admin-dashboard.jsp");  // Điều hướng đến trang Admin
                 } else if ("Employee".equalsIgnoreCase(roleName)) {
-                    response.sendRedirect("ProductController");  // Điều hướng đến trang Employee
+                    session.setAttribute("account", account);
+            
+                    Employee employee = dao.getEmployeeByAccountID(account.getId());
+                    session.setAttribute("employee", employee);
+                    response.sendRedirect("sale");  // Điều hướng đến trang Employee
                 } else {
                     response.sendRedirect("home.jsp");  // Mặc định nếu không có role cụ thể
                 }

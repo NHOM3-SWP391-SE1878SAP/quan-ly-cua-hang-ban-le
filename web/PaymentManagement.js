@@ -13,16 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Lấy tổng tiền từ phần tử HTML
     const totalAmountElement = document.getElementById('totalAmountValue') || document.getElementById('totalInput');
     const totalAmount = totalAmountElement ? parseFloat(totalAmountElement.value) || 0 : 0;
-    console.log("Total amount:", totalAmount);
     
     // Khởi tạo giỏ hàng từ dữ liệu JSON
     try {
         // Kiểm tra dữ liệu JSON từ biến toàn cục
         if (typeof cartItemsJsonData !== 'undefined' && cartItemsJsonData.trim()) {
             // Làm sạch chuỗi JSON (loại bỏ khoảng trắng thừa, dấu xuống dòng)
-            let cleanedJson = cartItemsJsonData.trim();
-            console.log("Raw cart JSON data:", cleanedJson);
-            
+            let cleanedJson = cartItemsJsonData.trim();           
             // Kiểm tra và xử lý JSON
             try {
                 // Thử parse để kiểm tra nếu JSON hợp lệ

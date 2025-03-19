@@ -323,14 +323,10 @@ public class SaleController extends HttpServlet {
             int totalInt = (int) Math.round(total);
             int customerPaidInt = (int) Math.round(customerPaid);
             
-            // Thêm log chi tiết hơn
-
             // Parse JSON cart items
             List<Map<String, Object>> orderItems = new ArrayList<>();
             if (cartItemsJson != null && !cartItemsJson.isEmpty()) {
                 try {
-                    // Log trước khi parse
-                    
                     Gson gson = new Gson();
                     Type type = new TypeToken<List<Map<String, Object>>>(){}.getType();
                     orderItems = gson.fromJson(cartItemsJson, type);
@@ -422,9 +418,7 @@ public class SaleController extends HttpServlet {
             if (orderId <= 0) {
                 throw new Exception("Cannot create oder: ");
             }
-            
-            LOGGER.info("Created new order with ID: " + orderId);
-            
+
             // Xử lý từng sản phẩm trong giỏ hàng
             boolean allItemsProcessed = true;
             
@@ -468,13 +462,7 @@ public class SaleController extends HttpServlet {
                     } else if (quantityObj instanceof Integer) {
                         quantity = (Integer) quantityObj;
                     }
-                    
-                    LOGGER.info("Processing product: ID=" + productId + 
-                               ", Name=" + productName +
-                               ", Quantity=" + quantity + 
-                               ", Price=" + price + 
-                               ", OrderID=" + orderId);
-                    
+
                     // Kiểm tra tồn kho
                     Product product = daoProduct.getProductById(productId);
                     if (product == null || product.getId() <= 0) {
@@ -488,8 +476,6 @@ public class SaleController extends HttpServlet {
                             .quantity(quantity)
                             .price(price)
                             .build();
-                    
-                    LOGGER.info("Saving order detail: " + orderDetail.toString());
                     
                     // Lưu chi tiết đơn hàng
                     boolean detailSaved = daoOrderDetails.addOrderDetail(orderDetail);
@@ -530,17 +516,17 @@ public class SaleController extends HttpServlet {
             }
             
             // Đặt các thuộc tính vào request để hiển thị trên trang hóa đơn
-            req.setAttribute("orderId", orderId);
-            req.setAttribute("orderDate", new Date());
-            req.setAttribute("customerName", customerName);
-            req.setAttribute("customerPhone", customerPhone);
-            req.setAttribute("employeeName", employee.getEmployeeName());
-            req.setAttribute("orderItems", orderItems);
-            req.setAttribute("total", total);
-            req.setAttribute("discount", 0); // Mặc định không có giảm giá
-            req.setAttribute("totalPayable", total);
-            req.setAttribute("customerPaid", customerPaid);
-            req.setAttribute("paymentMethod", paymentMethod);
+//            req.setAttribute("orderId", orderId);
+//            req.setAttribute("orderDate", new Date());
+//            req.setAttribute("customerName", customerName);
+//            req.setAttribute("customerPhone", customerPhone);
+//            req.setAttribute("employeeName", employee.getEmployeeName());
+//            req.setAttribute("orderItems", orderItems);
+//            req.setAttribute("total", total);
+//            req.setAttribute("discount", 0); // Mặc định không có giảm giá
+//            req.setAttribute("totalPayable", total);
+//            req.setAttribute("customerPaid", customerPaid);
+//            req.setAttribute("paymentMethod", paymentMethod);
             
             // Chuyển hướng đến trang hóa đơn
 //            req.getRequestDispatcher("report").forward(req, resp);
@@ -549,7 +535,7 @@ public class SaleController extends HttpServlet {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing checkout", e);
             req.setAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý thanh toán: " + e.getMessage());
-            req.getRequestDispatcher("/SalaManagement.jsp").forward(req, resp);
+            req.getRequestDispatcher("/SaleManagement.jsp").forward(req, resp);
         }
     }
     

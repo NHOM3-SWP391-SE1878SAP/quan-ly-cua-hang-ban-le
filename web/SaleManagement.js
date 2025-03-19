@@ -32,16 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePaymentModal();
     
     // Khởi tạo sự kiện cho các sản phẩm trong grid
-    initializeProductGrid();
-    
-    // Thêm phím tắt F4 để focus vào ô tìm kiếm khách hàng
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F4') {
-            e.preventDefault();
-            const customerSearchInput = document.getElementById('customerSearchInput');
-            if (customerSearchInput) customerSearchInput.focus();
-        }
-    });
+    initializeProductGrid();    
 });
 
 // Khởi tạo điều khiển số lượng

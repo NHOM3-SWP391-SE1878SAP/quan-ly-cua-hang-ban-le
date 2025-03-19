@@ -85,7 +85,7 @@ public class SaleController extends HttpServlet {
             // Đặt danh sách sản phẩm vào request attribute
             req.setAttribute("products", products);
             // Chuyển hướng đến trang sale.jsp
-            req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+            req.getRequestDispatcher("/SaleManagement.jsp").forward(req, resp);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error retrieving products for sale page", e);
             // Không thể chuyển hướng sau khi đã forward, nên chỉ log lỗi
@@ -243,7 +243,7 @@ public class SaleController extends HttpServlet {
             // Kiểm tra nếu giỏ hàng trống
             if (cartItems.isEmpty()) {
                 req.setAttribute("errorMessage", "Giỏ hàng trống, không thể thanh toán");
-                req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+                req.getRequestDispatcher("/SaleManagement.jsp").forward(req, resp);
                 return;
             }
             
@@ -258,12 +258,12 @@ public class SaleController extends HttpServlet {
             req.setAttribute("paymentMethods", daoPayment.getAllPaymentMethods());
             
             // Chuyển hướng đến trang thanh toán
-            req.getRequestDispatcher("/sale-payment.jsp").forward(req, resp);
+            req.getRequestDispatcher("/PaymentManagement.jsp").forward(req, resp);
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error showing payment page", e);
             req.setAttribute("errorMessage", "Lỗi hiển thị trang thanh toán: " + e.getMessage());
-            req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+            req.getRequestDispatcher("/SaleManagement.jsp").forward(req, resp);
         }
     }
     
@@ -347,7 +347,7 @@ public class SaleController extends HttpServlet {
             // Kiểm tra nếu giỏ hàng trống
             if (orderItems.isEmpty()) {
                 req.setAttribute("errorMessage", "Giỏ hàng trống, không thể thanh toán");
-                req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+                req.getRequestDispatcher("/SaleManagement.jsp").forward(req, resp);
                 return;
             }
             
@@ -549,7 +549,7 @@ public class SaleController extends HttpServlet {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing checkout", e);
             req.setAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý thanh toán: " + e.getMessage());
-            req.getRequestDispatcher("/sale.jsp").forward(req, resp);
+            req.getRequestDispatcher("/SalaManagement.jsp").forward(req, resp);
         }
     }
     
@@ -675,12 +675,12 @@ public class SaleController extends HttpServlet {
             req.setAttribute("paymentMethods", daoPayment.getAllPaymentMethods());
             
             // Chuyển hướng đến trang thanh toán
-            req.getRequestDispatcher("/sale-payment.jsp").forward(req, resp);
+            req.getRequestDispatcher("/PaymentManagement.jsp").forward(req, resp);
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error applying discount code", e);
             req.setAttribute("errorMessage", "Lỗi khi áp dụng mã giảm giá: " + e.getMessage());
-            req.getRequestDispatcher("/sale-payment.jsp").forward(req, resp);
+            req.getRequestDispatcher("/PaymentManagement.jsp").forward(req, resp);
         }
     }
     

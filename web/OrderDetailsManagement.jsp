@@ -1,52 +1,41 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Chi tiết ${detailType eq 'SALE' ? 'Đơn hàng' : 'Đơn trả hàng'}</title>
-        <!-- Bootstrap CSS -->
+        <title>Quản lý hóa đơn</title>
+        <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.css">
+        <link rel="stylesheet" href="assets/css/style.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="style.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
         <style>
-            .card {
-                border-radius: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            body {
+                background-color: #f5f5f5;
             }
-            .card-header {
-                background-color: #f8f9fa;
-                border-bottom: 1px solid #e9ecef;
+            .search-options {
+                padding: 15px;
             }
-            .table th {
-                font-weight: 600;
+            .table th, .table td {
+                padding: 0.5rem;
             }
-            .badge {
-                font-size: 0.9em;
+            .pagination-btn {
+                margin-right: 5px;
+            }
+            .main-content {
+                margin-left: 300px; /* Adjust according to the sidebar width */
+                margin-top: 35px;  /* Adjust this value based on the header height */
             }
         </style>
     </head>
-    <div class="search-bar d-flex justify-content-end align-items-center">
-
-        <div class="header-icons">
-            <span class="header-icon">0912345678</span>
-            <div class="dropdown d-inline-block">
-                <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-list"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="/Slim/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
-                    <li><a class="dropdown-item" href="/Slim/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
-                    <li><a class="dropdown-item" href="/Slim/order-return" ><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <body class="bg-light">
-        <div class="container py-4">
+    <body>
+        <%@include file="HeaderAdmin.jsp"%>
+        <!-- Main Content -->
+        <div class="main-content">
+           <div class="container py-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">
                     <c:choose>
@@ -58,7 +47,7 @@
                         </c:otherwise>
                     </c:choose>
                 </h2>
-                <a href="report" class="btn btn-outline-secondary">
+                <a href="order" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Quay lại
                 </a>
             </div>
@@ -194,8 +183,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- Bootstrap JS -->
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-</html> 
+</html>

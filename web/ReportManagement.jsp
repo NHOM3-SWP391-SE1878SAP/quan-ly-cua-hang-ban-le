@@ -9,7 +9,7 @@
     <title>Báo cáo - Hệ thống quản lý</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleHeaderSale.css">
     <style>
         body {
             background-color: #f5f5f5;
@@ -344,7 +344,6 @@
     <!-- Footer -->
     <footer class="bg-light py-3 mt-5">
         <div class="container text-center">
-            <p class="mb-0">© 2023 Hệ thống quản lý. All rights reserved.</p>
         </div>
     </footer>
 

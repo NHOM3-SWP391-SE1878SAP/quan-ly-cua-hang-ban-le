@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: PC
-  Date: 3/11/2025
-  Time: 5:08 AM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -16,8 +9,8 @@
         <title>Thanh toán - Hệ thống quản lý bán hàng</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="sale-css.css">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="SaleManagement.css">
+        <link rel="stylesheet" href="styleHeaderSale.css">
         <style>
             body {
                 background-color: #f8f9fa;
@@ -275,7 +268,7 @@
 
         <!-- Thêm tham chiếu đến file JavaScript mới -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="payment.js"></script>
+        <script src="PaymentManagement.js"></script>
 
         <!-- Thêm script để xử lý AJAX cho mã giảm giá -->
         <script>

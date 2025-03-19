@@ -9,8 +9,8 @@
     <title>Hệ thống quản lý bán hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="sale-css.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="SaleManagement.css">
+    <link rel="stylesheet" href="styleHeaderSale.css">
     <style>
         .product-search {
             position: relative;
@@ -77,51 +77,34 @@
             border-radius: 4px;
         }
         
-        /* Đảm bảo dropdown hiển thị đúng vị trí */
-        .search-container {
-            position: relative;
-        }
-        
-        /* Styles cho giỏ hàng */
-        #cartItems {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
+        /* Styles cho giỏ hàng */       
         #cartItems li {
             padding: 10px 15px;
             border-bottom: 1px solid #eee;
             display: flex;
             flex-direction: column;
-        }
-        
+        }        
         .cart-item-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
-        }
-        
+        }       
         .cart-item-name {
             font-weight: 500;
             color: #000;
-        }
-        
+        }      
         .cart-item-price {
             color: #0d6efd;
-        }
-        
+        }        
         .cart-item-controls {
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-        
+        }       
         .quantity-control {
             display: flex;
             align-items: center;
-        }
-        
+        }       
         .quantity-control button {
             width: 30px;
             height: 30px;
@@ -132,16 +115,13 @@
             justify-content: center;
             font-size: 16px;
             cursor: pointer;
-        }
-        
+        }      
         .quantity-control button:first-child {
             border-radius: 4px 0 0 4px;
-        }
-        
+        }    
         .quantity-control button:last-child {
             border-radius: 0 4px 4px 0;
-        }
-        
+        }  
         .quantity-control input {
             width: 40px;
             height: 30px;
@@ -149,8 +129,7 @@
             border-left: none;
             border-right: none;
             text-align: center;
-        }
-        
+        }        
         .remove-item {
             color: #dc3545;
             background: none;
@@ -165,7 +144,7 @@
     <div class="search-bar d-flex justify-content-between align-items-center">
         <div class="search-container" style="width: 30%;">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="Tìm hàng hóa (F3)" id="productSearchInput">
+            <input type="text" placeholder="Tìm hàng hóa" id="productSearchInput">
             <div id="productSearchResults"></div>
         </div>
         
@@ -205,18 +184,9 @@
             </div>
             
             <div class="cart-actions">
-                <button class="btn btn-secondary me-2 d-flex align-items-center">
-                    <i class="bi bi-lightning me-1"></i> Bán nhanh
-                </button>
-                
                 <button class="btn btn-primary me-2 d-flex align-items-center" id="checkoutBtn2">
-                    <i class="bi bi-bag me-1"></i> Bán thường
-                </button>
-                
-                <button class="btn btn-outline-secondary d-flex align-items-center">
-                    <i class="bi bi-truck me-1"></i> Bán giao hàng
-                </button>
-                
+                    <i class="bi bi-bag me-1"></i> Thanh toán
+                </button>          
                 <!-- Thêm form ẩn để gửi dữ liệu thanh toán -->
                 <form id="checkoutForm2" action="sale" method="post" style="display: none;">
                     <input type="hidden" name="action" value="showPayment">
@@ -238,7 +208,7 @@
                     </span>
                     <input type="text" 
                            class="form-control" 
-                           placeholder="Tìm khách hàng (F4)" 
+                           placeholder="Tìm khách hàng" 
                            id="customerSearchInput" 
                            autocomplete="off">
                     <div id="customerSearchResults"></div>
@@ -264,23 +234,12 @@
                         </div>
                     </div>
                 </c:forEach>
-            </div>
-            
-            <div class="d-flex justify-content-between mt-3">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-telephone me-2"></i>
-                    <span>1900 6522</span>
-                </div>
-                <div>
-                    <i class="bi bi-question-circle me-2"></i>
-                    <i class="bi bi-chat"></i>
-                </div>
-            </div>
+            </div>           
         </div>
     </div>
     
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="SaleManagement.js"></script>
 </body>
 </html>

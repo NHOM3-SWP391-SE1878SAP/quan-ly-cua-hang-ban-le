@@ -9,7 +9,7 @@
     <title>Hệ thống quản lý trả hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleHeaderSale.css">
 </head>
 <body>
     <!-- Header with search bar -->
@@ -44,9 +44,6 @@
                             <div class="col-2 text-center">Số lượng</div>
                             <div class="col-2 text-end">Đơn giá</div>
                             <div class="col-1 text-end">Thành tiền</div>
-                            <div class="col-1 text-end">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </div>
                         </div>
                         
                         <c:forEach var="detail" items="${orderDetails}" varStatus="status">
@@ -76,17 +73,6 @@
                                     <fmt:formatNumber value="${detail.price}" pattern="#,###" />
                                 </div>
                                 <div class="col-1 text-end product-total" data-product-id="${detail.productID}">0</div>
-                                <div class="col-1 text-end">
-                                    <i class="bi bi-three-dots-vertical action-menu-toggle"></i>
-                                </div>
-                                <div class="action-menu">
-                                    <div class="action-menu-item">
-                                        <i class="bi bi-pencil"></i> Ghi chú
-                                    </div>
-                                    <div class="action-menu-item">
-                                        <i class="bi bi-info-circle"></i> Xem chi tiết
-                                    </div>
-                                </div>
                             </div>
                         </c:forEach>
                     </div>
@@ -94,7 +80,6 @@
                 
                 <div class="mt-3 p-3 bg-white rounded">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-receipt me-2"></i>
                         <a href="<c:url value='/order-return'/>" class="btn btn-outline-primary">
                             Chọn hóa đơn trả hàng
                         </a>
@@ -103,44 +88,9 @@
             </div>
             
             <!-- Summary section -->
-            <div class="col-md-4">
-                <div class="customer-info mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <c:set var="employee" value="${accountDAO.getEmployeeByID(selectedOrder.employeeID)}" />
-                            <c:choose>
-                                <c:when test="${not empty employee}">${employee.employeeName}</c:when>
-                                <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
-                            </c:choose>
-                            <i class="bi bi-chevron-down"></i>
-                        </div>
-                        <div>
-                            <i class="bi bi-arrow-up"></i>
-                            <i class="bi bi-chevron-right"></i>
-                        </div>
-                    </div>
-                    <div class="mt-2">
-                        <i class="bi bi-person"></i> 
-                        <c:set var="customer" value="${customerDAO.getCustomerById(selectedOrder.customerID)}" />
-                        <c:choose>
-                            <c:when test="${not empty customer}">${customer.customerName}</c:when>
-                            <c:otherwise>Khách hàng #${selectedOrder.customerID}</c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-                
+            <div class="col-md-4">  
                 <div class="summary-panel">
-                    <div class="return-title">
-                        <span>Trả hàng / HD${String.format("%06d", selectedOrder.orderID)} - 
-                            <c:set var="employee" value="${accountDAO.getEmployeeByID(selectedOrder.employeeID)}" />
-                            <c:choose>
-                                <c:when test="${not empty employee}">${employee.employeeName}</c:when>
-                                <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
-                            </c:choose>
-                        </span>
-                    </div>
-                    
-                    <!-- Thông tin khách hàng -->
+                 <!-- Thông tin khách hàng -->
                     <div class="customer-info mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -149,11 +99,6 @@
                                     <c:when test="${not empty employee}">${employee.employeeName}</c:when>
                                     <c:otherwise>Nhân viên #${selectedOrder.employeeID}</c:otherwise>
                                 </c:choose>
-                                <i class="bi bi-chevron-down"></i>
-                            </div>
-                            <div>
-                                <i class="bi bi-arrow-up"></i>
-                                <i class="bi bi-chevron-right"></i>
                             </div>
                         </div>
                         <div class="mt-2">
@@ -161,7 +106,7 @@
                             <c:set var="customer" value="${customerDAO.getCustomerById(selectedOrder.customerID)}" />
                             <c:choose>
                                 <c:when test="${not empty customer}">${customer.customerName}</c:when>
-                                <c:otherwise>Khách hàng #${selectedOrder.customerID}</c:otherwise>
+                                <c:otherwise>Khách lẻ</c:otherwise>
                             </c:choose>
                         </div>
                     </div>
@@ -202,6 +147,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="SaleManagement.js"></script>
 </body>
 </html>

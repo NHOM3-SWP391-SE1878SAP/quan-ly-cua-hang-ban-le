@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet(name = "ReportController", urlPatterns = { "/report" })
-public class ReportController extends HttpServlet {
+@WebServlet(name = "OrderController", urlPatterns = { "/order" })
+public class OrderController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ReportController.class.getName());
     private static final int REPORTS_PER_PAGE = 10; // Số lượng báo cáo trên mỗi trang
@@ -162,7 +162,7 @@ public class ReportController extends HttpServlet {
             request.setAttribute("voucherDAO", daoVoucher);
             
             // Chuyển hướng đến trang báo cáo
-            request.getRequestDispatcher("/ReportManagement.jsp").forward(request, response);
+            request.getRequestDispatcher("/OrdersManagement.jsp").forward(request, response);
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing report request", e);
@@ -179,7 +179,7 @@ public class ReportController extends HttpServlet {
             // Lấy thông tin đơn hàng
             Order order = daoOrder.getOrderById(orderId);
             if (order == null) {
-                response.sendRedirect("report?error=OrderNotFound");
+                response.sendRedirect("order?error=OrderNotFound");
                 return;
             }
             
@@ -211,7 +211,7 @@ public class ReportController extends HttpServlet {
             request.setAttribute("daoProduct", daoProduct);
             
             // Chuyển hướng đến trang chi tiết
-            request.getRequestDispatcher("/ReportDetailManagement.jsp").forward(request, response);
+            request.getRequestDispatcher("/OrderDetailsManagement.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error viewing order details", e);
             response.sendRedirect("report?error=ErrorViewingOrderDetails");
@@ -227,7 +227,7 @@ public class ReportController extends HttpServlet {
             // Lấy thông tin đơn trả hàng
             Return returnOrder = daoReturn.getReturnById(returnId);
             if (returnOrder == null) {
-                response.sendRedirect("report?error=ReturnNotFound");
+                response.sendRedirect("order?error=ReturnNotFound");
                 return;
             }
             
@@ -260,7 +260,7 @@ public class ReportController extends HttpServlet {
             request.setAttribute("daoOrderDetails", daoOrderDetails);
             
             // Chuyển hướng đến trang chi tiết
-            request.getRequestDispatcher("/ReportDetailManagement.jsp").forward(request, response);
+            request.getRequestDispatcher("/OrderDetailsManagement.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error viewing return details", e);
             response.sendRedirect("report?error=ErrorViewingReturnDetails");
@@ -600,6 +600,6 @@ public class ReportController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Report Controller";
+        return "Order Controller";
     }
 }

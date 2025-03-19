@@ -79,14 +79,6 @@ body {
     color: white;
 }
 
-.note-input {
-    width: 100%;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    padding: 8px;
-    margin-top: 10px;
-}
-
 .customer-info {
     background-color: white;
     border-radius: 5px;
@@ -148,41 +140,6 @@ body {
     margin: 0 5px;
 }
 
-/* Action menu styling */
-.action-menu-toggle {
-    cursor: pointer;
-}
-
-.action-menu {
-    display: none;
-    position: absolute;
-    right: 10px;
-    top: 100%;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 100;
-    width: 150px;
-}
-
-.action-menu.show {
-    display: block;
-}
-
-.action-menu-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    border-bottom: 1px solid #f0f2f5;
-}
-
-.action-menu-item:last-child {
-    border-bottom: none;
-}
-
-.action-menu-item:hover {
-    background-color: #f8f9fa;
-}
-
 /* Styles for dropdown menu */
 .dropdown-menu {
     padding: 0;
@@ -213,31 +170,6 @@ body {
     margin: 0;
 }
 
-/* Modal styles */
-.modal-content {
-    border-radius: 8px;
-    border: none;
-}
-
-.modal-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.modal-title {
-    font-weight: 600;
-    color: #333;
-}
-
-.search-options {
-    padding: 10px;
-}
-
-.search-options h6 {
-    color: #495057;
-    font-weight: 600;
-}
-
 .form-label.small {
     font-size: 0.85rem;
     color: #6c757d;
@@ -262,9 +194,3 @@ body {
     color: #6c757d;
     font-size: 0.875rem;
 }
-
-.modal-footer .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    padding: 0.5rem 1.5rem;
-} 

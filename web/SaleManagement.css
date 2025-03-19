@@ -1,9 +1,3 @@
-:root {
-    --primary-color: #0d6efd;
-    --secondary-color: #f8f9fa;
-    --border-color: #dee2e6;
-    --text-color: #212529;
-}
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,16 +10,6 @@ body {
     flex-direction: column;
 }
 
-/* Header styles */
-.top-header {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    background-color: var(--primary-color);
-    color: white;
-    height: 60px;
-}
-
 .search-container {
     display: flex;
     align-items: center;
@@ -33,6 +17,7 @@ body {
     border-radius: 4px;
     padding: 5px 10px;
     width: 350px;
+    position: relative;
 }
 
 .search-container i {
@@ -45,34 +30,6 @@ body {
     background: transparent;
     outline: none;
     width: 100%;
-}
-
-.tab-container {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    color: var(--text-color);
-    padding: 5px 15px;
-    border-radius: 4px;
-    margin: 0 15px;
-}
-
-.tab-close {
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 1.2rem;
-}
-
-.header-icons {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-}
-
-.header-icon {
-    margin-left: 15px;
-    color: white;
-    text-decoration: none;
 }
 
 /* Main container styles */
@@ -157,14 +114,6 @@ body {
     margin-right: 15px;
 }
 
-.remove-btn {
-    background: none;
-    border: none;
-    color: #dc3545;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
-
 /* Right panel styles */
 .right-panel {
     width: 60%;
@@ -227,99 +176,11 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.summary-row:last-child {
-    margin-bottom: 0;
-}
-
 /* Cart actions styles */
 .cart-actions {
     padding: 15px;
     display: flex;
     justify-content: space-between;
-}
-
-/* Checkout button */
-.checkout-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-.checkout-btn:hover {
-    background-color: #0b5ed7;
-}
-
-/* Modal Thanh Toán */
-.payment-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 400px;
-    height: 100%;
-    background-color: white;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.payment-modal.show {
-    display: block;
-}
-
-.payment-modal-content {
-    padding: 20px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.payment-modal-header {
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.payment-modal-body {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 15px 0;
-}
-
-.payment-modal-footer {
-    padding-top: 15px;
-    border-top: 1px solid var(--border-color);
-}
-
-.payment-amount-btn {
-    font-size: 14px;
-    padding: 8px;
-}
-
-/* Overlay khi modal hiển thị */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
-
-.modal-overlay.show {
-    display: block;
 }
 
 /* Loading message */

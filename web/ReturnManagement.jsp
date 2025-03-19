@@ -9,13 +9,10 @@
     <title>Trả hàng - Hệ thống quản lý</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleHeaderSale.css">
     <style>
         body {
             background-color: #f5f5f5;
-        }
-        .search-options {
-            padding: 15px;
         }
         .table th, .table td {
             padding: 0.5rem;
@@ -143,7 +140,7 @@
                                                 <c:set var="customer" value="${customerDAO.getCustomerById(order.customerID)}" />
                                                 <c:choose>
                                                     <c:when test="${not empty customer}">${customer.customerName}</c:when>
-                                                    <c:otherwise>Khách hàng #${order.customerID}</c:otherwise>
+                                                    <c:otherwise>Khách lẻ</c:otherwise>
                                                 </c:choose>
                                             </td>
                                             <td class="text-end"><fmt:formatNumber value="${order.totalAmount}" pattern="#,###" /></td>
@@ -262,12 +259,12 @@
     <!-- Footer -->
     <footer class="bg-light py-3 mt-5">
         <div class="container text-center">
-            <p class="mb-0">© 2023 Hệ thống quản lý. All rights reserved.</p>
+           
         </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="SaleManagement.js"></script>
 </body>
 </html> 

@@ -133,7 +133,7 @@ public class OrderReturnController extends HttpServlet {
         req.setAttribute("customerDAO", customerDAO);
 
         // Trả về trang order_return_page.jsp
-        req.getRequestDispatcher("/order_return_page.jsp").forward(req, resp);
+        req.getRequestDispatcher("/ReturnManagement.jsp").forward(req, resp);
     }
 
     /**
@@ -348,7 +348,7 @@ public class OrderReturnController extends HttpServlet {
             req.setAttribute("totalAmount", totalAmount);
 
             // Chuyển hướng đến trang trả hàng
-            req.getRequestDispatcher("/order_Return.jsp").forward(req, resp);
+            req.getRequestDispatcher("/ReturnDetailManagement.jsp").forward(req, resp);
 
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid order ID format: {0}", orderIdStr);
@@ -523,7 +523,7 @@ public class OrderReturnController extends HttpServlet {
         // TODO: Implement logic to get current employee from session
         // Temporary return dummy employee
         Employee employee = new Employee();
-        employee.setEmployeeID(1); // Set appropriate employee ID
+        employee.setEmployeeID(2); // Set appropriate employee ID
         return employee;
     }
 }

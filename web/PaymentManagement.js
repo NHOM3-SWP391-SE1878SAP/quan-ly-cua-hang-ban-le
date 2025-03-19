@@ -2,24 +2,14 @@
  * JavaScript cho trang thanh toán
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("==== PAYMENT JS INITIALIZED ====");
-    
+  
     const checkoutForm = document.getElementById('checkoutForm');
     const submitBtn = document.querySelector('button[type="submit"]');
     const customerPaidInput = document.getElementById('customerPaidInput');
     const paymentMethodInput = document.getElementById('paymentMethodInput');
     const cartItemsInput = document.getElementById('cartItemsInput');
     const totalInput = document.getElementById('totalInput');
-    
-    console.log("Form elements:", {
-        checkoutForm: !!checkoutForm,
-        submitBtn: !!submitBtn,
-        customerPaidInput: !!customerPaidInput,
-        paymentMethodInput: !!paymentMethodInput,
-        cartItemsInput: !!cartItemsInput,
-        totalInput: !!totalInput
-    });
-    
+      
     // Lấy tổng tiền từ phần tử HTML
     const totalAmountElement = document.getElementById('totalAmountValue') || document.getElementById('totalInput');
     const totalAmount = totalAmountElement ? parseFloat(totalAmountElement.value) || 0 : 0;

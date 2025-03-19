@@ -64,15 +64,11 @@ public class OrderReturnController extends HttpServlet {
                 showOrderSelectionPage(req, resp);
             } else {
                 switch (action) {
-                    case "viewOrder":
-                        viewOrderDetails(req, resp);
-                        break;
+
                     case "returnOrder":
                         showReturnOrderPage(req, resp);
                         break;
-                    case "searchOrders":
-                        searchOrders(req, resp);
-                        break;
+
                     default:
                         showOrderSelectionPage(req, resp);
                         break;
@@ -162,8 +158,6 @@ public class OrderReturnController extends HttpServlet {
         // Lấy tất cả đơn hàng
         List<Order> allOrders = daoOrder.getAllOrders();
 
-        // TODO: Thêm logic lọc theo các tham số tìm kiếm
-        // Ví dụ:
         List<Order> filteredOrders = new ArrayList<>(allOrders);
 
         if (orderIdSearch != null && !orderIdSearch.isEmpty()) {
@@ -217,8 +211,7 @@ public class OrderReturnController extends HttpServlet {
                 LOGGER.log(Level.WARNING, "Invalid toDate format: " + toDateStr, e);
             }
         }
-
-        // Thêm các điều kiện lọc khác tương tự
+        
         return filteredOrders;
     }
 
@@ -266,30 +259,7 @@ public class OrderReturnController extends HttpServlet {
         req.setAttribute("toDate", toDateStr);
     }
 
-    /**
-     * Hiển thị chi tiết đơn hàng
-     */
-    private void viewOrderDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String orderIdStr = req.getParameter("orderId");
 
-        if (orderIdStr != null && !orderIdStr.isEmpty()) {
-            try {
-                int orderId = Integer.parseInt(orderIdStr);
-                Order order = daoOrder.getOrderById(orderId);
-
-                if (order != null) {
-                    req.setAttribute("order", order);
-                    req.getRequestDispatcher("/order_details.jsp").forward(req, resp);
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                LOGGER.log(Level.WARNING, "Invalid order ID: {0}", orderIdStr);
-            }
-        }
-
-        // Nếu không tìm thấy đơn hàng hoặc ID không hợp lệ, quay lại trang chọn đơn hàng
-        resp.sendRedirect(req.getContextPath() + "/order-return");
-    }
 
     /**
      * Hiển thị trang trả hàng với thông tin chi tiết đơn hàng
@@ -356,14 +326,6 @@ public class OrderReturnController extends HttpServlet {
         }
     }
 
-    /**
-     * Tìm kiếm đơn hàng
-     */
-    private void searchOrders(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Chuyển hướng đến trang chọn đơn hàng với các tham số tìm kiếm
-        showOrderSelectionPage(req, resp);
-    }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -378,9 +340,6 @@ public class OrderReturnController extends HttpServlet {
             switch (action) {
                 case "selectOrder":
                     processSelectOrder(req, resp);
-                    break;
-                case "quickReturn":
-                    processQuickReturn(req, resp);
                     break;
                 case "submitReturn":
                     processSubmitReturn(req, resp);
@@ -407,15 +366,6 @@ public class OrderReturnController extends HttpServlet {
         } else {
             resp.sendRedirect(req.getContextPath() + "/order-return");
         }
-    }
-
-    /**
-     * Xử lý khi người dùng nhấn nút "Trả nhanh"
-     */
-    private void processQuickReturn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: Xử lý logic trả nhanh
-
-        resp.sendRedirect(req.getContextPath() + "/order-return");
     }
 
     /**

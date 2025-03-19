@@ -56,12 +56,7 @@
                                 <label class="form-label small">Theo mã hóa đơn</label>
                                 <input type="text" class="form-control form-control-sm" name="orderId" placeholder="Nhập mã hóa đơn" value="${orderIdSearch}">
                             </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label small">Theo mã vận đơn bán</label>
-                                <input type="text" class="form-control form-control-sm" name="orderCode" placeholder="Nhập mã vận đơn" value="${orderCodeSearch}">
-                            </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label small">Theo khách hàng hoặc ĐT</label>
                                 <input type="text" class="form-control form-control-sm" name="customer" placeholder="Nhập tên hoặc SĐT" value="${customerSearch}">

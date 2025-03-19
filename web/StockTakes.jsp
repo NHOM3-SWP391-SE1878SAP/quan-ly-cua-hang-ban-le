@@ -31,7 +31,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Sản Phẩm chưa được nhập vào kho</h5>
-                                <table class="table table-borderless datatable mt-3">
+                                <table class="table table-hover datatable mt-3">
                                     <thead>
                                         <tr>
                                             <th scope="col" class="w-5">Ảnh</th>
@@ -56,18 +56,18 @@
                                                 <img src="<%= p.getImageURL() != null && !p.getImageURL().isEmpty() ? p.getImageURL() : "assets/img/no-image.png" %>" 
                                                      alt="Product Image" class="img-thumbnail" style="width: 60px; height: 60px;">
                                             </td>
-                                            <td><%= p.getProductCode() %></td>
-                                            <td><%= p.getProductName() %></td>
-                                            <td><%= p.getStockQuantity() %></td>
-                                            <td><%= String.format("%,d", p.getPrice()) %></td>
-                                            <td><%= String.format("%,d",p.getStockQuantity()*p.getPrice()) %></td>
-                                            <td>
+                                            <td style="align-content: center;"><%= p.getProductCode() %></td>
+                                            <td style="align-content: center;"><%= p.getProductName() %></td>
+                                            <td style="align-content: center;"><%= p.getStockQuantity() %></td>
+                                            <td style="align-content: center;"><%= String.format("%,d", p.getPrice()) %></td>
+                                            <td style="align-content: center;"><%= String.format("%,d",p.getStockQuantity()*p.getPrice()) %></td>
+                                            <td style="align-content: center;">
                                                 <span class="badge <%= p.getStockQuantity() == 0 ? "bg-danger" : (p.isIsAvailable() ? "bg-success" : "bg-secondary") %>">
                                                     <%= p.getStockQuantity() == 0 ? "Out of Stock" : (p.isIsAvailable() ? "Available" : "Stop Sell") %>
                                                 </span>
                                             </td>
-                                            <td>Phiếu kiểm kho được tạo khi cập nhật hàng hóa: <br><%=p.getProductCode()%></td>
-                                            <td style="text-align: center;">
+                                            <td style="align-content: center;">Phiếu kiểm kho được tạo khi cập nhật hàng hóa: <br><%=p.getProductCode()%></td>
+                                            <td style="align-content: center; text-align: center;">
                                                 <button class="btn btn-warning btn-sm"
                                                         onclick="showProductDetail('<%= p.getImageURL() %>',
                                                                 '<%= p.getProductCode() %>',

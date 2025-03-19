@@ -37,7 +37,6 @@
                                             <th scope="col">Ảnh</th>
                                             <th scope="col">Mã hàng</th>
                                             <th scope="col">Tên hàng</th>
-                                            <!--<th scope="col">Loại hàng</th>-->
                                             <th scope="col">Tồn kho</th>
                                             <th scope="col">Giá bán (VNĐ)</th>
                                             <th scope="col">Tổng giá</th>
@@ -59,7 +58,6 @@
                                             </td>
                                             <td><%= p.getProductCode() %></td>
                                             <td><%= p.getProductName() %></td>
-                                            
                                             <td><%= p.getStockQuantity() %></td>
                                             <td><%= String.format("%,d", p.getPrice()) %></td>
                                             <td><%= String.format("%,d",p.getStockQuantity()*p.getPrice()) %></td>

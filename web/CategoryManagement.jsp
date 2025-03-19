@@ -32,7 +32,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Danh Sách Các Loại Hàng</h5>
-                                <table class="table table-borderless datatable mt-3">
+                                <table class="table table-hover datatable mt-3">
                                     <thead>
                                         <tr>
                                             <th scope="col" class="w-15">Ảnh</th>
@@ -52,9 +52,9 @@
                                                 <img src="<%= category.getImage() != null && !category.getImage().isEmpty() ? category.getImage() : "assets/img/no-image.png" %>" 
                                                      alt="Category Image" class="img-thumbnail" style="width: 60px; height: 60px;">
                                             </td>
-                                            <td><%= category.getCategoryName() %></td>
-                                            <td><%= category.getDescription() %></td>
-                                            <td style="text-align: center;">
+                                            <td style="align-content: center"><%= category.getCategoryName() %></td>
+                                            <td style="align-content: center"><%= category.getDescription() %></td>
+                                            <td style="align-content: center; text-align: center;">
                                                 <a class="btn btn-success btn-sm" href="CategoryControllerURL?service=getProduct&categoryId=<%= category.getCategoryID() %>">
                                                     Xem hàng
                                                 </a>

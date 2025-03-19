@@ -32,13 +32,13 @@
                         <h5 class="card-title">Danh sách sản phẩm</h5>
 
                         <form action="ProductsControllerURL?service=updatePriceBatch" method="post" onsubmit="convertFormattedPriceBeforeSubmit()">
-                            <table class="table table-borderless datatable mt-3">
+                            <table class="table table-hover datatable mt-3">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Mã hàng</th>
-                                        <th scope="col">Tên hàng</th>
-                                        <th scope="col">Giá vốn (VNĐ)</th>
-                                        <th scope="col">Giá bán (VNĐ)</th>
+                                        <th scope="col" class="w-25">Mã hàng</th>
+                                        <th scope="col" class="w-25">Tên hàng</th>
+                                        <th scope="col" class="w-25">Giá vốn (VNĐ)</th>
+                                        <th scope="col" class="w-25">Giá bán (VNĐ)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -49,9 +49,9 @@
                                                 int unitCost = (p.getGoodReceiptDetail() != null) ? p.getGoodReceiptDetail().getUnitCost() : 0;
                                     %>
                                     <tr>
-                                        <td><%= p.getProductCode() %></td>
-                                        <td><%= p.getProductName() %></td>
-                                        <td><%= String.format("%,d", unitCost) %></td>
+                                        <td style="align-content: center;"><%= p.getProductCode() %></td>
+                                        <td style="align-content: center;"><%= p.getProductName() %></td>
+                                        <td style="align-content: center;"><%= String.format("%,d", unitCost) %></td>
                                         <td>
                                             <input type="hidden" name="productIds" value="<%= p.getId() %>">
                                             <input type="text" class="form-control price-input" name="prices" 

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded'); // Debug log
     // Khởi tạo các chức năng chung
     initializeQuantityControls();
-    initializeActionMenus();
+
     calculateTotals();
     
     // Thêm xử lý nút trả hàng
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeProductGrid();    
 });
 
-// Khởi tạo điều khiển số lượng
+// Khởi tạo điều khiển số lượng returnDtail
 function initializeQuantityControls() {
     const minusBtns = document.querySelectorAll('.minus-btn');
     const plusBtns = document.querySelectorAll('.plus-btn');
@@ -116,43 +116,6 @@ function updateProductTotal(input) {
     if (hiddenInput) {
         hiddenInput.value = currentValue;
     }
-}
-
-// Khởi tạo menu hành động
-function initializeActionMenus() {
-    const actionMenuToggles = document.querySelectorAll('.action-menu-toggle');
-    const actionMenus = document.querySelectorAll('.action-menu');
-
-    actionMenuToggles.forEach((toggle, index) => {
-        toggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            
-            // Đóng tất cả các menu khác
-            actionMenus.forEach((menu) => {
-                if (menu !== this.closest('.product-row').querySelector('.action-menu')) {
-                    menu.classList.remove('show');
-                }
-            });
-            
-            // Chuyển đổi menu hiện tại
-            const menu = this.closest('.product-row').querySelector('.action-menu');
-            menu.classList.toggle('show');
-        });
-    });
-
-    // Đóng menu hành động khi nhấp vào nơi khác
-    document.addEventListener('click', function() {
-        actionMenus.forEach(menu => {
-            menu.classList.remove('show');
-        });
-    });
-
-    // Ngăn menu đóng khi nhấp vào bên trong nó
-    actionMenus.forEach(menu => {
-        menu.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    });
 }
 
 // Tính toán tổng tiền
@@ -644,13 +607,7 @@ function initializeCheckoutButton() {
                 customerPhoneData.value = "";
                 customerIdData.value = "0"; // Mặc định là khách lẻ
             }
-            
-            console.log("Sending customer data:", {
-                name: customerNameData.value,
-                phone: customerPhoneData.value,
-                id: customerIdData.value
-            });
-            
+                        
             // Lấy thông tin giỏ hàng
             const cartItemsArray = [];
             const cartItemElements = document.querySelectorAll('#cartItems li');

@@ -226,7 +226,7 @@ public class DAOProduct extends DBConnect {
 
     public Vector<Product> getProductsWithUnitCost() {
         Vector<Product> products = new Vector<>();
-        String sql = "SELECT p.id, p.ProductCode, p.ProductName, grd.UnitCost, p.Price "
+        String sql = "SELECT p.id, p.ProductCode, p.ProductName, grd.BatchNumber, grd.UnitCost, p.Price "
                 + "FROM Products p "
                 + "JOIN GoodReceiptDetails grd ON p.ID = grd.ProductsID";
 
@@ -236,9 +236,9 @@ public class DAOProduct extends DBConnect {
                 int id = rs.getInt("ID");
                 String productCode = rs.getString("ProductCode");
                 String productName = rs.getString("ProductName");
-                int unitCost = rs.getInt("UnitCost"); // Giá vốn
-                int price = rs.getInt("Price"); // Giá bán
-
+                String batchNumber = rs.getString("BatchNumber");
+                int unitCost = rs.getInt("UnitCost"); 
+                int price = rs.getInt("Price"); 
                 // Tạo đối tượng Product chỉ với các thông tin cần thiết
                 Product product = new Product();
                 product.setId(id);
@@ -247,6 +247,7 @@ public class DAOProduct extends DBConnect {
                 product.setPrice(price);
 
                 GoodReceiptDetail grd = new GoodReceiptDetail();
+                grd.setBatchNumber(batchNumber);
                 grd.setUnitCost(unitCost);
                 product.setGoodReceiptDetail(grd);
 
@@ -260,12 +261,11 @@ public class DAOProduct extends DBConnect {
 
     public Vector<Product> getProductsStockTakes() {
         Vector<Product> products = new Vector<>();
-        // Câu lệnh SQL mới với JOIN bảng Categories để lấy thêm tên danh mục
         String sql = "SELECT p.id, p.ProductCode, p.ProductName, p.StockQuantity, p.IsAvailable, p.Price, p.ImageURL, c.CategoryName "
                 + "FROM Products p "
                 + "LEFT JOIN GoodReceiptDetails grd ON p.ID = grd.ProductsID "
                 + "LEFT JOIN Categories c ON p.CategoryID = c.ID "
-                + "WHERE grd.ProductsID IS NULL"; // Chỉ lấy những sản phẩm chưa có thông tin phiếu nhập kho
+                + "WHERE grd.ProductsID IS NULL"; 
 
         try (PreparedStatement pre = conn.prepareStatement(sql); ResultSet rs = pre.executeQuery()) {
 

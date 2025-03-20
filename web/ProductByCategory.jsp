@@ -44,7 +44,7 @@
                                         <div class="row">
                                             <div style="text-align: center;">
                                                 <img src="<%= category.getImage() != null && !category.getImage().isEmpty() ? category.getImage() : "assets/img/no-image.png" %>" 
-                                                     alt="Category Image" class="img-thumbnail" style="width: 200px; height: 200px;">
+                                                     alt="Category Image" class="img-thumbnail" style="width: 250px; height: 200px; object-fit: cover;">
                                             </div>
                                         </div>
                                     </div>
@@ -53,8 +53,8 @@
                                             <h5 class="card-title">Thông tin loại hàng</h5>
                                         </div>
                                         <div class="row">
-                                            <div style="margin-bottom: 5px">Loại hàng: <%= category.getCategoryName() %></div>
-                                            <div style="margin-bottom: 5px">Mô tả: <%= category.getDescription() %></div>
+                                            <div style="margin-bottom: 5px"><a class="text-primary" style="font-weight: bold;">Loại hàng: </a><%= category.getCategoryName() %></div>
+                                            <div style="margin-bottom: 5px"><a class="text-primary" style="font-weight: bold;">Mô tả: </a><%= category.getDescription() %></div>
                                         </div>
                                     </div>
                                 </div>

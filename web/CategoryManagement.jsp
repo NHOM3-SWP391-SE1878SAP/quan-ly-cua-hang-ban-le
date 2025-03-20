@@ -50,7 +50,7 @@
                                         <tr>
                                             <td>
                                                 <img src="<%= category.getImage() != null && !category.getImage().isEmpty() ? category.getImage() : "assets/img/no-image.png" %>" 
-                                                     alt="Category Image" class="img-thumbnail" style="width: 60px; height: 60px;">
+                                                     alt="Category Image" class="img-thumbnail" style="width: 80px; height: 60px; object-fit: contain;">
                                             </td>
                                             <td style="align-content: center"><%= category.getCategoryName() %></td>
                                             <td style="align-content: center"><%= category.getDescription() %></td>

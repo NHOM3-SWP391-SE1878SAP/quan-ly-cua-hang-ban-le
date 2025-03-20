@@ -54,7 +54,7 @@
                                         <tr>
                                             <td>
                                                 <img src="<%= p.getImageURL() != null && !p.getImageURL().isEmpty() ? p.getImageURL() : "assets/img/no-image.png" %>" 
-                                                     alt="Product Image" class="img-thumbnail" style="width: 60px; height: 60px;">
+                                                     alt="Product Image" class="img-thumbnail" style="width: 80px; height: 60px;  object-fit: contain;">
                                             </td>
                                             <td style="align-content: center;"><%= p.getProductCode() %></td>
                                             <td style="align-content: center;"><%= p.getProductName() %></td>

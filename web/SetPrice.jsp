@@ -35,10 +35,11 @@
                             <table class="table table-hover datatable mt-3">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="w-25">Mã hàng</th>
-                                        <th scope="col" class="w-25">Tên hàng</th>
-                                        <th scope="col" class="w-25">Giá vốn (VNĐ)</th>
-                                        <th scope="col" class="w-25">Giá bán (VNĐ)</th>
+                                        <th scope="col" class="w-20">Mã hàng</th>
+                                        <th scope="col" class="w-20">Tên hàng</th>
+                                        <th scope="col" class="w-20">Số lô</th>
+                                        <th scope="col" class="w-20">Giá vốn (VNĐ)</th>
+                                        <th scope="col" class="w-20">Giá bán (VNĐ)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,6 +52,7 @@
                                     <tr>
                                         <td style="align-content: center;"><%= p.getProductCode() %></td>
                                         <td style="align-content: center;"><%= p.getProductName() %></td>
+                                        <td style="align-content: center;"><%= p.getGoodReceiptDetail().getBatchNumber() %></td>
                                         <td style="align-content: center;"><%= String.format("%,d", unitCost) %></td>
                                         <td>
                                             <input type="hidden" name="productIds" value="<%= p.getId() %>">

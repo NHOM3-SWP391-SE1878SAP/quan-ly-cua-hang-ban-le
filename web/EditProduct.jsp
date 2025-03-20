@@ -54,7 +54,7 @@
                                         Category category = product.getCategory();
                                 %>
 
-                                <form action="ProductsControllerURL" method="post" class="w-100">
+                                <form action="ProductsControllerURL" method="post" class="w-100" onsubmit="return validateForm()">
                                     <input type="hidden" name="service" value="updateProduct">
                                     <input type="hidden" name="productId" value="<%= product.getId() %>">
 
@@ -115,5 +115,21 @@
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
         <script src="assets/js/main.js"></script>
+        <script>
+            function validateForm() {
+                let productName = document.getElementById("productName").value.trim();
+                let productCode = document.getElementById("productCode").value.trim();
+
+                if (productName.length < 3) {
+                    alert("Tên sản phẩm phải có ít nhất 3 ký tự.");
+                    return false;
+                }
+                if (!/^[A-Z0-9]+$/.test(productCode)) {
+                    alert("Mã sản phẩm chỉ được chứa chữ in hoa và số.");
+                    return false;
+                }
+                return true;
+            }
+        </script>
     </body>
 </html>

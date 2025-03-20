@@ -14,7 +14,6 @@
     </head>
     <body>
         <%@include file="HeaderAdmin.jsp"%>
-
         <main id="main" class="main">
             <div class="pagetitle">
                 <h1>Quản lý sản phẩm</h1>
@@ -28,7 +27,6 @@
 
             <section class="section">
                 <div class="row">
-
                     <a href="AddProduct.jsp" class="btn btn-primary mb-3">Thêm sản phẩm</a>
                     <div class="col-lg-2">
                         <div class="card">
@@ -104,7 +102,7 @@
                                                                    '<%= p.getStockQuantity() %>',
                                                                    '<%= p.getStockQuantity() == 0 ? "Hết hàng" : (p.isIsAvailable() ? "Còn hàng" : "Ngừng bán") %>')">
                                                     <img src="<%= p.getImageURL() != null && !p.getImageURL().isEmpty() ? p.getImageURL() : "assets/img/no-image.png" %>" 
-                                                         alt="Product Image" class="img-thumbnail" style="width: 60px; height: 60px;">
+                                                         alt="Product Image" class="img-thumbnail" style="width: 80px; height: 60px;  object-fit: contain;">
                                                 </a>
                                             </td>
                                             <td style="align-content: center;"><%= p.getProductCode() %></td>

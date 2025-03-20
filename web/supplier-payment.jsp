@@ -1,6 +1,6 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%> <%@ taglib prefix="c"
-uri="http://java.sun.com/jsp/jstl/core" %> <%@ taglib prefix="fmt"
-uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,14 +23,8 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
     />
 
     <!-- Vendor CSS Files -->
-    <link
-      href="assets/vendor/bootstrap/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
-      rel="stylesheet"
-    />
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
     <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
     <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
     <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
@@ -39,7 +33,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
-
+    
     <style>
       .badge {
         padding: 5px 10px;
@@ -47,12 +41,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         font-size: 12px;
         font-weight: 500;
       }
-
+      
       .badge-active {
         background-color: #00c853;
         color: white;
       }
-
+      
       .badge-inactive {
         background-color: #757575;
         color: white;
@@ -68,7 +62,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         border-color: #00c853;
       }
     </style>
-  </head>
+</head>
   <body>
     <!-- ======= Header ======= -->
     <%@include file="HeaderAdmin.jsp"%>
@@ -79,9 +73,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item">
-              <a href="supplier?action=list">Nhà cung cấp</a>
-            </li>
+            <li class="breadcrumb-item"><a href="supplier?action=list">Nhà cung cấp</a></li>
             <li class="breadcrumb-item active">Nợ cần trả NCC</li>
           </ol>
         </nav>
@@ -94,50 +86,30 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
               <div class="card-body">
                 <h5 class="card-title">Thao tác nhanh</h5>
                 <div class="d-grid gap-2">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    onclick="window.location.href='supplier?action=view&id=${supplier.id}'"
-                  >
+                  <button type="button" class="btn btn-primary" onclick="window.location.href='supplier-infor.jsp?id=${param.id}'">
                     <i class="bi bi-info-circle"></i> Thông tin nhà cung cấp
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-success"
-                    onclick="window.location.href='supplier?action=history&id=${supplier.id}'"
-                  >
+                  <button type="button" class="btn btn-success" onclick="window.location.href='supplier-purchase-history.jsp?id=${param.id}'">
                     <i class="bi bi-clock-history"></i> Lịch sử nhập/trả hàng
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-info text-white"
-                    onclick="window.location.href='supplier?action=exportTransactions&id=${supplier.id}'"
-                  >
+                  <button type="button" class="btn btn-info text-white">
                     <i class="bi bi-download"></i> Xuất thông tin
                   </button>
                 </div>
 
-                <hr />
+                <hr>
 
                 <div class="text-center mb-3">
                   <div class="fs-5">Nợ hiện tại</div>
                   <div class="fs-4 text-danger">
-                    <fmt:formatNumber
-                      value="${supplier.currentDebt}"
-                      type="currency"
-                      currencySymbol="₫"
-                    />
+                    <fmt:formatNumber value="${supplier.currentDebt}" type="currency" currencySymbol="₫"/>
                   </div>
                 </div>
 
                 <div class="mb-3">
                   <label class="form-label">Tổng mua</label>
                   <div class="fs-5 text-end">
-                    <fmt:formatNumber
-                      value="${supplier.totalPurchase}"
-                      type="currency"
-                      currencySymbol="₫"
-                    />
+                    <fmt:formatNumber value="${supplier.totalPurchase}" type="currency" currencySymbol="₫"/>
                   </div>
                 </div>
               </div>
@@ -153,18 +125,10 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
                 <ul class="nav nav-tabs mb-3">
                   <li class="nav-item">
-                    <a
-                      class="nav-link"
-                      href="supplier?action=view&id=${supplier.id}"
-                      >Thông tin</a
-                    >
+                    <a class="nav-link" href="supplier-infor.jsp?id=${param.id}">Thông tin</a>
                   </li>
                   <li class="nav-item">
-                    <a
-                      class="nav-link"
-                      href="supplier?action=history&id=${supplier.id}"
-                      >Lịch sử nhập/trả hàng</a
-                    >
+                    <a class="nav-link" href="supplier-purchase-history.jsp?id=${param.id}">Lịch sử nhập/trả hàng</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link active" href="#">Nợ cần trả NCC</a>
@@ -174,20 +138,10 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                 <div class="mb-3">
                   <form id="filterForm" class="row g-3">
                     <div class="col-md-4">
-                      <input
-                        type="date"
-                        class="form-control"
-                        name="fromDate"
-                        value="${fromDate}"
-                      />
+                      <input type="date" class="form-control" name="fromDate" value="${fromDate}">
                     </div>
                     <div class="col-md-4">
-                      <input
-                        type="date"
-                        class="form-control"
-                        name="toDate"
-                        value="${toDate}"
-                      />
+                      <input type="date" class="form-control" name="toDate" value="${toDate}">
                     </div>
                     <div class="col-md-4">
                       <button type="submit" class="btn btn-primary">
@@ -215,33 +169,16 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                           <td>
                             <a href="#" class="text-primary">${trans.id}</a>
                           </td>
-                          <td>
-                            <fmt:formatDate
-                              value="${trans.date}"
-                              pattern="dd/MM/yyyy HH:mm"
-                            />
-                          </td>
+                          <td><fmt:formatDate value="${trans.date}" pattern="dd/MM/yyyy HH:mm"/></td>
                           <td>${trans.type}</td>
                           <td class="text-end">
-                            <fmt:formatNumber
-                              value="${trans.amount}"
-                              type="currency"
-                              currencySymbol="₫"
-                            />
+                            <fmt:formatNumber value="${trans.amount}" type="currency" currencySymbol="₫"/>
                           </td>
                           <td class="text-end">
-                            <fmt:formatNumber
-                              value="${trans.remainingDebt}"
-                              type="currency"
-                              currencySymbol="₫"
-                            />
+                            <fmt:formatNumber value="${trans.remainingDebt}" type="currency" currencySymbol="₫"/>
                           </td>
                           <td>
-                            <a
-                              href="#"
-                              class="btn btn-sm btn-info text-white"
-                              title="Chi tiết"
-                            >
+                            <a href="#" class="btn btn-sm btn-info text-white" title="Chi tiết">
                               <i class="bi bi-eye"></i>
                             </a>
                           </td>
@@ -252,19 +189,13 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                 </div>
 
                 <div class="d-flex gap-2 mt-3">
-                  <button
-                    class="btn btn-primary"
-                    onclick="showAdjustmentModal()"
-                  >
+                  <button class="btn btn-primary" onclick="showAdjustmentModal()">
                     <i class="bi bi-arrow-repeat"></i> Điều chỉnh
                   </button>
                   <button class="btn btn-success" onclick="showPaymentModal()">
                     <i class="bi bi-cash-coin"></i> Thanh toán
                   </button>
-                  <button
-                    class="btn btn-info text-white"
-                    onclick="showDiscountModal()"
-                  >
+                  <button class="btn btn-info text-white" onclick="showDiscountModal()">
                     <i class="bi bi-receipt"></i> Chiết khấu thanh toán
                   </button>
                 </div>
@@ -281,28 +212,19 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Thanh toán công nợ</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <form id="paymentForm" action="supplier" method="POST">
-              <input type="hidden" name="action" value="makePayment" />
-              <input type="hidden" name="supplierId" value="${supplier.id}" />
-
+              <input type="hidden" name="action" value="makePayment">
+              <input type="hidden" name="supplierId" value="${supplier.id}">
+              
               <div class="mb-3">
                 <label class="form-label">Số tiền thanh toán</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  name="amount"
-                  required
-                  max="${supplier.currentDebt}"
-                />
+                <input type="number" class="form-control" name="amount" required 
+                       max="${supplier.currentDebt}">
               </div>
-
+              
               <div class="mb-3">
                 <label class="form-label">Phương thức thanh toán</label>
                 <select class="form-select" name="paymentMethod" required>
@@ -310,7 +232,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                   <option value="BANK">Chuyển khoản</option>
                 </select>
               </div>
-
+              
               <div class="mb-3">
                 <label class="form-label">Ghi chú</label>
                 <textarea class="form-control" name="notes" rows="3"></textarea>
@@ -318,16 +240,8 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Hủy
-            </button>
-            <button type="submit" form="paymentForm" class="btn btn-primary">
-              Xác nhận
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" form="paymentForm" class="btn btn-primary">Xác nhận</button>
           </div>
         </div>
       </div>
@@ -347,37 +261,30 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/supplier-payment.js"></script>
     <script>
-      // Apply currency formatting on load
-      document.addEventListener("DOMContentLoaded", function () {
-        // Format debt and total amount in header
-        const debtElement = document.querySelector(".fs-5");
-        const totalElement = debtElement.nextElementSibling;
-
-        if (debtElement) {
-          const debtValue = parseCurrency(
-            debtElement.textContent.split(":")[1]
-          );
-          debtElement.innerHTML = "Nợ hiện tại: " + formatCurrency(debtValue);
-        }
-
-        if (totalElement) {
-          const totalValue = parseCurrency(
-            totalElement.textContent.split(":")[1]
-          );
-          totalElement.innerHTML = "Tổng mua: " + formatCurrency(totalValue);
-        }
-
-        // Format amounts in transaction table
-        document.querySelectorAll(".text-end").forEach((cell) => {
-          if (
-            cell.textContent.trim() &&
-            !isNaN(parseCurrency(cell.textContent))
-          ) {
-            const value = parseCurrency(cell.textContent);
-            cell.textContent = formatCurrency(value);
-          }
+        // Apply currency formatting on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format debt and total amount in header
+            const debtElement = document.querySelector('.fs-5');
+            const totalElement = debtElement.nextElementSibling;
+            
+            if (debtElement) {
+                const debtValue = parseCurrency(debtElement.textContent.split(':')[1]);
+                debtElement.innerHTML = 'Nợ hiện tại: ' + formatCurrency(debtValue);
+            }
+            
+            if (totalElement) {
+                const totalValue = parseCurrency(totalElement.textContent.split(':')[1]);
+                totalElement.innerHTML = 'Tổng mua: ' + formatCurrency(totalValue);
+            }
+            
+            // Format amounts in transaction table
+            document.querySelectorAll('.text-end').forEach(cell => {
+                if (cell.textContent.trim() && !isNaN(parseCurrency(cell.textContent))) {
+                    const value = parseCurrency(cell.textContent);
+                    cell.textContent = formatCurrency(value);
+                }
+            });
         });
-      });
     </script>
-  </body>
+</body>
 </html>

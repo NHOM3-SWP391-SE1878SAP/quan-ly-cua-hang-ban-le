@@ -13,12 +13,12 @@ public class DAOSupplier extends DBConnect {
     
     public List<GoodReceipt> getGoodReceipts(int supplierId, String fromDate, String toDate) {
         List<GoodReceipt> list = new ArrayList<>();
-        String sql = "SELECT * FROM GoodReceipts WHERE SupplierID=?";
+        String sql = "SELECT * FROM [GoodsReceipt] WHERE [SuppliersID]=?";
         if (fromDate != null && !fromDate.isEmpty()) {
-            sql += " AND ReceivedDate >= ?";
+            sql += " AND [ReceivedDate] >= ?";
         }
         if (toDate != null && !toDate.isEmpty()) {
-            sql += " AND ReceivedDate <= ?";
+            sql += " AND [ReceivedDate] <= ?";
         }
         try {
             PreparedStatement st = conn.prepareStatement(sql);
@@ -33,10 +33,10 @@ public class DAOSupplier extends DBConnect {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 GoodReceipt receipt = new GoodReceipt();
-                receipt.setGoodReceiptID(rs.getInt("GoodReceiptID"));
+                receipt.setGoodReceiptID(rs.getInt("ID"));
                 receipt.setReceivedDate(rs.getDate("ReceivedDate"));
                 receipt.setTotalCost(rs.getInt("TotalCost"));
-                receipt.setSupplier(getSupplierById(rs.getInt("SupplierID")));
+                receipt.setSupplier(getSupplierById(rs.getInt("SuppliersID")));
                 list.add(receipt);
             }
         } catch (SQLException e) {

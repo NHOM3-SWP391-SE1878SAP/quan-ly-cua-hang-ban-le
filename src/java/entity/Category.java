@@ -5,7 +5,8 @@ public class Category {
     private String categoryName;
     private String description;
     private String image;
-
+    private Product Product;
+    
     public Category() {
     }
 
@@ -16,6 +17,22 @@ public class Category {
         this.image = image;
     }
 
+    public Category(int categoryID, String categoryName, String description, String image, Product Product) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.description = description;
+        this.image = image;
+        this.Product = Product;
+    }
+
+    public Product getProduct() {
+        return Product;
+    }
+
+    public void setProduct(Product Product) {
+        this.Product = Product;
+    }
+    
     public int getCategoryID() {
         return categoryID;
     }

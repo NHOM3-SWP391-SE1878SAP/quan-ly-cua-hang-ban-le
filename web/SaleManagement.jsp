@@ -1,179 +1,251 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.Vector" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="entity.Product" %>
-<%@ page import="entity.CartItem" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="entity.Account" %>
 <!DOCTYPE html>
-<html>     
-    <head>         
-        <meta charset="UTF-8">         
-        <title>POS System</title>         
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">         
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">         
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống quản lý bán hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="SaleManagement.css">
+    <link rel="stylesheet" href="styleHeaderSale.css">
+    <style>
+        .product-search {
+            position: relative;
+        }
 
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f8f9fa;
-            }
-            .top-bar {
-                background-color: #007bff;
-                color: white;
-                padding: 10px;
-            }
-            .cart-container {
-                background-color: white;
-                padding: 15px;
-                border-radius: 5px;
-            }
-            .cart-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin: 5px 0;
-                padding: 10px;
-                border-bottom: 1px solid #ddd;
-            }
-            .product-list {
-                height: 500px;
-                overflow-y: auto;
-                margin-bottom: 10px;
-            }
-            .product-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-            .product-grid-item {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 10px;
-                border: 1px solid #ddd;
-                cursor: pointer;
-                text-align: center;
-            }
-            .product-image {
-                width: 80px;
-                height: auto;
-                margin-bottom: 10px;
-            }
-            .cart-actions button {
-                border: none;
-                background: none;
-                font-size: 16px;
-                cursor: pointer;
-                margin-left: 5px;
-            }
-        </style>
+        #customerSearchResults, #productSearchResults {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            margin-top: 2px;
+            width: 100%;
+        }
 
-        <script>
-            function addToCart(productId) {
-                $.post("CartController", {action: "add", productId: productId}, function (data) {
-                    $("#cart-items").html(data);
-                    updateTotal();
-                });
-            }
+        #customerSearchResults.show, #productSearchResults.show {
+            display: block !important;
+        }
 
-            function updateCart(productId, actionType) {
-                $.post("CartController", {action: actionType, productId: productId}, function (data) {
-                    $("#cart-items").html(data);
-                    updateTotal();
-                });
-            }
+        .customer-item, .product-item {
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
 
-            function updateTotal() {
-                $.get("CartController", {action: "getTotal"}, function (total) {
-                    $("#totalAmount").text(total + " VND");
-                });
-            }
-        </script>
-    </head>     
+        .customer-item:hover, .product-item:hover {
+            background-color: #f0f8ff;
+        }
 
-    <body>         
-        <div class="top-bar d-flex justify-content-end">             
-            <div>                 
-                <i class="fas fa-shopping-cart me-3"></i>                 
-                <i class="fas fa-sync-alt me-3"></i>                 
-                <i class="fas fa-print me-3"></i>                 
-                <span>0385726162</span>                 
-                <i class="fas fa-bars menu-icon ms-3"></i>             
-            </div>         
-        </div>          
+        .customer-item:last-child, .product-item:last-child {
+            border-bottom: none;
+        }
 
-        <div class="container mt-3">             
-            <div class="row">                 
-                <!-- Giỏ hàng bên trái -->                 
-                <div class="col-md-6">                     
-                    <div class="cart-container">                         
-                        <h5>Giỏ hàng</h5>    
+        .customer-name, .product-name {
+            color: #000;
+            font-weight: 500;
+        }
 
-                        <!-- Ô tìm khách hàng -->
-                        <input type="text" class="form-control mb-3" placeholder="Tìm khách hàng...">                     
+        .customer-phone, .product-code {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .product-price {
+            color: #0d6efd;
+            min-width: 70px;
+            text-align: right;
+        }
+        
+        .product-stock {
+            color: #28a745;
+            font-size: 0.85em;
+        }
+        
+        .product-image img {
+            object-fit: contain;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        /* Styles cho giỏ hàng */       
+        #cartItems li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }        
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }       
+        .cart-item-name {
+            font-weight: 500;
+            color: #000;
+        }      
+        .cart-item-price {
+            color: #0d6efd;
+        }        
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }       
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }       
+        .quantity-control button {
+            width: 30px;
+            height: 30px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }      
+        .quantity-control button:first-child {
+            border-radius: 4px 0 0 4px;
+        }    
+        .quantity-control button:last-child {
+            border-radius: 0 4px 4px 0;
+        }  
+        .quantity-control input {
+            width: 40px;
+            height: 30px;
+            border: 1px solid #dee2e6;
+            border-left: none;
+            border-right: none;
+            text-align: center;
+        }        
+        .remove-item {
+            color: #dc3545;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with search bar -->
+    <div class="search-bar d-flex justify-content-between align-items-center">
+        <div class="search-container" style="width: 30%;">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Tìm hàng hóa" id="productSearchInput">
+            <div id="productSearchResults"></div>
+        </div>
+        
+        <div class="header-icons">
+            <% 
+    Account account = (Account) session.getAttribute("account");
+    String phoneNumber = (account != null) ? account.getPhone() : "Chưa đăng nhập";
+%>
+<span class="header-icon"><%= phoneNumber %></span>
 
-                        <div id="cart-items">
-                            <% 
-                                Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
-                                if (cart != null && !cart.isEmpty()) {
-                                    for (CartItem item : cart.values()) { 
-                            %>
-                            <div class="cart-item">
-                                <span><%= item.getProduct().getProductName() %> (x<%= item.getQuantity() %>)</span>
-                                <span><%= item.getProduct().getPrice() * item.getQuantity() %> VND</span>
-                                <div class="cart-actions">
-                                    <button onclick="updateCart(<%= item.getProduct().getId() %>, 'decrease')">➖</button>
-                                    <button onclick="updateCart(<%= item.getProduct().getId() %>, 'increase')">➕</button>
-                                    <button onclick="updateCart(<%= item.getProduct().getId() %>, 'remove')">🗑️</button>
-                                </div>
-                            </div>
-                            <% 
-                                    }
-                                } else { 
-                            %>
-                            <p class="text-danger">Giỏ hàng trống.</p>
-                            <% } %>
+            <div class="dropdown d-inline-block">
+                <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
+                    <li><a class="dropdown-item" href="/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
+                    <li><a class="dropdown-item" href="/order-return"><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
+                    <li><a class="dropdown-item" href="/Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left panel - Cart -->
+        <div class="left-panel">
+            <ul class="product-list" id="cartItems">
+                <!-- Cart items will be dynamically added here -->
+            </ul>
+            
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Tổng tiền hàng</span>
+                    <span id="cartTotal">0</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span>Số lượng</span>
+                    <span id="cartQuantity">0</span>
+                </div>
+            </div>
+            
+            <div class="cart-actions">
+                <button class="btn btn-primary me-2 d-flex align-items-center" id="checkoutBtn2">
+                    <i class="bi bi-bag me-1"></i> Thanh toán
+                </button>          
+                <!-- Thêm form ẩn để gửi dữ liệu thanh toán -->
+                <form id="checkoutForm2" action="sale" method="post" style="display: none;">
+                    <input type="hidden" name="action" value="showPayment">
+                    <input type="hidden" name="cartItems" id="cartItemsData">
+                    <input type="hidden" name="customerName" id="customerNameData">
+                    <input type="hidden" name="customerPhone" id="customerPhoneData">
+                    <input type="hidden" name="customerId" id="customerIdData">
+                    <input type="hidden" name="total" id="totalData">
+                </form>
+            </div>
+        </div>
+        
+        <!-- Right panel - Product selection -->
+        <div class="right-panel">
+            <div class="product-search position-relative">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Tìm khách hàng" 
+                           id="customerSearchInput" 
+                           autocomplete="off">
+                    <div id="customerSearchResults"></div>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="product-grid">
+                <c:forEach var="product" items="${products}">
+                    <div class="product-card" 
+                         data-product-id="${product.id}" 
+                         data-product-code="${product.productCode}" 
+                         data-product-name="${product.productName}" 
+                         data-product-price="${product.price}"
+                         data-product-stockquantity="${product.stockQuantity}">
+                        <img src="${not empty product.imageURL ? product.imageURL : 'https://via.placeholder.com/60'}" 
+                             alt="${product.productName}">
+                        <div class="product-card-name">${product.productName}</div>
+                        <div class="product-card-price">
+                            <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                         </div>
-                        <p>Tổng tiền hàng: <strong id="totalAmount">
-                                <%= session.getAttribute("totalAmount") != null ? session.getAttribute("totalAmount") : "0" %> VND
-                            </strong></p>                       
+                    </div>
+                </c:forEach>
+            </div>           
+        </div>
+    </div>
+    
 
-                        <button class="btn btn-primary w-100" onclick="window.location.href = 'Invoice.jsp'">THANH TOÁN</button>
-
-                    </div>                 
-                </div>                   
-
-                <!-- Danh sách sản phẩm bên phải -->                 
-                <div class="col-md-6">   
-                    <div class="cart-container">    
-
-                        <!-- Ô tìm sản phẩm -->
-                        <input type="text" class="form-control mb-3" placeholder="Tìm sản phẩm...">    
-
-                        <div class="product-list border p-2">                         
-                            <div class="product-grid">                             
-                                <%  
-                                    Vector<Product> productList = (Vector<Product>) request.getAttribute("productList");
-                                    if (productList != null && !productList.isEmpty()) {                                     
-                                        for (Product product : productList) {                             
-                                %>                                 
-                                <div class="product-grid-item" onclick="addToCart(<%= product.getId() %>)">                                     
-                                    <img src="<%= product.getImageURL() %>" alt="Ảnh sản phẩm" class="product-image">                                     
-                                    <div class="product-info">
-                                        <h6><%= product.getProductName() %></h6>                                     
-                                        <p><%= product.getProductCode() %></p>                                     
-                                        <p><%= product.getPrice() %> VND</p>                                     
-                                        <p>Số lượng còn lại: <strong><%= product.getStockQuantity() %></strong></p>                                 
-                                    </div>
-                                </div>                             
-                                <% } } else { %>                                 
-                                <p class="text-danger">Không có sản phẩm nào.</p>                             
-                                <% } %>                         
-                            </div>                     
-                        </div>  
-                    </div>               
-                </div>             
-            </div>         
-        </div>  
-    </body> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="SaleManagement.js"></script>
+</body>
 </html>

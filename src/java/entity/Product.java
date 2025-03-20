@@ -4,6 +4,7 @@ package entity;
  * Entity class for Product
  */
 public class Product {
+
     private int id;
     private String productName;
     private String productCode;
@@ -12,10 +13,52 @@ public class Product {
     private boolean isAvailable;
     private String imageURL;
     private int categoryId;
+    private Category category;
+    private GoodReceiptDetail goodReceiptDetail;
 
+    
     // Default Constructor
-
     public Product() {
+    }
+
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, int categoryId, Category category, GoodReceiptDetail goodReceiptDetail) {
+        this.id = id;
+        this.productName = productName;
+        this.productCode = productCode;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.isAvailable = isAvailable;
+        this.imageURL = imageURL;
+        this.categoryId = categoryId;
+        this.category = category;
+        this.goodReceiptDetail = goodReceiptDetail;
+    }
+    
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, Category category) {
+        this.id = id;
+        this.productName = productName;
+        this.productCode = productCode;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.isAvailable = isAvailable;
+        this.imageURL = imageURL;
+        this.category = category;
+    }
+
+    public GoodReceiptDetail getGoodReceiptDetail() {
+        return goodReceiptDetail;
+    }
+
+    public void setGoodReceiptDetail(GoodReceiptDetail goodReceiptDetail) {
+        this.goodReceiptDetail = goodReceiptDetail;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, int categoryId) {
@@ -92,5 +135,5 @@ public class Product {
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
-    
+
 }

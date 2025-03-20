@@ -201,14 +201,14 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+            <img src="assets/img/admin.png" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">thangnd</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
+              <h6>thangnd</h6>
+              <span>Admin</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -245,7 +245,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="/Logout">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -265,7 +265,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.html">
+        <a class="nav-link " href="SalesReport.jsp">
           <i class="ri-eye-fill"></i>
           <span>Tổng quan</span>
         </a>
@@ -277,18 +277,28 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="ProductManagement.jsp">
+            <a href="ProductsControllerURL?service=listAll">
               <i class="bi bi-circle"></i><span>Danh mục</span>
             </a>
           </li>
-          <li>
-            <a href="">
+         <li>
+            <a href="ProductsControllerURL?service=setPrice">
               <i class="bi bi-circle"></i><span>Thiết lập giá</span>
             </a>
           </li>
-          <li>
-            <a href="">
+           <li>
+            <a href="ProductsControllerURL?service=stockTakes">
               <i class="bi bi-circle"></i><span>Kiểm kho</span>
+            </a>
+          </li>
+          <li>
+            <a href="CategoryControllerURL?service=listAll">
+              <i class="bi bi-circle"></i><span>Loại hàng</span>
+            </a>
+          </li>
+          <li>
+            <a href="VoucherServlet">
+              <i class="bi bi-circle"></i><span>Mã giảm giá</span>
             </a>
           </li>
           
@@ -306,7 +316,7 @@
             </a>
           </li>
           <li>
-            <a href="OrderManagement.jsp">
+            <a href="order">
               <i class="bi bi-circle"></i><span>Hóa đơn</span>
             </a>
           </li>
@@ -321,7 +331,7 @@
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="inventory">
               <i class="bi bi-circle"></i><span>Nhập hàng</span>
             </a>
           </li>
@@ -344,12 +354,12 @@
         </a>
         <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="customer-groups.jsp">
+            <a href="CustomerServlet">
               <i class="bi bi-circle"></i><span>Khách hàng</span>
             </a>
           </li>
           <li>
-            <a href="manage-supplier.jsp">
+            <a href="supplier">
               <i class="bi bi-circle"></i><span>Nhà cung cấp</span>
             </a>
           </li>
@@ -362,33 +372,23 @@
         </a>
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="EmployeeManagement.jsp">
+            <a href="EmployeeControllerURL?service=getAllEmployees">
               <i class="bi bi-circle"></i><span>Nhân viên</span>
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="WeeklyScheduleController">
               <i class="bi bi-circle"></i><span>Lịch làm việc</span>
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="WeeklyScheduleController?service=getAllAttendanceHistory">
               <i class="bi bi-circle"></i><span>Chấm công</span>
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="PayrollController">
               <i class="bi bi-circle"></i><span>Bảng tính lương</span>
-            </a>
-          </li>
-          <li>
-            <a href="">
-              <i class="bi bi-circle"></i><span>Thiết lập hoa hồng</span>
-            </a>
-          </li>
-          <li>
-            <a href="">
-              <i class="bi bi-circle"></i><span>Thiết lập nhân viên</span>
             </a>
           </li>
         </ul>
@@ -407,6 +407,11 @@
           <i class="ri-clipboard-fill"></i><span>Báo cáo</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+            <a href="SalesReport1">
+              <i class="bi bi-circle"></i><span>Báo cáo bán hàng</span>
+            </a>
+          </li>
           <li>
             <a href="">
               <i class="bi bi-circle"></i><span>Cuối ngày</span>

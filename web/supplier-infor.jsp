@@ -92,13 +92,13 @@
               <div class="card-body">
                 <h5 class="card-title">Thao tác nhanh</h5>
                 <div class="d-grid gap-2">
-                  <button type="button" class="btn btn-primary" onclick="window.location.href='supplier?action=history&id=${supplier.id}'">
+                  <button type="button" class="btn btn-primary" onclick="window.location.href='supplier-purchase-history.jsp?id=${supplier.id}'">
                     <i class="bi bi-clock-history"></i> Lịch sử nhập/trả hàng
                   </button>
-                  <button type="button" class="btn btn-success" onclick="window.location.href='supplier?action=debt&id=${supplier.id}'">
+                  <button type="button" class="btn btn-success" onclick="window.location.href='supplier-payment.jsp?id=${supplier.id}'">
                     <i class="bi bi-cash-coin"></i> Nợ cần trả NCC
                   </button>
-                  <button type="button" class="btn btn-info text-white" onclick="window.location.href='supplier?action=exportTransactions&id=${supplier.id}'">
+                  <button type="button" class="btn btn-info text-white">
                     <i class="bi bi-download"></i> Xuất thông tin
                   </button>
                 </div>
@@ -136,10 +136,10 @@
                     <a class="nav-link active" href="#">Thông tin</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="supplier?action=history&id=${supplier.id}">Lịch sử nhập/trả hàng</a>
+                    <a class="nav-link" href="supplier-purchase-history.jsp?id=${supplier.id}">Lịch sử nhập/trả hàng</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="supplier?action=debt&id=${supplier.id}">Nợ cần trả NCC</a>
+                    <a class="nav-link" href="supplier-payment.jsp?id=${supplier.id}">Nợ cần trả NCC</a>
                   </li>
                 </ul>
 
@@ -150,7 +150,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label class="form-label">Mã nhà cung cấp</label>
-                      <input type="text" class="form-control" name="supplierCode" value="${supplier.supplierCode}">
+                      <input type="text" class="form-control" name="supplierCode" value="${supplier.supplierCode}" readonly>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -227,26 +227,12 @@
                   <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> Cập nhật
                   </button>
-                  <c:choose>
-                    <c:when test="${supplier.status}">
-                      <button type="button" class="btn btn-warning" 
-                              onclick="if(confirm('Bạn có chắc muốn ngưng hoạt động nhà cung cấp này?')) {
-                                document.getElementById('statusInput').value = 'false';
-                                document.getElementById('statusForm').submit();
-                              }">
-                        <i class="bi bi-pause-circle"></i> Ngưng hoạt động
-                      </button>
-                    </c:when>
-                    <c:otherwise>
-                      <button type="button" class="btn btn-success" 
-                              onclick="if(confirm('Bạn có chắc muốn tái hoạt động nhà cung cấp này?')) {
-                                document.getElementById('statusInput').value = 'true';
-                                document.getElementById('statusForm').submit();
-                              }">
-                        <i class="bi bi-play-circle"></i> Tái hoạt động
-                      </button>
-                    </c:otherwise>
-                  </c:choose>
+                  <button type="button" class="btn btn-warning" 
+                          onclick="if(confirm('Bạn có chắc muốn ngưng hoạt động nhà cung cấp này?')) {
+                            document.getElementById('statusForm').submit();
+                          }">
+                    <i class="bi bi-pause-circle"></i> Ngưng hoạt động
+                  </button>
                   <button type="button" class="btn btn-danger"
                           onclick="if(confirm('Bạn có chắc muốn xóa nhà cung cấp này?')) {
                             window.location.href = 'supplier?action=delete&id=${supplier.id}';
@@ -262,7 +248,7 @@
               <form id="statusForm" action="supplier" method="POST" style="display: none;">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="id" value="${supplier.id}">
-                <input type="hidden" id="statusInput" name="status" value="false">
+                <input type="hidden" name="status" value="false">
               </form>
             </div>
           </div>

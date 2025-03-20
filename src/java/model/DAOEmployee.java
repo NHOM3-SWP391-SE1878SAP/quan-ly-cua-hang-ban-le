@@ -14,7 +14,7 @@ public class DAOEmployee extends DBConnect {
 
 public Vector<Employee> getAllEmployees() {
     Vector<Employee> employees = new Vector<>();
-    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Adress " +
+    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Address " +
                  "FROM Employees e " +
                  "LEFT JOIN Accounts a ON e.AccountsID = a.ID"; 
 
@@ -27,7 +27,7 @@ public Vector<Employee> getAllEmployees() {
                     rs.getString("Password"),
                     rs.getString("Email"),
                     rs.getString("Phone"),
-                    rs.getString("Adress"),
+                    rs.getString("Address"),
                     null // Không cần gán Role
             );
 
@@ -52,7 +52,7 @@ public Vector<Employee> getAllEmployees() {
 }
 
 public boolean addEmployee(Employee emp) {
-    String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Adress, RoleID) VALUES (?, ?, ?, ?, ?, ?)";
+    String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Address, RoleID) VALUES (?, ?, ?, ?, ?, ?)";
     String sqlEmployee = "INSERT INTO Employees (EmployeeName, Avatar, DoB, Gender, Salary, CCCD, IsAvailable, AccountsID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     try {
@@ -127,7 +127,7 @@ public boolean addEmployee(Employee emp) {
 
 public boolean updateEmployee(Employee emp) {
     String sqlUpdateEmployee = "UPDATE Employees SET EmployeeName=?, Avatar=?, DoB=?, Gender=?, Salary=?, CCCD=?, IsAvailable=? WHERE ID=?";
-    String sqlUpdateAccount = "UPDATE Accounts SET UserName=?, Email=?, Phone=?, Adress=? WHERE ID=(SELECT AccountsID FROM Employees WHERE ID=?)";
+    String sqlUpdateAccount = "UPDATE Accounts SET UserName=?, Email=?, Phone=?, Address=? WHERE ID=(SELECT AccountsID FROM Employees WHERE ID=?)";
 
     try {
         conn.setAutoCommit(false);
@@ -175,7 +175,7 @@ public boolean updateEmployee(Employee emp) {
 }
 
 public Employee getEmployeeByID(int employeeID) {
-    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Adress " +
+    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Address " +
                  "FROM Employees e " +
                  "LEFT JOIN Accounts a ON e.AccountsID = a.ID WHERE e.ID = ?";
 

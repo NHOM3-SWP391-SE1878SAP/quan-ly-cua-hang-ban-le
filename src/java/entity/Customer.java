@@ -23,7 +23,11 @@ public class Customer {
         this.address = address;
         this.points = points;
     }
-
+    public Customer(int aInt, String string, String string0) {
+        this.id = aInt;
+        this.customerName = string;
+        this.phone = string0;
+    }
     // ✅ Constructor chỉ có ID (Dùng khi xóa)
     public Customer(int id) {
         this.id = id;

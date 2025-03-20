@@ -96,7 +96,7 @@ public class LoginController extends HttpServlet {
                     boolean isAttendanceMarked = daoAttendance.isEmployeeScheduled(employee.getEmployeeID(), currentShift.getShiftId(), java.sql.Date.valueOf(currentDate));
 
                     if (isAttendanceMarked) {
-                        response.sendRedirect("homeEmployee.jsp"); // Redirect to home if attendance is already marked
+                        response.sendRedirect("sale"); // Redirect to home if attendance is already marked
                     } else {
                         response.sendRedirect("attendance.jsp"); // Redirect to attendance page if not
                     }

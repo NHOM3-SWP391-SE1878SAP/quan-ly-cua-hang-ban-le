@@ -9,12 +9,12 @@ public class GoodReceiptDetail {
     private int unitCost;
     private Date expirationDate;
     private GoodReceipt goodReceipt;
-    private Product product;
+    private Product1 product;
 
     public GoodReceiptDetail() {
     }
 
-    public GoodReceiptDetail(int goodReceiptDetailID, String batchNumber, int quantityReceived, int unitCost, Date expirationDate, GoodReceipt goodReceipt, Product product) {
+    public GoodReceiptDetail(int goodReceiptDetailID, String batchNumber, int quantityReceived, int unitCost, Date expirationDate, GoodReceipt goodReceipt, Product1 product) {
         this.goodReceiptDetailID = goodReceiptDetailID;
         this.batchNumber = batchNumber;
         this.quantityReceived = quantityReceived;
@@ -72,11 +72,11 @@ public class GoodReceiptDetail {
         this.goodReceipt = goodReceipt;
     }
 
-    public Product getProduct() {
+    public Product1 getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(Product1 product) {
         this.product = product;
     }
 }

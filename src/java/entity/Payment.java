@@ -15,7 +15,10 @@ public class Payment {
         this.paymentDate = paymentDate;
         this.paymentMethods = paymentMethods;
     }
-
+        public Payment(int aInt, String string) {
+        this.paymentID = aInt;
+        this.paymentMethods = string;
+    }
     public int getPaymentID() {
         return paymentID;
     }

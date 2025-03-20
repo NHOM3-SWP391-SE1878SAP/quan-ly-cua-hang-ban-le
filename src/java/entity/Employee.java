@@ -27,7 +27,10 @@ public class Employee {
         this.isAvailable = isAvailable;
         this.account = account;
     }
-
+    public Employee(int aInt, String string) {
+        this.employeeID = aInt;
+        this.employeeName = string;
+    }
     public int getEmployeeID() {
         return employeeID;
     }

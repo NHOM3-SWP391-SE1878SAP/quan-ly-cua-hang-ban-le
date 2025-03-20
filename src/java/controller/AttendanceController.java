@@ -78,7 +78,7 @@ public class AttendanceController extends HttpServlet {
             }
 
             // Chuyển tiếp về trang điểm danh
-            RequestDispatcher dispatcher = request.getRequestDispatcher("attendance.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("sale");
             dispatcher.forward(request, response);
         }
     }

@@ -14,6 +14,7 @@ public class VoucherDAO {
         this.conn = conn;
     }
 
+    // ✅ Get total number of vouchers
     public int getTotalVoucherCount() {
         String query = "SELECT COUNT(*) FROM vouchers";
         try (PreparedStatement stmt = conn.prepareStatement(query);
@@ -27,7 +28,7 @@ public class VoucherDAO {
         return 0;
     }
 
-    // ✅ Phân trang: Lấy danh sách vouchers theo trang
+    // ✅ Pagination: Get vouchers by page
     public List<Voucher> getVouchersByPage(int page, int recordsPerPage) {
         List<Voucher> vouchers = new ArrayList<>();
         int start = (page - 1) * recordsPerPage;
@@ -45,8 +46,11 @@ public class VoucherDAO {
                         rs.getInt("MinOrder"),
                         rs.getInt("DiscountRate"),
                         rs.getInt("MaxValue"),
-                        rs.getDate("StartDate").toLocalDate(),
-                        rs.getDate("EndDate").toLocalDate()
+                        rs.getInt("Usage_limit"),
+                        rs.getInt("Usage_count"),
+                        rs.getBoolean("Status"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate")
                 ));
             }
         } catch (SQLException e) {
@@ -55,7 +59,7 @@ public class VoucherDAO {
         return vouchers;
     }
 
-    // 📌 Lấy danh sách tất cả voucher
+    // 📌 Get all vouchers
     public List<Voucher> getAllVouchers() {
         List<Voucher> vouchers = new ArrayList<>();
         String query = "SELECT * FROM vouchers ORDER BY ID DESC";
@@ -67,8 +71,11 @@ public class VoucherDAO {
                         rs.getInt("MinOrder"),
                         rs.getInt("DiscountRate"),
                         rs.getInt("MaxValue"),
-                        rs.getDate("StartDate").toLocalDate(),
-                        rs.getDate("EndDate").toLocalDate()
+                        rs.getInt("Usage_limit"),
+                        rs.getInt("Usage_count"),
+                        rs.getBoolean("Status"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate")
                 ));
             }
         } catch (SQLException e) {
@@ -77,7 +84,7 @@ public class VoucherDAO {
         return vouchers;
     }
 
-    // 🔍 Tìm kiếm voucher theo Code
+    // 🔍 Search vouchers by code
     public List<Voucher> searchVouchers(String keyword) {
         List<Voucher> vouchers = new ArrayList<>();
         String query = "SELECT * FROM vouchers WHERE Code LIKE ?";
@@ -91,8 +98,11 @@ public class VoucherDAO {
                         rs.getInt("MinOrder"),
                         rs.getInt("DiscountRate"),
                         rs.getInt("MaxValue"),
-                        rs.getDate("StartDate").toLocalDate(),
-                        rs.getDate("EndDate").toLocalDate()
+                        rs.getInt("Usage_limit"),
+                        rs.getInt("Usage_count"),
+                        rs.getBoolean("Status"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate")
                 ));
             }
         } catch (SQLException e) {
@@ -101,40 +111,46 @@ public class VoucherDAO {
         return vouchers;
     }
 
-    // 📌 Thêm mới voucher với mã tự động
+    // 📌 Add a new voucher
     public void addVoucher(Voucher v) {
-        String query = "INSERT INTO vouchers (Code, MinOrder, DiscountRate, MaxValue, StartDate, EndDate) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO vouchers (Code, MinOrder, DiscountRate, MaxValue, Usage_limit, Usage_count, Status, StartDate, EndDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, generateUniqueCode());
             stmt.setInt(2, v.getMinOrder());
             stmt.setInt(3, v.getDiscountRate());
             stmt.setInt(4, v.getMaxValue());
-            stmt.setDate(5, java.sql.Date.valueOf(v.getStartDate()));
-            stmt.setDate(6, java.sql.Date.valueOf(v.getEndDate()));
+            stmt.setInt(5, v.getUsage_limit());
+            stmt.setInt(6, v.getUsage_count());
+            stmt.setBoolean(7, v.getStatus());
+            stmt.setDate(8, new java.sql.Date(v.getStartDate().getTime()));
+            stmt.setDate(9, new java.sql.Date(v.getEndDate().getTime()));
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // 🟡 Cập nhật thông tin voucher
+    // 🟡 Update voucher
     public void updateVoucher(Voucher v) {
-        String query = "UPDATE vouchers SET Code = ?, MinOrder = ?, DiscountRate = ?, MaxValue = ?, StartDate = ?, EndDate = ? WHERE ID = ?";
+        String query = "UPDATE vouchers SET Code = ?, MinOrder = ?, DiscountRate = ?, MaxValue = ?, Usage_limit = ?, Usage_count = ?, Status = ?, StartDate = ?, EndDate = ? WHERE ID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, v.getCode());
             stmt.setInt(2, v.getMinOrder());
             stmt.setInt(3, v.getDiscountRate());
             stmt.setInt(4, v.getMaxValue());
-            stmt.setDate(5, java.sql.Date.valueOf(v.getStartDate()));
-            stmt.setDate(6, java.sql.Date.valueOf(v.getEndDate()));
-            stmt.setInt(7, v.getId());
+            stmt.setInt(5, v.getUsage_limit());
+            stmt.setInt(6, v.getUsage_count());
+            stmt.setBoolean(7, v.getStatus());
+            stmt.setDate(8, new java.sql.Date(v.getStartDate().getTime()));
+            stmt.setDate(9, new java.sql.Date(v.getEndDate().getTime()));
+            stmt.setInt(10, v.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // 🔄 Xóa voucher
+    // 🔄 Delete voucher
     public void deleteVoucher(int id) {
         String query = "DELETE FROM vouchers WHERE ID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -145,7 +161,7 @@ public class VoucherDAO {
         }
     }
 
-    // 🔢 Tạo mã voucher ngẫu nhiên
+    // 🔢 Generate a unique voucher code
     public String generateUniqueCode() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
@@ -160,7 +176,7 @@ public class VoucherDAO {
         return code;
     }
 
-    // 🛑 Kiểm tra mã có tồn tại chưa
+    // 🛑 Check if the code already exists
     public boolean isCodeExists(String code) {
         String query = "SELECT COUNT(*) FROM vouchers WHERE Code = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -174,4 +190,16 @@ public class VoucherDAO {
         }
         return false;
     }
+    public boolean isCodeExistsForOtherVoucher(String code, int voucherId) {
+    String query = "SELECT COUNT(*) FROM vouchers WHERE Code = ? AND ID != ?";
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setString(1, code);
+        stmt.setInt(2, voucherId);
+        ResultSet rs = stmt.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

@@ -1,20 +1,41 @@
 package entity;
 
+/**
+ * Entity class for Product
+ */
 public class Product {
-    private int productID;
+
+    private int id;
     private String productName;
     private String productCode;
     private int price;
     private int stockQuantity;
     private boolean isAvailable;
     private String imageURL;
+    private int categoryId;
     private Category category;
+    private GoodReceiptDetail goodReceiptDetail;
 
+    
+    // Default Constructor
     public Product() {
     }
 
-    public Product(int productID, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, Category category) {
-        this.productID = productID;
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, int categoryId, Category category, GoodReceiptDetail goodReceiptDetail) {
+        this.id = id;
+        this.productName = productName;
+        this.productCode = productCode;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.isAvailable = isAvailable;
+        this.imageURL = imageURL;
+        this.categoryId = categoryId;
+        this.category = category;
+        this.goodReceiptDetail = goodReceiptDetail;
+    }
+    
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, Category category) {
+        this.id = id;
         this.productName = productName;
         this.productCode = productCode;
         this.price = price;
@@ -24,12 +45,39 @@ public class Product {
         this.category = category;
     }
 
-    public int getProductID() {
-        return productID;
+    public GoodReceiptDetail getGoodReceiptDetail() {
+        return goodReceiptDetail;
     }
 
-    public void setProductID(int productID) {
-        this.productID = productID;
+    public void setGoodReceiptDetail(GoodReceiptDetail goodReceiptDetail) {
+        this.goodReceiptDetail = goodReceiptDetail;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Product(int id, String productName, String productCode, int price, int stockQuantity, boolean isAvailable, String imageURL, int categoryId) {
+        this.id = id;
+        this.productName = productName;
+        this.productCode = productCode;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.isAvailable = isAvailable;
+        this.imageURL = imageURL;
+        this.categoryId = categoryId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getProductName() {
@@ -64,12 +112,12 @@ public class Product {
         this.stockQuantity = stockQuantity;
     }
 
-    public boolean isAvailable() {
+    public boolean isIsAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
     public String getImageURL() {
@@ -80,11 +128,12 @@ public class Product {
         this.imageURL = imageURL;
     }
 
-    public Category getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
+
 }

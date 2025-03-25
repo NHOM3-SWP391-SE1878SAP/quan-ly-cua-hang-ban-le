@@ -5,6 +5,8 @@ import entity.Employee;
 import entity.Shift;
 import entity.WeekDay;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -237,5 +239,61 @@ public Vector<Shift> getEmployeeShiftsToday(int employeeID) {
     }
     return shifts;
 }
+// Trong DAOWeeklySchedule.java
+public Vector<Employee> getEmployeesInCurrentShift() {
+    Vector<Employee> employees = new Vector<>();
+    String sql = "DECLARE @CurrentTime TIME = CONVERT(TIME, GETDATE()) "
+               + "DECLARE @CurrentDate DATE = CONVERT(DATE, GETDATE()) "
+               + "DECLARE @CurrentWeekDay VARCHAR(255) = DATENAME(WEEKDAY, GETDATE()) "
+               + "SELECT e.* FROM Employees e "
+               + "JOIN WeeklySchedule ws ON e.ID = ws.EmployeesID "
+               + "JOIN Shifts s ON ws.ShiftsID = s.ID "
+               + "JOIN WeekDays wd ON ws.WeekDaysID = wd.ID "
+               + "WHERE wd.WeekDay = @CurrentWeekDay "
+               + "AND ((s.StartTime < s.EndTime AND @CurrentTime >= s.StartTime AND @CurrentTime < s.EndTime) "
+               + "OR (s.StartTime > s.EndTime AND (@CurrentTime >= s.StartTime OR @CurrentTime < s.EndTime))) "
+               + "AND e.IsAvailable = 1";
 
+    try (Statement stmt = conn.createStatement(); 
+         ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            employees.add(new Employee(
+                rs.getInt("ID"),
+                rs.getString("EmployeeName"),
+                rs.getString("Avatar"),
+                rs.getDate("DoB"),
+                rs.getBoolean("Gender"),
+                rs.getInt("Salary"),
+                rs.getString("CCCD"),
+                rs.getBoolean("IsAvailable"),
+                null // Account có thể load sau nếu cần
+            ));
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOWeeklySchedule.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return employees;
+}
+public Vector<Shift> getCurrentShifts() {
+    Vector<Shift> shifts = new Vector<>();
+    String sql = "DECLARE @CurrentTime TIME = CONVERT(TIME, GETDATE()) "
+               + "SELECT * FROM Shifts WHERE "
+               + "(StartTime < EndTime AND @CurrentTime >= StartTime AND @CurrentTime < EndTime) "
+               + "OR (StartTime > EndTime AND (@CurrentTime >= StartTime OR @CurrentTime < EndTime))";
+
+    try (Statement stmt = conn.createStatement(); 
+         ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            shifts.add(new Shift(
+                rs.getInt("ID"),
+                rs.getString("ShiftName"),
+                rs.getTime("StartTime"),
+                rs.getTime("EndTime")
+            ));
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOWeeklySchedule.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return shifts;
+}
 }

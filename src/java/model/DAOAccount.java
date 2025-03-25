@@ -371,7 +371,7 @@ public class DAOAccount extends DBConnect {
 
     public Employee getEmployeeByAccountID(int accountID) {
         Employee employee = null;
-        String sql = "SELECT * FROM Employees WHERE AccountsID = ?";
+        String sql = "SELECT * FROM Employees WHERE AccountsID = ? and isAvailable = 1";
         
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);

@@ -50,6 +50,12 @@ public class LoginController extends HttpServlet {
             
                     Employee employee = dao.getEmployeeByAccountID(account.getId());
                     session.setAttribute("employee", employee);
+                     // If no valid shift is found, display message and stay on current page
+                    if (employee == null) {
+                        session.setAttribute("errorMessage", "Tài khoản hiện không hoạt động");
+                        request.getRequestDispatcher("Login.jsp").forward(request, response);
+                        return;  // Exit the method and stay on the current page
+                    }
 
                     // Xác định ca làm hiện tại
                     LocalDate currentDate = LocalDate.now();

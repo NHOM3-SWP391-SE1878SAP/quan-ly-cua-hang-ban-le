@@ -42,7 +42,13 @@
     </div>
 
     <div class="container">
-        
+         <div class="d-flex mb-3">
+           
+      <a class="btn btn-primary ms-2" href="WeeklyScheduleController?service=viewCurrentShift" style="color: white; margin-top: 5px;">
+        <i class="bi bi-people-fill"></i>
+        <span>Điểm danh ca hiện tại</span>
+    </a>
+        </div>
 
 
                 <table class="table table-bordered attendance-table">

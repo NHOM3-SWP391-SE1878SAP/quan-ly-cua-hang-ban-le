@@ -1,6 +1,7 @@
 package controller;
 
 import entity.Attendance;
+import entity.AttendanceInfo;
 import entity.WeeklySchedule;
 import entity.Shift;
 import entity.WeekDay;
@@ -90,11 +91,36 @@ public class WeeklyScheduleController extends HttpServlet {
                 RequestDispatcher dispatcherHistory = request.getRequestDispatcher("AttendanceHistory.jsp");
                 dispatcherHistory.forward(request, response);
                 break;
-            case "attendanceForEmployee":
+            // Trong WeeklyScheduleController.java
+case "viewCurrentShift":
+    Vector<Employee> currentShiftEmployees = dao.getEmployeesInCurrentShift();
+    Vector<Shift> currentShifts = dao.getCurrentShifts();
     
+    // Lấy thông tin điểm danh
+    Vector<Integer> attendanceRecords = daoAttendance.getTodayAttendance();
+    
+    request.setAttribute("currentEmployees", currentShiftEmployees);
+    request.setAttribute("currentShifts", currentShifts);
+    request.setAttribute("attendanceRecords", attendanceRecords);
+    
+    request.getRequestDispatcher("CurrentShiftAttendance.jsp").forward(request, response);
+    break;
 
-                
-                
+
+case "markAttendance":
+    int employeeId = Integer.parseInt(request.getParameter("employeeId"));
+    int shiftId = Integer.parseInt(request.getParameter("shiftId"));
+    boolean isPresent = Boolean.parseBoolean(request.getParameter("isPresent"));
+    
+    boolean result = new DAOAttendance().markAttendance(employeeId, shiftId, isPresent);
+    
+    if(result) {
+        request.setAttribute("message", "Điểm danh thành công!");
+    } else {
+        request.setAttribute("error", "Lỗi khi điểm danh!");
+    }
+    response.sendRedirect("WeeklyScheduleController?service=getAllAttendanceHistory");
+    break;    // Trong WeeklyScheduleController.java
         }
     }
 

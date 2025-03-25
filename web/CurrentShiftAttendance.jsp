@@ -124,7 +124,7 @@
                                                 <form action="WeeklyScheduleController" method="post" class="d-inline">
                                                     <input type="hidden" name="service" value="markAttendance">
                                                     <input type="hidden" name="employeeId" value="${employee.employeeID}">
-                                                    <input type="hidden" name="shiftId" value="${shift.id}">
+                                                    <input type="hidden" name="shiftId" value="${shift.shiftId}">
                                                     <button type="submit" name="isPresent" value="true" class="btn btn-success btn-sm btn-action me-1">
                                                         <i class="fas fa-user-check me-1"></i> Có mặt
                                                     </button>

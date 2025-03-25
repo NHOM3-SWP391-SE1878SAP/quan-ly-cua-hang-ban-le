@@ -7,11 +7,14 @@ import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DAOEmployee extends DBConnect {
 
     
-
+    private String hashPassword(String plainPassword) {
+        return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+    }
 public Vector<Employee> getAllEmployees() {
     Vector<Employee> employees = new Vector<>();
     String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Address " +
@@ -52,78 +55,79 @@ public Vector<Employee> getAllEmployees() {
 }
 
 public boolean addEmployee(Employee emp) {
-    String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Address, RoleID) VALUES (?, ?, ?, ?, ?, ?)";
-    String sqlEmployee = "INSERT INTO Employees (EmployeeName, Avatar, DoB, Gender, Salary, CCCD, IsAvailable, AccountsID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Address, RoleID) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlEmployee = "INSERT INTO Employees (EmployeeName, Avatar, DoB, Gender, Salary, CCCD, IsAvailable, AccountsID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try {
-        conn.setAutoCommit(false);
+        try {
+            conn.setAutoCommit(false);
 
-        // Set RoleID = 2 for the account
-        Role role = new Role(2, "Employee");  // Assuming role with ID 2 is called "Employee"
-        emp.getAccount().setRole(role);  // Set the role to the Account object
+            // Set RoleID = 2 cho tài khoản
+            Role role = new Role(2, "Employee");
+            emp.getAccount().setRole(role);
 
-        // Thêm tài khoản trước
-        int accountID = -1;
-        try (PreparedStatement pstmt = conn.prepareStatement(sqlAccount, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, emp.getAccount().getUserName());
-            pstmt.setString(2, emp.getAccount().getPassword());
-            pstmt.setString(3, emp.getAccount().getEmail());
-            pstmt.setString(4, emp.getAccount().getPhone());
-            pstmt.setString(5, emp.getAccount().getAddress());
-            pstmt.setInt(6, emp.getAccount().getRole().getRoleID());  // Insert RoleID (2)
-            int rows = pstmt.executeUpdate();
+            // Thêm tài khoản với mật khẩu đã mã hóa
+            int accountID = -1;
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlAccount, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setString(1, emp.getAccount().getUserName());
+                pstmt.setString(2, hashPassword(emp.getAccount().getPassword())); // Mật khẩu đã mã hóa
+                pstmt.setString(3, emp.getAccount().getEmail());
+                pstmt.setString(4, emp.getAccount().getPhone());
+                pstmt.setString(5, emp.getAccount().getAddress());
+                pstmt.setInt(6, emp.getAccount().getRole().getRoleID());
+                
+                int rows = pstmt.executeUpdate();
 
-            if (rows > 0) {
-                ResultSet rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    accountID = rs.getInt(1);
+                if (rows > 0) {
+                    ResultSet rs = pstmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        accountID = rs.getInt(1);
+                    }
                 }
             }
-        }
 
-        if (accountID == -1) {
-            conn.rollback();
-            return false;
-        }
-
-        // Thêm nhân viên
-        try (PreparedStatement pstmt = conn.prepareStatement(sqlEmployee)) {
-            pstmt.setString(1, emp.getEmployeeName());
-            pstmt.setString(2, emp.getAvatar());
-            pstmt.setDate(3, new java.sql.Date(emp.getDob().getTime()));
-            pstmt.setBoolean(4, emp.isGender());  // 'emp.isGender()' returns boolean
-            pstmt.setInt(5, emp.getSalary());
-            pstmt.setString(6, emp.getCccd());
-            pstmt.setBoolean(7, emp.isIsAvailable());
-            pstmt.setInt(8, accountID);
-            int rows = pstmt.executeUpdate();
-
-            if (rows > 0) {
-                conn.commit();
-                return true;
-            } else {
+            if (accountID == -1) {
                 conn.rollback();
                 return false;
             }
-        }
 
-    } catch (SQLException ex) {
-        try {
-            conn.rollback();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        ex.printStackTrace();
-        return false;
-    } finally {
-        try {
-            conn.setAutoCommit(true);
+            // Thêm nhân viên
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlEmployee)) {
+                pstmt.setString(1, emp.getEmployeeName());
+                pstmt.setString(2, emp.getAvatar());
+                pstmt.setDate(3, new java.sql.Date(emp.getDob().getTime()));
+                pstmt.setBoolean(4, emp.isGender());
+                pstmt.setInt(5, emp.getSalary());
+                pstmt.setString(6, emp.getCccd());
+                pstmt.setBoolean(7, emp.isIsAvailable());
+                pstmt.setInt(8, accountID);
+                
+                int rows = pstmt.executeUpdate();
+
+                if (rows > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
         } catch (SQLException ex) {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             ex.printStackTrace();
+            return false;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
-}
-
 
 public boolean updateEmployee(Employee emp) {
     String sqlUpdateEmployee = "UPDATE Employees SET EmployeeName=?, Avatar=?, DoB=?, Gender=?, Salary=?, CCCD=?, IsAvailable=? WHERE ID=?";
@@ -214,15 +218,47 @@ public Employee getEmployeeByID(int employeeID) {
 
 
 public boolean deleteEmployee(int employeeID) {
+    // Các câu lệnh SQL để xử lý ràng buộc khóa ngoại
+    String deletePayrollSQL = "DELETE FROM Employees_Payroll WHERE EmployeesID = ?";
+    String deleteWeeklyScheduleSQL = "DELETE FROM WeeklySchedule WHERE EmployeesID = ?";
+    String deleteAttendanceSQL = "DELETE FROM Attendance WHERE EmployeesID = ?";
+    String deleteReturnsSQL = "DELETE FROM Returns WHERE EmployeesID = ?";
+    String updateOrdersSQL = "UPDATE Orders SET EmployeesID = NULL WHERE EmployeesID = ?";
     String deleteEmployeeSQL = "DELETE FROM Employees WHERE ID = ?";
     String getAccountIDSQL = "SELECT AccountsID FROM Employees WHERE ID = ?";
     String deleteAccountSQL = "DELETE FROM Accounts WHERE ID = ?";
 
     try {
-        // Start a transaction
-        conn.setAutoCommit(false);
+        conn.setAutoCommit(false); // Bắt đầu transaction
 
-        // Step 1: Get the associated Account ID for the Employee
+        // Xóa dữ liệu liên quan từ các bảng phụ thuộc
+        try (PreparedStatement pstmt = conn.prepareStatement(deletePayrollSQL)) {
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteWeeklyScheduleSQL)) {
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteAttendanceSQL)) {
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteReturnsSQL)) {
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+        }
+
+        // Cập nhật Orders để xóa tham chiếu đến nhân viên
+        try (PreparedStatement pstmt = conn.prepareStatement(updateOrdersSQL)) {
+            pstmt.setInt(1, employeeID);
+            pstmt.executeUpdate();
+        }
+
+        // Lấy AccountID của nhân viên
         int accountID = -1;
         try (PreparedStatement pstmt = conn.prepareStatement(getAccountIDSQL)) {
             pstmt.setInt(1, employeeID);
@@ -234,35 +270,35 @@ public boolean deleteEmployee(int employeeID) {
 
         if (accountID == -1) {
             conn.rollback();
-            return false; // If no associated account is found, rollback the transaction
+            return false;
         }
 
-        // Step 2: Delete the Employee
+        // Xóa nhân viên
         try (PreparedStatement pstmt = conn.prepareStatement(deleteEmployeeSQL)) {
             pstmt.setInt(1, employeeID);
-            int rowsAffectedEmployee = pstmt.executeUpdate();
-            if (rowsAffectedEmployee <= 0) {
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected <= 0) {
                 conn.rollback();
-                return false; // Rollback if the Employee deletion fails
+                return false;
             }
         }
 
-        // Step 3: Delete the associated Account
+        // Xóa tài khoản
         try (PreparedStatement pstmt = conn.prepareStatement(deleteAccountSQL)) {
             pstmt.setInt(1, accountID);
-            int rowsAffectedAccount = pstmt.executeUpdate();
-            if (rowsAffectedAccount <= 0) {
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected <= 0) {
                 conn.rollback();
-                return false; // Rollback if the Account deletion fails
+                return false;
             }
         }
 
-        // Step 4: Commit the transaction
-        conn.commit();
+        conn.commit(); // Commit transaction nếu mọi thứ thành công
         return true;
+
     } catch (SQLException ex) {
         try {
-            conn.rollback(); // Rollback in case of any exception
+            conn.rollback(); // Rollback nếu có lỗi
         } catch (SQLException e) {
             Logger.getLogger(DAOEmployee.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -270,14 +306,12 @@ public boolean deleteEmployee(int employeeID) {
         return false;
     } finally {
         try {
-            conn.setAutoCommit(true);  // Reset auto-commit to true after the transaction
+            conn.setAutoCommit(true); // Khôi phục auto-commit
         } catch (SQLException ex) {
             Logger.getLogger(DAOEmployee.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
-
-
 
 }
 

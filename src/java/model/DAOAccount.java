@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Data Access Object for Account
@@ -434,11 +435,50 @@ public class DAOAccount extends DBConnect {
         return employee;
     }
     
+    public Account checkLogin1(String userName, String plainPassword) {
+    Account account = null;
+    String sql = "SELECT * FROM Accounts WHERE UserName = ?";
+    
+    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setString(1, userName);
+        
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                String storedHash = rs.getString("Password");
+                
+                // Thêm các kiểm tra an toàn
+                if (storedHash == null || storedHash.trim().isEmpty()) {
+                    LOGGER.warning("Empty password hash for user: " + userName);
+                    return null;
+                }
+                
+                try {
+                    if (BCrypt.checkpw(plainPassword, storedHash)) {
+                        account = extractAccountFromResultSet(rs);
+                    }
+                } catch (IllegalArgumentException e) {
+                    LOGGER.log(Level.SEVERE, "Invalid hash format for user: " + userName, e);
+                    return null;
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Database error during login", ex);
+    }
+    
+    return account;
+}
+
     /**
      * Main method to test the DAO
      */
-    public static void main(String[] args) {
-        DAOAccount daoAccount = new DAOAccount();
-        System.out.println(daoAccount.getEmployeeByAccountID(11));
-    }
+public static void main(String[] args) {
+    DAOAccount dao = new DAOAccount();
+    
+    // Test case 1: Đăng nhập đúng
+    Account acc1 = dao.checkLogin1("admin", "admin123");
+    System.out.println(acc1 != null ? "Đăng nhập thành công" : "Sai thông tin");
+    
+
+}
 }

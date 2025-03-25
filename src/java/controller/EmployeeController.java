@@ -130,19 +130,19 @@ public class EmployeeController extends HttpServlet {
     }
 
     private void deleteEmployee(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        try {
-            int employeeID = Integer.parseInt(getParameterSafe(request, "employeeID"));
-            if (dao.deleteEmployee(employeeID)) {
-                request.setAttribute("message", "Xóa nhân viên thành công!");
-            } else {
-                request.setAttribute("message", "Xóa nhân viên thất bại.");
-            }
-        } catch (Exception e) {
-            request.setAttribute("message", "Lỗi: " + e.getMessage());
+        throws IOException {
+    try {
+        int employeeID = Integer.parseInt(getParameterSafe(request, "employeeID"));
+        if (dao.deleteEmployee(employeeID)) {
+            request.getSession().setAttribute("message", "Xóa nhân viên thành công!");
+        } else {
+            request.getSession().setAttribute("message", "Xóa nhân viên thất bại. Có thể còn dữ liệu liên quan.");
         }
-        response.sendRedirect("EmployeeControllerURL?service=listAll");
+    } catch (Exception e) {
+        request.getSession().setAttribute("message", "Lỗi: " + e.getMessage());
     }
+    response.sendRedirect("EmployeeControllerURL?service=listAll");
+}
 
     // Hàm hỗ trợ tránh lỗi NullPointerException
     private String getParameterSafe(HttpServletRequest request, String paramName) {

@@ -237,4 +237,16 @@ public boolean isAlreadyMarked(int employeeId, int shiftId) {
         return false;
     }
 }
+public boolean updateAttendance(int attendanceId, boolean isPresent) {
+    String sql = "UPDATE Attendance SET IsPresent = ? WHERE ID = ?";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setBoolean(1, isPresent);
+        pstmt.setInt(2, attendanceId);
+        return pstmt.executeUpdate() > 0;
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOAttendance.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
+}
 }

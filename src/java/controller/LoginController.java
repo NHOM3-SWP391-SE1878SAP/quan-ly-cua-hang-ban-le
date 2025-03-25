@@ -34,7 +34,7 @@ public class LoginController extends HttpServlet {
         DAOWeeklySchedule daoWeeklySchedule = new DAOWeeklySchedule();
         DAOAttendance daoAttendance = new DAOAttendance();  // DAO to check attendance
 
-        Account account = dao.checkLogin(userName, password);
+        Account account = dao.checkLogin1(userName, password);
         
         if (account != null) {
             HttpSession session = request.getSession();
@@ -44,7 +44,7 @@ public class LoginController extends HttpServlet {
             if (role != null) {
                 String roleName = role.getRoleName();
                 if ("Admin".equalsIgnoreCase(roleName)) {
-                    response.sendRedirect("HeaderAdmin.jsp"); 
+                    response.sendRedirect("SalesReport.jsp"); 
                 } else if ("Employee".equalsIgnoreCase(roleName)) {
                     session.setAttribute("account", account);
             
@@ -84,8 +84,8 @@ public class LoginController extends HttpServlet {
 
                     // If no valid shift is found, display message and stay on current page
                     if (currentShift == null) {
-                        session.setAttribute("shiftMessage", "ĐÂY KHÔNG PHẢI CA LÀM CỦA BẠN");
-                        request.getRequestDispatcher("attendance.jsp").forward(request, response);
+                        session.setAttribute("errorMessage", "HIỆN KHÔNG PHẢI CA LÀM CỦA BẠN");
+                        request.getRequestDispatcher("Login.jsp").forward(request, response);
                         return;  // Exit the method and stay on the current page
                     }
 

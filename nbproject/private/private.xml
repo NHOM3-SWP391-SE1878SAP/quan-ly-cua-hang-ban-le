@@ -9,7 +9,9 @@
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/PayrollController.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/ExportCustomerExcelServlet.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/SetPrice.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/modal-add-supplier.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/attendance.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/CurrentShiftAttendance.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/SalesReportTest.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Voucher.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/VoucherServlet.java</file>
@@ -49,6 +51,7 @@
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/WeeklySchedule.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOProduct.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/ReturnManagement.jsp</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/AttendanceInfo.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Order.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/ProductManagement.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAORole.java</file>
@@ -61,13 +64,13 @@
             <file>file:/D:/New%20Folder%20(3)/Slim/web/PaymentManagement.js</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/database/DatabaseConnection.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/CategoryController.java</file>
-            <file>file:/D:/New%20Folder%20(3)/Slim/web/AddAttendance.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/DAOAccount.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/model/CustomerDAO.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/web/customers.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Category.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/EmployeePayroll.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Product.java</file>
+            <file>file:/D:/New%20Folder%20(3)/Slim/web/CategoryManagement.jsp</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/GoodReceiptDetail.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/entity/Customer.java</file>
             <file>file:/D:/New%20Folder%20(3)/Slim/src/java/controller/LoginController.java</file>

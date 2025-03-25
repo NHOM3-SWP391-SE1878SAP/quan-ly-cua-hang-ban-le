@@ -120,6 +120,7 @@
                                              '<%= employee.getAccount().getAddress().replace("'", "\\'") %>')">
         Cập nhật
     </button>
+                                    <a href="EmployeeControllerURL?service=deleteEmployee&employeeID=<%= employee.getEmployeeID() %>" class="btn btn-outline-danger btn-icon-text">Delete</a>
 
 
 

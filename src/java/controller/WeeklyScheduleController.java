@@ -121,6 +121,27 @@ case "markAttendance":
     }
     response.sendRedirect("WeeklyScheduleController?service=getAllAttendanceHistory");
     break;    // Trong WeeklyScheduleController.java
+    
+    // Add this to the switch statement in your WeeklyScheduleController
+case "updateAttendance":
+    int attendanceId = Integer.parseInt(request.getParameter("attendanceId"));
+    boolean newStatus = Boolean.parseBoolean(request.getParameter("isPresent"));
+    
+    boolean updateSuccess = new DAOAttendance().updateAttendance(attendanceId, newStatus);
+    
+    if (updateSuccess) {
+        request.setAttribute("message", "Cập nhật trạng thái thành công!");
+    } else {
+        request.setAttribute("error", "Cập nhật trạng thái thất bại!");
+    }
+    
+    // Load lại dữ liệu
+    Vector<Attendance> updatedList = new DAOAttendance().getAllAttendanceHistory();
+    request.setAttribute("attendanceList", updatedList);
+    
+    dispatcher = request.getRequestDispatcher("AttendanceHistory.jsp");
+    dispatcher.forward(request, response);
+    break;
         }
     }
 

@@ -466,10 +466,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                   </li>
                 </ul>
               </div>
-              <button class="btn btn-primary">
-                <i class="bi bi-grid"></i>
-                ▼
-              </button>
+              
             </div>
           </div>
 

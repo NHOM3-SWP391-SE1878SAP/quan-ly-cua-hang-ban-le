@@ -23,7 +23,7 @@ public class DBConnect {
 
     public DBConnect() {
         this("jdbc:sqlserver://localhost:1433;databaseName=slim10",
-                "sa","Long2002@");
+                "sa","123");
 
     }
 

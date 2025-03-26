@@ -48,7 +48,6 @@ public class VoucherServlet extends HttpServlet {
         request.getRequestDispatcher("vouchers.jsp").forward(request, response);
     }
 
-   
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -64,8 +63,13 @@ public class VoucherServlet extends HttpServlet {
                 int maxValue = Integer.parseInt(request.getParameter("maxValue").replace(".", ""));
                 LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
                 LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
-
-                if (startDate.isAfter(endDate)) {
+                
+                if (discountRate >= 100) {
+                    session.setAttribute("message", "❌ Lỗi: Discount rate phải nhỏ hơn 100!");
+                    response.sendRedirect("VoucherServlet?page=1");
+                    return;
+                }
+                else if (startDate.isAfter(endDate)) {
                     session.setAttribute("message", "❌ Lỗi: Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
                     response.sendRedirect("VoucherServlet?page=1");
                     return;
@@ -87,8 +91,11 @@ public class VoucherServlet extends HttpServlet {
                 int maxValue = Integer.parseInt(request.getParameter("maxValue").replace(".", ""));
                 LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
                 LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
-
-                if (startDate.isAfter(endDate)) {
+                if (discountRate >= 100) {
+                    session.setAttribute("message", "❌ Lỗi: Discount rate phải nhỏ hơn 100!");
+                    response.sendRedirect("VoucherServlet?page=1");
+                    return;
+                } else if (startDate.isAfter(endDate)) {
                     session.setAttribute("message", "❌ Lỗi: Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
                     response.sendRedirect("VoucherServlet?page=1");
                     return;

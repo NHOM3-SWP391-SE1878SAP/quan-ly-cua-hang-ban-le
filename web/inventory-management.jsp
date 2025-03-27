@@ -409,6 +409,28 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
       <section class="section">
         <div class="container">
+             <!-- Hiển thị thông báo lỗi nếu có -->
+          <c:if test="${not empty sessionScope.errorMessages}">
+            <div class="alert alert-danger">
+              <strong>Lỗi!</strong>
+              <ul>
+                <c:forEach var="error" items="${sessionScope.errorMessages}">
+                  <li>${error}</li>
+                </c:forEach>
+              </ul>
+            </div>
+            <!-- Xóa thông báo lỗi sau khi hiển thị -->
+            <c:remove var="errorMessages"/>
+          </c:if>
+
+          <!-- Hiển thị thông báo thành công nếu có -->
+          <c:if test="${not empty sessionScope.successMessage}">
+            <div class="alert alert-success">
+              <strong>Thành công!</strong> ${sessionScope.successMessage}
+            </div>
+            <!-- Xóa thông báo thành công sau khi hiển thị -->
+            <c:remove var="successMessage"/>
+          </c:if>
           <!-- Header -->
           <div class="header">
             <div class="title">Phiếu nhập hàng</div>
@@ -654,7 +676,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
       // Xem chi tiết phiếu nhập hàng
       function viewReceiptDetails(id) {
-        window.location.href = "inventory?action=edit&id=" + id;
+        window.location.href = "inventory?action=view&id=" + id;
       }
 
       // Xác nhận xóa phiếu nhập hàng

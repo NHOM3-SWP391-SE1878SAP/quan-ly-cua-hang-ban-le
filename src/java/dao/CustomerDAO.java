@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDAO {
+
     private Connection conn;
 
-    
     public CustomerDAO(Connection conn) {
         this.conn = conn;
     }
-    
+
     public CustomerDAO() {
         this.conn = new DatabaseConnection().getConnection();
     }
@@ -21,8 +21,7 @@ public class CustomerDAO {
     // ✅ Lấy tổng số khách hàng để phục vụ phân trang
     public int getTotalCustomerCount() {
         String query = "SELECT COUNT(*) FROM customer";
-        try (PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -59,7 +58,7 @@ public class CustomerDAO {
     }
 
     // ✅ Lấy danh sách tất cả khách hàng
-     public List<Customer> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customer ORDER BY ID DESC";
 
@@ -149,5 +148,26 @@ public class CustomerDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    // Kiểm tra nếu số điện thoại đã tồn tại
+
+    public boolean isPhoneNumberExists(String phone) {
+        String query = "SELECT COUNT(*) FROM customer WHERE Phone = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true; // Số điện thoại đã tồn tại
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Số điện thoại chưa tồn tại
+    }
+
+    public boolean isValidPhoneNumber(String phone) {
+        // Giả sử số điện thoại hợp lệ là 10 chữ số, không có ký tự đặc biệt
+        String regex = "^\\d{10}$"; // Định dạng 10 chữ số
+        return phone.matches(regex);
     }
 }

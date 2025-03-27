@@ -14,10 +14,8 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "CustomerServlet", urlPatterns = {"/CustomerServlet"})
-
-
 public class CustomerServlet extends HttpServlet {
-    
+
     private static final long serialVersionUID = 1L;
     private CustomerDAO customerDAO;
 
@@ -29,17 +27,15 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
         String keyword = request.getParameter("search");
-
-        int page = 1; 
-        int recordsPerPage = 10; 
+        int page = 1;
+        int recordsPerPage = 10;
 
         if (request.getParameter("page") != null) {
             try {
                 page = Integer.parseInt(request.getParameter("page"));
             } catch (NumberFormatException e) {
-                page = 1; 
+                page = 1;
             }
         }
 
@@ -53,39 +49,73 @@ public class CustomerServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         try {
+             
+            String name = request.getParameter("customerName");
+            String phone = request.getParameter("phone");
+            String address = request.getParameter("address");
+            Integer points = parseInteger(request.getParameter("points"));
+
+            // Validate input
+            if (name == null || name.length() > 20) {
+                session.setAttribute("message", "❌ Tên không được vượt quá 20 ký tự.");
+                response.sendRedirect("CustomerServlet?page=1");
+                return;
+            }
+
+            if (address == null || address.length() > 20) {
+                session.setAttribute("message", "❌ Địa chỉ không được vượt quá 20 ký tự.");
+                response.sendRedirect("CustomerServlet?page=1");
+                return;
+            }
+
+            if (points == null || points < 1) {
+                session.setAttribute("message", "❌ Điểm phải lớn hơn hoặc bằng 1.");
+                response.sendRedirect("CustomerServlet?page=1");
+                return;
+            }
+
+            String phoneRegex = "^(0[3|5|7|8|9])+([0-9]{8})$";
+            if (phone == null || !phone.matches(phoneRegex)) {
+                session.setAttribute("message", "❌ Số điện thoại không hợp lệ theo định dạng");
+                response.sendRedirect("CustomerServlet?page=1");
+                return;
+            }
+
             if ("add".equals(action)) {
-                String name = request.getParameter("customerName");
-                String phone = request.getParameter("phone");
-                String address = request.getParameter("address");
-                Integer points = parseInteger(request.getParameter("points"));
+                if (customerDAO.isPhoneNumberExists(phone)) {
+                    session.setAttribute("message", "❌ Số điện thoại này đã tồn tại!");
+                    response.sendRedirect("CustomerServlet?page=1");
+                    return;
+                }
                 Customer customer = new Customer(name, phone, address, points);
                 customerDAO.addCustomer(customer);
-                session.setAttribute("message", "✅ Customer added successfully!");
+                session.setAttribute("message", "✅ Thêm khách hàng thành công!");
 
             } else if ("update".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                String name = request.getParameter("customerName");
-                String phone = request.getParameter("phone");
-                String address = request.getParameter("address");
-                Integer points = parseInteger(request.getParameter("points"));
+                List<Customer> allCustomers = customerDAO.getAllCustomers();
+                boolean phoneExists = allCustomers.stream()
+                        .anyMatch(c -> c.getPhone().equals(phone) && c.getId() != id);
+
+                if (phoneExists) {
+                    session.setAttribute("message", "❌ Số điện thoại này đã được sử dụng bởi khách hàng khác!");
+                    response.sendRedirect("CustomerServlet?page=1");
+                    return;
+                }
+
                 Customer customer = new Customer(id, name, phone, address, points);
                 customerDAO.updateCustomer(customer);
-                session.setAttribute("message", "✅ Customer updated successfully!");
+                session.setAttribute("message", "✅ Cập nhật khách hàng thành công!");
 
-            } else if ("delete".equals(action)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                customerDAO.deleteCustomer(id);
-                session.setAttribute("message", "🗑️ Customer deleted successfully!");
-            }
+            } 
 
-            // ✅ Cập nhật danh sách khách hàng ngay sau CRUD
             paginateCustomers(request, null, 1, 10);
 
         } catch (Exception e) {
-            session.setAttribute("message", "❌ Error: " + e.getMessage());
+            session.setAttribute("message", "❌ Lỗi: " + e.getMessage());
         }
 
-        response.sendRedirect("CustomerServlet?page=1"); 
+        response.sendRedirect("CustomerServlet?page=1");
     }
 
     private void paginateCustomers(HttpServletRequest request, String keyword, int page, int recordsPerPage) {
@@ -93,7 +123,7 @@ public class CustomerServlet extends HttpServlet {
         int totalRecords;
 
         if (keyword == null || keyword.trim().isEmpty()) {
-            totalRecords = customerDAO.getTotalCustomerCount(); 
+            totalRecords = customerDAO.getTotalCustomerCount();
             customers = customerDAO.getCustomersByPage(page, recordsPerPage);
         } else {
             customers = customerDAO.searchCustomers(keyword);

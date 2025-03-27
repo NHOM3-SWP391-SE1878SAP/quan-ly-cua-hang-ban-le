@@ -73,6 +73,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Danh sách sản phẩm</h5>
+                                <a href="ExportProductExcelServlet" class="btn btn-success mb-3">Xuất Excel</a>
                                 <table class="table table-hover datatable mt-3">
                                     <thead>
                                         <tr>

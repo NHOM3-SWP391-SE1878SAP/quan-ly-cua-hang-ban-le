@@ -42,7 +42,7 @@ public class PayrollController extends HttpServlet {
         dao.createPayrollForMonth(month, year);
 
         // Step 2: Generate Payroll from Attendance
-        dao.generateEmployeePayroll(month, year);
+        dao.generateEmployeePayroll1(month, year);
 
         // Step 3: Retrieve Payroll Data
         Vector<EmployeePayroll> payrollList = dao.getPayrollWithAttendance(month, year);

@@ -63,4 +63,23 @@ public class DAORole extends DBConnect {
         }
         return roles;
     }
+    
+     public Role getRoleById(int roleId) {
+        String sql = "SELECT id, RoleName FROM Role WHERE id = ?;";
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, roleId);
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                Role role = new Role();
+                role.setRoleID(rs.getInt("id"));
+                role.setRoleName(rs.getString("RoleName"));
+                return role;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi trong getRoleById: " + e.getMessage());
+        }
+
+        return null; // Trả về null nếu không tìm thấy role
+    }
 }

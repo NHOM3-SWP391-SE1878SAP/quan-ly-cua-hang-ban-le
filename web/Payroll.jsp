@@ -33,7 +33,20 @@
         <div class="pagetitle">
             <h1>Bảng Lương Nhân Viên</h1>
         </div>
-
+        <div class="d-flex mb-3">
+    <div class="me-auto">
+        <!-- Các phần form trước đó -->
+    </div>
+    <div class="ms-2">
+                                <form action="ExportPayrollExcelServlet" method="GET">
+    <input type="hidden" name="month" value="${selectedMonth}">
+    <input type="hidden" name="year" value="${selectedYear}">
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+    </button>
+</form>
+    </div>
+</div>
         <div class="container">
             <div class="d-flex mb-3">
                 <div class="me-auto">
@@ -55,12 +68,14 @@
 
             <div class="card">
                 <div class="card-body">
-                    <table class="table table-striped" id="payrollTable">
+                    <table class="table table-striped datatable" id="payrollTable">
                         <thead>
     <tr>
         <th>ID Nhân Viên</th>
         <th>Tên Nhân Viên</th>
         <th>Số Ngày Công</th>
+                <th>Số Ngày Nghỉ</th> <!-- Thêm cột mới -->
+
         <th>Lương Cơ Bản</th>
         <th>Tổng Lương</th>
         <th>Ngày Thanh Toán</th>
@@ -77,8 +92,17 @@
             <td>NV<%= payroll.getEmployee().getEmployeeID() %></td>
             <td><%= payroll.getEmployee().getEmployeeName() %></td>
             <td><%= payroll.getWorkDays() %></td>
+                        <td><%= payroll.getOffDays() %></td> <!-- Hiển thị OffDays -->
+
             <td><%= payroll.getEmployee().getSalary() %></td>
-            <td><%= payroll.getEmployee().getSalary() * payroll.getWorkDays() %></td>
+             <td><%= 
+    Math.max(
+        payroll.getEmployee().getSalary() * payroll.getWorkDays() 
+        - (payroll.getEmployee().getSalary() * 0.1 * payroll.getOffDays()), 
+        0
+    ) 
+%></td>
+            <td><%= payroll.getPayDate() != null ? payroll.getPayDate() : "Chưa thanh toán" %></td>
             <td><%= payroll.getPayDate() != null ? payroll.getPayDate() : "Chưa thanh toán" %></td>
             <td>
                 <% if (payroll.getPayDate() == null) { %>

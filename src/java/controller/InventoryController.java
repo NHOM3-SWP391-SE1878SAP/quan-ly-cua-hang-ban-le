@@ -2,7 +2,6 @@ package controller;
 
 import entity.GoodReceipt;
 import entity.GoodReceiptDetail;
-import entity.Product;
 import entity.Product1;
 import entity.Supplier;
 import java.io.IOException;

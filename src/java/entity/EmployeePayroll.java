@@ -7,11 +7,21 @@ public class EmployeePayroll {
     private Employee employee;
     private Payroll payroll;
     private int workDays;
+    private int offDays;
     private Date payDate;
-
+    
     public EmployeePayroll() {
     }
 
+    public EmployeePayroll(int employeePayrollID, Employee employee, Payroll payroll, int workDays, int offDays, Date payDate) {
+        this.employeePayrollID = employeePayrollID;
+        this.employee = employee;
+        this.payroll = payroll;
+        this.workDays = workDays;
+        this.offDays = offDays;
+        this.payDate = payDate;
+    }
+    
     public EmployeePayroll(int employeePayrollID, Employee employee, Payroll payroll, int workDays, Date payDate) {
         this.employeePayrollID = employeePayrollID;
         this.employee = employee;
@@ -59,4 +69,13 @@ public class EmployeePayroll {
     public void setPayDate(Date payDate) {
         this.payDate = payDate;
     }
+
+    public int getOffDays() {
+        return offDays;
+    }
+
+    public void setOffDays(int offDays) {
+        this.offDays = offDays;
+    }
+    
 }

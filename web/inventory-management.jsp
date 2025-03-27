@@ -412,19 +412,19 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           <!-- Header -->
           <div class="header">
             <div class="title">Phiếu nhập hàng</div>
-            <div class="search-bar">
+<!--            <div class="search-bar">
               <form action="inventory" method="get">
                 <input
                   type="text"
                   class="search-input"
-                  placeholder="Theo mã phiếu nhập"
+                  placeholder=""
                   name="search"
                   value="${param.search}"
                 />
                 <button type="submit" style="display: none"></button>
               </form>
               <span class="dropdown-icon">▼</span>
-            </div>
+            </div>-->
             <div class="action-buttons">
               <a href="inventory?action=add" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i>
@@ -478,10 +478,10 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             <!-- Content Area -->
             <div class="content-area">
               <div class="table-container">
-                <table class="data-table">
+                <table class="table table-hover datatable">
                   <thead>
                     <tr>
-                      <th width="30">
+<!--                      <th width="30">
                         <label
                           class="checkbox-container"
                           style="margin-bottom: 0"
@@ -489,12 +489,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                           <input type="checkbox" id="selectAll" />
                           <span class="checkmark"></span>
                         </label>
-                      </th>
+                      </th>-->
                       <th>Mã nhập hàng</th>
                       <th>Thời gian</th>
                       <th>Nhà cung cấp</th>
                       <th>Tổng tiền</th>
-                      <th>Thao tác</th>
+<!--                      <th>Thao tác</th>-->
                     </tr>
                   </thead>
                   <tbody>
@@ -502,7 +502,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                       <tr
                         onclick="viewReceiptDetails(${receipt.goodReceiptID})"
                       >
-                        <td>
+<!--                        <td>
                           <label
                             class="checkbox-container"
                             style="margin-bottom: 0"
@@ -515,7 +515,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                             />
                             <span class="checkmark"></span>
                           </label>
-                        </td>
+                        </td>-->
                         <td>
                           PN${String.format("%06d", receipt.goodReceiptID)}
                         </td>
@@ -564,7 +564,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                   </tbody>
                 </table>
 
-                <!-- Pagination -->
+<!--                 Pagination 
                 <div class="pagination">
                   <div class="pagination-controls">
                     <button class="page-btn" onclick="goToPage(1)">◀◀</button>
@@ -599,7 +599,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                     ${Math.min(currentPage*10, totalItems.longValue())} / Tổng
                     số ${totalItems} phiếu nhập hàng
                   </div>
-                </div>
+                </div>-->
               </div>
             </div>
           </div>
@@ -657,8 +657,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
       // Xem chi tiết phiếu nhập hàng
       function viewReceiptDetails(id) {
-        window.location.href = "inventory?action=edit&id=" + id;
-      }
+window.location.href = "inventory?action=view&id=" + id;      }
 
       // Xác nhận xóa phiếu nhập hàng
       function confirmDelete(id, event) {

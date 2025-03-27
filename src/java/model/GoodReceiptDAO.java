@@ -74,8 +74,8 @@ public class GoodReceiptDAO extends DBConnect{
         }
         
         // Thêm điều kiện tìm kiếm
-        if (search != null && !search.isEmpty()) {
-            sql.append(" AND (ID LIKE ? OR SuppliersID IN (SELECT ID FROM Suppliers WHERE Name LIKE ?))");
+if (search != null && !search.isEmpty()) {
+            sql.append(" AND (ID LIKE ? OR SuppliersID IN (SELECT ID FROM Suppliers WHERE [SupplierName] LIKE ?))");
         }
         
         // Thêm phân trang

@@ -48,7 +48,7 @@
     </a>
         </div>
 
-        <table class="table table-bordered attendance-table">
+        <table class="table table-striped datatable">
             <thead class="table-light">
                 <tr>
                     <th>Nhân viên</th>

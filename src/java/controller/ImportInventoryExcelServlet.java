@@ -107,8 +107,8 @@ public class ImportInventoryExcelServlet extends HttpServlet {
                 int unitCost;
                 
                 try {
-                    quantity = Integer.parseInt(row[2].getContents().trim());
-                    unitCost = Integer.parseInt(row[3].getContents().trim());
+                    quantity = Integer.parseInt(row[2].getContents().trim().replaceAll(",", ""));
+                    unitCost = Integer.parseInt(row[3].getContents().trim().replaceAll(",", ""));
                 } catch (NumberFormatException e) {
                     errors.add("Dòng " + (i + 1) + ": Số lượng hoặc đơn giá không hợp lệ");
                     continue;

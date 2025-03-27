@@ -90,6 +90,14 @@
                                             </span>
                                         </p>
                                     </c:if>
+<c:if test="${returnIds != null && !empty returnIds}">
+    <p><strong>Mã trả hàng:</strong></p>
+    <ul>
+        <c:forEach var="returnId" items="${returnIds}">
+            <li>#${returnId}</li>
+        </c:forEach>
+    </ul>
+</c:if>
                                 </c:when>
                                 <c:otherwise>
                                     <p><strong>Mã đơn trả:</strong> #${returnOrder.returnID}</p>
@@ -149,7 +157,7 @@
                                             <c:set var="totalAmount" value="${totalAmount + subtotal}" />
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td>${detail.productID}</td>
+                                                <td>${product != null ? product.productCode : 'Sản phẩm không tồn tại'}</td>
                                                 <td>${product != null ? product.productName : 'Sản phẩm không tồn tại'}</td>
                                                 <td class="text-center">${detail.quantity}</td>
                                                 <td class="text-end"><fmt:formatNumber value="${detail.price}" type="currency" currencySymbol="₫" maxFractionDigits="0" /></td>
@@ -167,7 +175,7 @@
                                             <c:set var="totalAmount" value="${totalAmount + subtotal}" />
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td>${orderDetail != null ? orderDetail.productID : 'N/A'}</td>
+                                                <td>${product != null ? product.productCode : 'Sản phẩm không tồn tại'}</td>
                                                 <td>${product != null ? product.productName : 'Sản phẩm không tồn tại'}</td>
                                                 <td class="text-center">${detail.quantity}</td>
                                                 <td class="text-end"><fmt:formatNumber value="${price}" type="currency" currencySymbol="₫" maxFractionDigits="0" /></td>

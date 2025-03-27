@@ -2,6 +2,7 @@ package model;
 
 import entity.Account;
 import entity.Employee;
+import entity.EmployeeSalesReport;
 import entity.Role;
 import java.sql.*;
 import java.util.Vector;
@@ -312,9 +313,68 @@ public boolean deleteEmployee(int employeeID) {
         }
     }
 }
-
+public boolean isEmailExists(String email, int excludeAccountID) {
+    String sql = "SELECT COUNT(*) FROM Accounts WHERE Email = ? AND ID != ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, email);
+        pstmt.setInt(2, excludeAccountID);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return false;
 }
 
+public boolean isPhoneExists(String phone, int excludeAccountID) {
+    String sql = "SELECT COUNT(*) FROM Accounts WHERE Phone = ? AND ID != ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, phone);
+        pstmt.setInt(2, excludeAccountID);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return false;
+}
 
+public Vector<EmployeeSalesReport> getEmployeeSalesReport(java.util.Date fromDate, java.util.Date toDate) {
+    Vector<EmployeeSalesReport> report = new Vector<>();
+    String sql = "SELECT e.ID, e.EmployeeName, "
+            + "CONVERT(date, o.OrderDate) AS ReportDate, "
+            + "COUNT(o.ID) AS OrderCount, "
+            + "SUM(o.TotalAmount) AS TotalSales "
+            + "FROM Employees e "
+            + "LEFT JOIN Orders o ON e.ID = o.EmployeesID "
+            + "WHERE o.OrderDate BETWEEN ? AND ? "
+            + "GROUP BY e.ID, e.EmployeeName, CONVERT(date, o.OrderDate) "
+            + "ORDER BY e.EmployeeName, CONVERT(date, o.OrderDate)";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setDate(1, new java.sql.Date(fromDate.getTime()));
+        pstmt.setDate(2, new java.sql.Date(toDate.getTime()));
+        
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            EmployeeSalesReport item = new EmployeeSalesReport(
+                rs.getInt("ID"),
+                rs.getString("EmployeeName"),
+                rs.getString("ReportDate"),
+                rs.getInt("OrderCount"),
+                rs.getInt("TotalSales")
+            );
+            report.add(item);
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOEmployee.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return report;
+}
 
+}
 

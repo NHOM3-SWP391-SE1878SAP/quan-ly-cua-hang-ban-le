@@ -150,4 +150,24 @@ public class CustomerDAO {
             e.printStackTrace();
         }
     }
+    
+    public boolean isPhoneNumberExists(String phone) {
+        String query = "SELECT COUNT(*) FROM customer WHERE Phone = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true; // Số điện thoại đã tồn tại
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Số điện thoại chưa tồn tại
+    }
+
+    public boolean isValidPhoneNumber(String phone) {
+        // Giả sử số điện thoại hợp lệ là 10 chữ số, không có ký tự đặc biệt
+        String regex = "^\\d{10}$"; // Định dạng 10 chữ số
+        return phone.matches(regex);
+    }
 }

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet(name = "ReportController", urlPatterns = { "/report" })
+@WebServlet(name = "ReportController", urlPatterns = {"/report"})
 public class ReportController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ReportController.class.getName());
@@ -59,12 +59,12 @@ public class ReportController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String action = request.getParameter("action");
-            
+
             // Xử lý action xem chi tiết
             if ("viewDetails".equals(action)) {
                 String type = request.getParameter("type");
                 int id = Integer.parseInt(request.getParameter("id"));
-                
+
                 // Xử lý chi tiết đơn hàng
                 if ("SALE".equals(type)) {
                     viewOrderDetails(request, response, id);
@@ -75,7 +75,7 @@ public class ReportController extends HttpServlet {
                     return;
                 }
             }
-            
+
             // Xử lý báo cáo thông thường
             String period = request.getParameter("period");
             String fromDateStr = request.getParameter("fromDate");
@@ -85,36 +85,36 @@ public class ReportController extends HttpServlet {
             String employeeSearch = request.getParameter("employee");
             String orderType = request.getParameter("orderType");
             String pageStr = request.getParameter("page");
-            
+
             // Xử lý số trang
             int currentPage = processPageNumber(pageStr);
-            
+
             // Lấy khoảng thời gian
             Date[] dateRange = getDateRange(period, fromDateStr, toDateStr);
             Date fromDate = dateRange[0];
             Date toDate = dateRange[1];
-            
+
             // Lấy danh sách báo cáo đã lọc
             List<Map<String, Object>> reportItems = getFilteredReportItems(
                     fromDate, toDate, orderType, orderIdSearch, customerSearch, employeeSearch, request);
-            
+
             // Tính toán phân trang
             int totalItems = reportItems.size();
             int totalPages = calculateTotalPages(totalItems);
-            
+
             // Lấy danh sách báo cáo cho trang hiện tại
             List<Map<String, Object>> itemsForCurrentPage = getItemsForPage(reportItems, currentPage);
-            
+
             // Tính toán tổng doanh thu, số đơn bán và số đơn trả
             float totalRevenue = 0;
             int totalSales = 0;
             int totalReturns = 0;
-            
+
             for (Map<String, Object> item : reportItems) {
                 String type = (String) item.get("orderType");
                 Number amount = (Number) item.get("totalAmount");
                 float value = amount != null ? amount.floatValue() : 0;
-                
+
                 if ("SALE".equals(type)) {
                     totalRevenue += value;
                     totalSales++;
@@ -123,7 +123,7 @@ public class ReportController extends HttpServlet {
                     totalReturns++;
                 }
             }
-            
+
             // Xây dựng chuỗi tham số tìm kiếm để giữ lại khi phân trang
             StringBuilder searchParams = new StringBuilder();
             if (period != null && !period.isEmpty()) {
@@ -147,7 +147,7 @@ public class ReportController extends HttpServlet {
             if (orderType != null && !orderType.isEmpty()) {
                 searchParams.append("&orderType=").append(orderType);
             }
-            
+
             // Đặt các thuộc tính vào request
             request.setAttribute("orders", itemsForCurrentPage);
             request.setAttribute("totalRevenue", totalRevenue);
@@ -160,10 +160,10 @@ public class ReportController extends HttpServlet {
             request.setAttribute("pageSize", REPORTS_PER_PAGE);
             request.setAttribute("accountDAO", daoAccount);
             request.setAttribute("voucherDAO", daoVoucher);
-            
+
             // Chuyển hướng đến trang báo cáo
             request.getRequestDispatcher("/ReportManagement.jsp").forward(request, response);
-            
+
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing report request", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -173,7 +173,7 @@ public class ReportController extends HttpServlet {
     /**
      * Xem chi tiết đơn hàng
      */
-    private void viewOrderDetails(HttpServletRequest request, HttpServletResponse response, int orderId) 
+    private void viewOrderDetails(HttpServletRequest request, HttpServletResponse response, int orderId)
             throws ServletException, IOException {
         try {
             // Lấy thông tin đơn hàng
@@ -182,25 +182,32 @@ public class ReportController extends HttpServlet {
                 response.sendRedirect("report?error=OrderNotFound");
                 return;
             }
-            
+
             // Lấy chi tiết đơn hàng
             List<OrderDetail> orderDetails = daoOrderDetails.getOrderDetailsByOrderId(orderId);
-            
+
             // Lấy thông tin khách hàng
             Customer customer = daoCustomer.getCustomerById(order.getCustomerID());
-            
+
             // Lấy thông tin nhân viên
             Employee employee = null;
             if (order.getEmployeeID() > 0) {
                 employee = daoAccount.getEmployeeByID(order.getEmployeeID());
             }
-            
+
             // Lấy thông tin voucher nếu có
             Voucher voucher = null;
             if (order.getVoucherID() != null && order.getVoucherID() > 0) {
                 voucher = daoVoucher.getVoucherById(order.getVoucherID());
             }
-            
+            List<Return> returnOrders = daoReturn.getReturnsByOrderId(orderId);
+            List<String> returnIds = new ArrayList<>();
+            if (returnOrders != null && !returnOrders.isEmpty()) {
+                for (Return returnOrder : returnOrders) {
+                    returnIds.add(String.valueOf(returnOrder.getReturnID())); // Lấy ID làm mã trả hàng
+                }
+            }
+
             // Đặt các thuộc tính vào request
             request.setAttribute("order", order);
             request.setAttribute("orderDetails", orderDetails);
@@ -209,7 +216,9 @@ public class ReportController extends HttpServlet {
             request.setAttribute("voucher", voucher);
             request.setAttribute("detailType", "SALE");
             request.setAttribute("daoProduct", daoProduct);
-            
+            request.setAttribute("returnOrders", returnOrders); // Đặt thông tin các đơn trả hàng
+            request.setAttribute("returnIds", returnIds); // Đặt danh sách mã trả hàng
+
             // Chuyển hướng đến trang chi tiết
             request.getRequestDispatcher("/ReportDetailManagement.jsp").forward(request, response);
         } catch (Exception e) {
@@ -221,7 +230,7 @@ public class ReportController extends HttpServlet {
     /**
      * Xem chi tiết đơn trả hàng
      */
-    private void viewReturnDetails(HttpServletRequest request, HttpServletResponse response, int returnId) 
+    private void viewReturnDetails(HttpServletRequest request, HttpServletResponse response, int returnId)
             throws ServletException, IOException {
         try {
             // Lấy thông tin đơn trả hàng
@@ -230,25 +239,25 @@ public class ReportController extends HttpServlet {
                 response.sendRedirect("report?error=ReturnNotFound");
                 return;
             }
-            
+
             // Lấy chi tiết đơn trả hàng
             List<ReturnDetails> returnDetails = daoReturnDetails.getReturnDetailsByReturnId(returnId);
-            
+
             // Lấy thông tin đơn hàng gốc
             Order originalOrder = daoOrder.getOrderById(returnOrder.getOrderId());
-            
+
             // Lấy thông tin khách hàng từ đơn hàng gốc
             Customer customer = null;
             if (originalOrder != null) {
                 customer = daoCustomer.getCustomerById(originalOrder.getCustomerID());
             }
-            
+
             // Lấy thông tin nhân viên
             Employee employee = null;
             if (returnOrder.getEmployeeId() > 0) {
                 employee = daoAccount.getEmployeeByID(returnOrder.getEmployeeId());
             }
-            
+
             // Đặt các thuộc tính vào request
             request.setAttribute("returnOrder", returnOrder);
             request.setAttribute("returnDetails", returnDetails);
@@ -258,7 +267,7 @@ public class ReportController extends HttpServlet {
             request.setAttribute("detailType", "RETURN");
             request.setAttribute("daoProduct", daoProduct);
             request.setAttribute("daoOrderDetails", daoOrderDetails);
-            
+
             // Chuyển hướng đến trang chi tiết
             request.getRequestDispatcher("/ReportDetailManagement.jsp").forward(request, response);
         } catch (Exception e) {
@@ -291,10 +300,10 @@ public class ReportController extends HttpServlet {
     private Date[] getDateRange(String period, String fromDateStr, String toDateStr) {
         Date fromDate = null;
         Date toDate = new Date(); // Mặc định đến ngày hiện tại
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
-        
+
         try {
             if (period != null && !period.isEmpty()) {
                 switch (period) {
@@ -342,7 +351,7 @@ public class ReportController extends HttpServlet {
             } else if (fromDateStr != null && !fromDateStr.isEmpty()) {
                 // Sử dụng khoảng thời gian từ form
                 fromDate = sdf.parse(fromDateStr);
-                
+
                 if (toDateStr != null && !toDateStr.isEmpty()) {
                     toDate = sdf.parse(toDateStr);
                     // Đặt thời gian kết thúc là cuối ngày
@@ -357,25 +366,25 @@ public class ReportController extends HttpServlet {
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, "Error parsing date: {0}", e.getMessage());
         }
-        
-        return new Date[] { fromDate, toDate };
+
+        return new Date[]{fromDate, toDate};
     }
 
     /**
      * Lấy danh sách báo cáo đã lọc
      */
     private List<Map<String, Object>> getFilteredReportItems(
-            Date fromDate, Date toDate, String reportType, 
+            Date fromDate, Date toDate, String reportType,
             String orderIdSearch, String customerSearch, String employeeSearch,
             HttpServletRequest request) {
-        
+
         List<Map<String, Object>> result = new ArrayList<>();
-        
+
         try {
             // Lấy danh sách đơn hàng và đơn trả hàng
             List<Order> orders = daoOrder.getAllOrders();
             List<Return> returns = daoReturn.getAllReturns();
-            
+
             // Lọc theo loại báo cáo
             if (reportType != null && !reportType.isEmpty()) {
                 if ("SALE".equals(reportType)) {
@@ -386,32 +395,32 @@ public class ReportController extends HttpServlet {
                     orders = new ArrayList<>();
                 }
             }
-            
+
             // Lọc theo nhân viên nếu có
             if (employeeSearch != null && !employeeSearch.isEmpty()) {
                 // Lọc đơn hàng
                 List<Order> filteredOrders = new ArrayList<>();
                 for (Order order : orders) {
                     Employee employee = daoAccount.getEmployeeByID(order.getEmployeeID());
-                    if (employee != null && 
-                        employee.getEmployeeName().toLowerCase().contains(employeeSearch.toLowerCase())) {
+                    if (employee != null
+                            && employee.getEmployeeName().toLowerCase().contains(employeeSearch.toLowerCase())) {
                         filteredOrders.add(order);
                     }
                 }
                 orders = filteredOrders;
-                
+
                 // Lọc đơn trả hàng
                 List<Return> filteredReturns = new ArrayList<>();
                 for (Return returnOrder : returns) {
                     Employee employee = daoAccount.getEmployeeByID(returnOrder.getEmployeeId());
-                    if (employee != null && 
-                        employee.getEmployeeName().toLowerCase().contains(employeeSearch.toLowerCase())) {
+                    if (employee != null
+                            && employee.getEmployeeName().toLowerCase().contains(employeeSearch.toLowerCase())) {
                         filteredReturns.add(returnOrder);
                     }
                 }
                 returns = filteredReturns;
             }
-            
+
             // Lọc theo thời gian
             if (fromDate != null || toDate != null) {
                 // Lọc đơn hàng theo thời gian
@@ -419,42 +428,42 @@ public class ReportController extends HttpServlet {
                 for (Order order : orders) {
                     Date orderDate = order.getOrderDate();
                     boolean includeOrder = true;
-                    
+
                     if (fromDate != null && orderDate.before(fromDate)) {
                         includeOrder = false;
                     }
-                    
+
                     if (toDate != null && orderDate.after(toDate)) {
                         includeOrder = false;
                     }
-                    
+
                     if (includeOrder) {
                         filteredOrders.add(order);
                     }
                 }
                 orders = filteredOrders;
-                
+
                 // Lọc đơn trả hàng theo thời gian
                 List<Return> filteredReturns = new ArrayList<>();
                 for (Return returnOrder : returns) {
                     Date returnDate = returnOrder.getReturnDate();
                     boolean includeReturn = true;
-                    
+
                     if (fromDate != null && returnDate.before(fromDate)) {
                         includeReturn = false;
                     }
-                    
+
                     if (toDate != null && returnDate.after(toDate)) {
                         includeReturn = false;
                     }
-                    
+
                     if (includeReturn) {
                         filteredReturns.add(returnOrder);
                     }
                 }
                 returns = filteredReturns;
             }
-            
+
             // Lọc theo mã đơn hàng
             if (orderIdSearch != null && !orderIdSearch.isEmpty()) {
                 // Lọc đơn hàng theo mã
@@ -465,48 +474,48 @@ public class ReportController extends HttpServlet {
                     }
                 }
                 orders = filteredOrders;
-                
+
                 // Lọc đơn trả hàng theo mã đơn hàng gốc
                 List<Return> filteredReturns = new ArrayList<>();
                 for (Return returnOrder : returns) {
-                    if (String.valueOf(returnOrder.getOrderId()).contains(orderIdSearch) ||
-                        String.valueOf(returnOrder.getOrderId()).contains(orderIdSearch)) {
+                    if (String.valueOf(returnOrder.getOrderId()).contains(orderIdSearch)
+                            || String.valueOf(returnOrder.getOrderId()).contains(orderIdSearch)) {
                         filteredReturns.add(returnOrder);
                     }
                 }
                 returns = filteredReturns;
             }
-            
+
             // Lọc theo khách hàng
             if (customerSearch != null && !customerSearch.isEmpty()) {
                 // Lọc đơn hàng theo khách hàng
                 List<Order> filteredOrders = new ArrayList<>();
                 for (Order order : orders) {
                     Customer customer = daoCustomer.getCustomerById(order.getCustomerID());
-                    if (customer != null && 
-                        (customer.getCustomerName().toLowerCase().contains(customerSearch.toLowerCase()) ||
-                         customer.getPhone().contains(customerSearch))) {
+                    if (customer != null
+                            && (customer.getCustomerName().toLowerCase().contains(customerSearch.toLowerCase())
+                            || customer.getPhone().contains(customerSearch))) {
                         filteredOrders.add(order);
                     }
                 }
                 orders = filteredOrders;
-                
+
                 // Lọc đơn trả hàng theo khách hàng của đơn hàng gốc
                 List<Return> filteredReturns = new ArrayList<>();
                 for (Return returnOrder : returns) {
                     Order originalOrder = daoOrder.getOrderById(returnOrder.getOrderId());
                     if (originalOrder != null) {
                         Customer customer = daoCustomer.getCustomerById(originalOrder.getCustomerID());
-                        if (customer != null && 
-                            (customer.getCustomerName().toLowerCase().contains(customerSearch.toLowerCase()) ||
-                             customer.getPhone().contains(customerSearch))) {
+                        if (customer != null
+                                && (customer.getCustomerName().toLowerCase().contains(customerSearch.toLowerCase())
+                                || customer.getPhone().contains(customerSearch))) {
                             filteredReturns.add(returnOrder);
                         }
                     }
                 }
                 returns = filteredReturns;
             }
-            
+
             // Xử lý đơn hàng bán
             for (Order order : orders) {
                 Map<String, Object> item = new HashMap<>();
@@ -514,24 +523,24 @@ public class ReportController extends HttpServlet {
                 item.put("date", order.getOrderDate());
                 item.put("totalAmount", order.getTotalAmount());
                 item.put("orderType", "SALE");
-                
+
                 // Đảm bảo employeeID không null trước khi thêm vào map
                 if (order.getEmployeeID() > 0) {
                     item.put("employeeID", order.getEmployeeID());
                 }
-                
+
                 // Add voucher ID if exists
                 if (order.getVoucherID() != null) {
                     item.put("voucherId", order.getVoucherID());
                 }
-                
+
                 // Lấy thông tin khách hàng
                 Customer customer = daoCustomer.getCustomerById(order.getCustomerID());
                 item.put("customerName", customer != null ? customer.getCustomerName() : "Khách Lẻ");
-                
+
                 result.add(item);
             }
-            
+
             // Xử lý đơn trả hàng
             for (Return returnOrder : returns) {
                 Map<String, Object> item = new HashMap<>();
@@ -539,34 +548,38 @@ public class ReportController extends HttpServlet {
                 item.put("date", returnOrder.getReturnDate());
                 item.put("totalAmount", returnOrder.getRefundAmount());
                 item.put("orderType", "RETURN");
-                
+
                 // Đảm bảo employeeID không null trước khi thêm vào map
                 if (returnOrder.getEmployeeId() > 0) {
                     item.put("employeeID", returnOrder.getEmployeeId());
                 }
-                
+
                 // Lấy thông tin khách hàng từ đơn hàng gốc
                 Order originalOrder = daoOrder.getOrderById(returnOrder.getOrderId());
-                Customer customer = originalOrder != null ? 
-                    daoCustomer.getCustomerById(originalOrder.getCustomerID()) : null;
+                Customer customer = originalOrder != null
+                        ? daoCustomer.getCustomerById(originalOrder.getCustomerID()) : null;
                 item.put("customerName", customer != null ? customer.getCustomerName() : "Khách Lẻ");
-                
+
                 result.add(item);
             }
-            
+
             // Sắp xếp danh sách theo thời gian giảm dần (mới nhất lên đầu)
             result.sort((a, b) -> {
                 Date dateA = (Date) a.get("date");
                 Date dateB = (Date) b.get("date");
-                if (dateA == null) return 1;
-                if (dateB == null) return -1;
+                if (dateA == null) {
+                    return 1;
+                }
+                if (dateB == null) {
+                    return -1;
+                }
                 return dateB.compareTo(dateA); // Sắp xếp giảm dần
             });
-            
+
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error filtering report items", e);
         }
-        
+
         return result;
     }
 
@@ -583,11 +596,11 @@ public class ReportController extends HttpServlet {
     private List<Map<String, Object>> getItemsForPage(List<Map<String, Object>> allItems, int currentPage) {
         int startIndex = (currentPage - 1) * REPORTS_PER_PAGE;
         int endIndex = Math.min(startIndex + REPORTS_PER_PAGE, allItems.size());
-        
+
         if (startIndex >= allItems.size()) {
             return new ArrayList<>();
         }
-        
+
         return allItems.subList(startIndex, endIndex);
     }
 

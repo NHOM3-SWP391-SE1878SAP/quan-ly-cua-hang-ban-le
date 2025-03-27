@@ -30,15 +30,17 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Danh sách sản phẩm</h5>
+                                                <a href="ExportSetPriceExcelServlet" class="btn btn-success mb-3">Xuất File Excel</a>
 
                         <form action="ProductsControllerURL?service=updatePriceBatch" method="post" onsubmit="convertFormattedPriceBeforeSubmit()">
                             <table class="table table-hover datatable mt-3">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="w-25">Mã hàng</th>
-                                        <th scope="col" class="w-25">Tên hàng</th>
-                                        <th scope="col" class="w-25">Giá vốn (VNĐ)</th>
-                                        <th scope="col" class="w-25">Giá bán (VNĐ)</th>
+                                        <th scope="col" class="w-20">Mã hàng</th>
+                                        <th scope="col" class="w-20">Tên hàng</th>
+                                        <th scope="col" class="w-20">Số lô</th>
+                                        <th scope="col" class="w-20">Giá vốn (VNĐ)</th>
+                                        <th scope="col" class="w-20">Giá bán (VNĐ)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,6 +53,7 @@
                                     <tr>
                                         <td style="align-content: center;"><%= p.getProductCode() %></td>
                                         <td style="align-content: center;"><%= p.getProductName() %></td>
+                                        <td style="align-content: center;"><%= p.getGoodReceiptDetail().getBatchNumber() %></td>
                                         <td style="align-content: center;"><%= String.format("%,d", unitCost) %></td>
                                         <td>
                                             <input type="hidden" name="productIds" value="<%= p.getId() %>">
@@ -83,10 +86,10 @@
                                 input.value = value;
                             }
 
-                            // Trước khi submit, chuyển giá trị về số nguyên không có dấu `.`
+                            // Trước khi submit, chuyển giá trị về số nguyên không có dấu .
                             function convertFormattedPriceBeforeSubmit() {
                                 document.querySelectorAll(".price-input").forEach(input => {
-                                    input.value = input.value.replace(/\./g, ""); // Xóa dấu `.`
+                                    input.value = input.value.replace(/\./g, ""); // Xóa dấu .
                                 });
                             }
 

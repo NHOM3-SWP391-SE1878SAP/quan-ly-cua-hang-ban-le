@@ -27,7 +27,7 @@
             }
             .main-content {
                 margin-left: 300px; /* Adjust according to the sidebar width */
-                margin-top: 35px;  /* Adjust this value based on the header height */
+                margin-top: 40px;  /* Adjust this value based on the header height */
             }
         </style>
     </head>
@@ -35,7 +35,7 @@
         <%@include file="HeaderAdmin.jsp"%>
         <!-- Main Content -->
         <div class="main-content">
-           <div class="container py-4">
+           <div class="container py-4 mt-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">
                     <c:choose>
@@ -74,6 +74,14 @@
                                             </span>
                                         </p>
                                     </c:if>
+                                    <c:if test="${returnIds != null && !empty returnIds}">
+    <p><strong>Mã trả hàng:</strong></p>
+    <ul>
+        <c:forEach var="returnId" items="${returnIds}">
+            <li>#${returnId}</li>
+        </c:forEach>
+    </ul>
+</c:if>
                                 </c:when>
                                 <c:otherwise>
                                     <p><strong>Mã đơn trả:</strong> #${returnOrder.returnID}</p>
@@ -133,7 +141,7 @@
                                             <c:set var="totalAmount" value="${totalAmount + subtotal}" />
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td>${detail.productID}</td>
+                                                <td>${product != null ? product.productCode : 'Sản phẩm không tồn tại'}</td>
                                                 <td>${product != null ? product.productName : 'Sản phẩm không tồn tại'}</td>
                                                 <td class="text-center">${detail.quantity}</td>
                                                 <td class="text-end"><fmt:formatNumber value="${detail.price}" type="currency" currencySymbol="₫" maxFractionDigits="0" /></td>
@@ -151,7 +159,7 @@
                                             <c:set var="totalAmount" value="${totalAmount + subtotal}" />
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td>${orderDetail != null ? orderDetail.productID : 'N/A'}</td>
+                                                <td>${product != null ? product.productCode : 'Sản phẩm không tồn tại'}</td>
                                                 <td>${product != null ? product.productName : 'Sản phẩm không tồn tại'}</td>
                                                 <td class="text-center">${detail.quantity}</td>
                                                 <td class="text-end"><fmt:formatNumber value="${price}" type="currency" currencySymbol="₫" maxFractionDigits="0" /></td>

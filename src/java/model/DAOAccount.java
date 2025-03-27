@@ -468,7 +468,25 @@ public class DAOAccount extends DBConnect {
     
     return account;
 }
-
+// Trong DAOAccount.java
+public boolean updatePassword(int accountId, String newHashedPassword) {
+    String sql = "UPDATE Accounts SET Password = ? WHERE ID = ?";
+    
+    if (getConnection() == null) {
+        LOGGER.severe("Error: Cannot connect to database!");
+        return false;
+    }
+    
+    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setString(1, newHashedPassword);
+        pst.setInt(2, accountId);
+        int rowsAffected = pst.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Error updating password for account ID: " + accountId, ex);
+        return false;
+    }
+}
     /**
      * Main method to test the DAO
      */
@@ -481,4 +499,49 @@ public static void main(String[] args) {
     
 
 }
+
+public Account getUserByEmail(String email) {
+        String sql = "SELECT id, username, password, email, phone, address, RoleID " +
+                     "FROM Accounts WHERE email = ?;";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                // Tạo đối tượng Account và gán các giá trị từ ResultSet
+                Account account = new Account();
+                account.setId(rs.getInt("id"));
+                account.setUserName(rs.getString("username"));
+                account.setPassword(rs.getString("password"));
+                account.setEmail(rs.getString("email"));
+                account.setPhone(rs.getString("phone"));
+                account.setAddress(rs.getString("address"));
+
+                // Lấy RoleID và tìm role tương ứng
+                int roleId = rs.getInt("RoleID");
+                DAORole roleDAO = new DAORole();  // Truyền connection vào RoleDAO
+                Role role = roleDAO.getRoleById(roleId);  // Truy vấn để lấy Role từ RoleID
+                account.setRole(role);
+
+                return account;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi trong getUserByEmail: " + e.getMessage());
+        }
+
+        return null; // Trả về null nếu không tìm thấy user
+    }
+
+public void changePass(int id, String newPass) {
+        try {
+            String sql = "UPDATE Accounts SET password = ? WHERE id = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, newPass);
+            st.setInt(2, id);
+            st.executeUpdate();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
 }

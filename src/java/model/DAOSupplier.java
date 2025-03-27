@@ -112,29 +112,44 @@ public class DAOSupplier extends DBConnect {
     }
     
     // Add new supplier
-    public int addSupplier(Supplier supplier) {
-        String sql = "INSERT INTO Suppliers (SupplierCode, SupplierName, CompanyName, TaxCode, " +
-                    "Phone, Address, Email, Region, Ward, CreatedBy, CreatedDate, Notes, Status, " +
-                    "SupplierGroup, TotalPurchase, CurrentDebt) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//    public int addSupplier(Supplier supplier) {
+//        String sql = "INSERT INTO Suppliers (SupplierCode, SupplierName, CompanyName, TaxCode, " +
+//                    "Phone, Address, Email, Region, Ward, CreatedBy, CreatedDate, Notes, Status, " +
+//                    "SupplierGroup, TotalPurchase, CurrentDebt) " +
+//                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//        try {
+//            PreparedStatement st = conn.prepareStatement(sql);
+//            st.setString(1, supplier.getSupplierCode());
+//            st.setString(2, supplier.getSupplierName());
+//            st.setString(3, supplier.getCompanyName());
+//            st.setString(4, supplier.getTaxCode());
+//            st.setString(5, supplier.getPhone());
+//            st.setString(6, supplier.getAddress());
+//            st.setString(7, supplier.getEmail());
+//            st.setString(8, supplier.getRegion());
+//            st.setString(9, supplier.getWard());
+//            st.setString(10, supplier.getCreatedBy());
+//            st.setString(11, supplier.getCreatedDate());
+//            st.setString(12, supplier.getNotes());
+//            st.setBoolean(13, supplier.isStatus());
+//            st.setString(14, supplier.getSupplierGroup());
+//            st.setDouble(15, supplier.getTotalPurchase());
+//            st.setDouble(16, supplier.getCurrentDebt());
+//            return st.executeUpdate();
+//        } catch (SQLException e) {
+//            System.out.println("addSupplier: " + e.getMessage());
+//        }
+//        return 0;
+//    }
+    
+        public int addSupplier(Supplier supplier) {
+        String sql = "INSERT INTO Suppliers (SupplierName, Phone, Address, Email) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setString(1, supplier.getSupplierCode());
-            st.setString(2, supplier.getSupplierName());
-            st.setString(3, supplier.getCompanyName());
-            st.setString(4, supplier.getTaxCode());
-            st.setString(5, supplier.getPhone());
-            st.setString(6, supplier.getAddress());
-            st.setString(7, supplier.getEmail());
-            st.setString(8, supplier.getRegion());
-            st.setString(9, supplier.getWard());
-            st.setString(10, supplier.getCreatedBy());
-            st.setString(11, supplier.getCreatedDate());
-            st.setString(12, supplier.getNotes());
-            st.setBoolean(13, supplier.isStatus());
-            st.setString(14, supplier.getSupplierGroup());
-            st.setDouble(15, supplier.getTotalPurchase());
-            st.setDouble(16, supplier.getCurrentDebt());
+            st.setString(1, supplier.getSupplierName());
+            st.setString(2, supplier.getPhone());
+            st.setString(3, supplier.getAddress());
+            st.setString(4, supplier.getEmail());
             return st.executeUpdate();
         } catch (SQLException e) {
             System.out.println("addSupplier: " + e.getMessage());

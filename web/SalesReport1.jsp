@@ -78,10 +78,9 @@
                 <div>
                     <%
                         Date reportDate = (Date) request.getAttribute("reportDate");
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         String dateStr = sdf.format(reportDate);
                     %>
-                    <form action="SalesReport" method="get" class="d-flex">
+                    <form action="SalesReport1" method="get" class="d-flex">
                         <input type="date" name="date" class="form-control me-2" value="<%= dateStr %>">
                         <button type="submit" class="btn btn-primary me-2">Xem báo cáo</button>
                         <a href="SalesReport1?action=exportPDF&date=<%= dateStr %>" class="btn btn-success">

@@ -138,34 +138,30 @@
                     Phiếu nhập hàng #PN${String.format("%06d", goodsReceipt.ID)}
                   </div>
                   <div class="detail-actions">
-                    <a href="inventory?action=edit&id=${goodsReceipt.ID}" class="btn btn-primary">
-                      <i class="bi bi-pencil"></i> Chỉnh sửa
-                    </a>
+                   
                     <button class="btn btn-success" onclick="printReceipt()">
                       <i class="bi bi-printer"></i> In phiếu
                     </button>
-                    <button class="btn btn-danger" onclick="confirmDelete(${goodsReceipt.ID})">
-                      <i class="bi bi-trash"></i> Xóa
-                    </button>
+                    
                   </div>
                 </div>
                 
                 <div class="detail-info">
                   <div class="info-group">
                     <div class="info-label">Mã phiếu nhập</div>
-                    <div class="info-value">PN${String.format("%06d", goodsReceipt.ID)}</div>
+                    <div class="info-value">PN${String.format("%06d", goodReceipt.goodReceiptID)}</div>
                   </div>
                   <div class="info-group">
                     <div class="info-label">Ngày nhập</div>
-                    <div class="info-value"><fmt:formatDate value="${goodsReceipt.receivedDate}" pattern="dd/MM/yyyy HH:mm" /></div>
+                    <div class="info-value"><fmt:formatDate value="${goodReceipt.receivedDate}" pattern="dd/MM/yyyy HH:mm" /></div>
                   </div>
                   <div class="info-group">
                     <div class="info-label">Nhà cung cấp</div>
-                    <div class="info-value">${goodsReceipt.supplier.supplierName}</div>
+                    <div class="info-value">${goodReceipt.supplier.supplierName}</div>
                   </div>
                   <div class="info-group">
                     <div class="info-label">Tổng tiền</div>
-                    <div class="info-value"><fmt:formatNumber value="${goodsReceipt.totalCost}" type="number" groupingUsed="true" /> VNĐ</div>
+                    <div class="info-value"><fmt:formatNumber value="${goodReceipt.totalCost}" type="number" groupingUsed="true" /> VNĐ</div>
                   </div>
                 </div>
                 
@@ -202,7 +198,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <c:forEach var="detail" items="${details}" varStatus="status">
+                          <c:forEach var="detail" items="${goodReceiptDetails}" varStatus="status">
                             <tr>
                               <td>${status.index + 1}</td>
                               <td>${detail.product.productCode}</td>
@@ -224,13 +220,13 @@
                         <div class="col-md-6">
                           <div class="summary-row">
                             <div class="summary-label">Tổng số sản phẩm:</div>
-                            <div class="summary-value">${details.size()}</div>
+                            <div class="summary-value">${goodReceiptDetails.size()}</div>
                           </div>
                           <div class="summary-row">
                             <div class="summary-label">Tổng số lượng:</div>
                             <div class="summary-value">
                               <c:set var="totalQuantity" value="0" />
-                              <c:forEach var="detail" items="${details}">
+                              <c:forEach var="detail" items="${goodReceiptDetails}">
                                 <c:set var="totalQuantity" value="${totalQuantity + detail.quantityReceived}" />
                               </c:forEach>
                               ${totalQuantity}
@@ -240,11 +236,11 @@
                         <div class="col-md-6">
                           <div class="summary-row">
                             <div class="summary-label">Tổng tiền hàng:</div>
-                            <div class="summary-value"><fmt:formatNumber value="${goodsReceipt.totalCost}" type="number" groupingUsed="true" /> VNĐ</div>
+                            <div class="summary-value"><fmt:formatNumber value="${goodReceipt.totalCost}" type="number" groupingUsed="true" /> VNĐ</div>
                           </div>
                           <div class="summary-row">
                             <div class="summary-label summary-total">Tổng cộng:</div>
-                            <div class="summary-value summary-total"><fmt:formatNumber value="${goodsReceipt.totalCost}" type="number" groupingUsed="true" /> VNĐ</div>
+                            <div class="summary-value summary-total"><fmt:formatNumber value="${goodReceipt.totalCost}" type="number" groupingUsed="true" /> VNĐ</div>
                           </div>
                         </div>
                       </div>
@@ -258,21 +254,21 @@
                         <div class="col-md-6">
                           <div class="mb-3">
                             <div class="info-label">Tên nhà cung cấp</div>
-                            <div class="info-value">${goodsReceipt.supplier.supplierName}</div>
+                            <div class="info-value">${goodReceipt.supplier.supplierName}</div>
                           </div>
                           <div class="mb-3">
                             <div class="info-label">Số điện thoại</div>
-                            <div class="info-value">${goodsReceipt.supplier.phone}</div>
+                            <div class="info-value">${goodReceipt.supplier.phone}</div>
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="mb-3">
                             <div class="info-label">Email</div>
-                            <div class="info-value">${goodsReceipt.supplier.email}</div>
+                            <div class="info-value">${goodReceipt.supplier.email}</div>
                           </div>
                           <div class="mb-3">
                             <div class="info-label">Địa chỉ</div>
-                            <div class="info-value">${goodsReceipt.supplier.address}</div>
+                            <div class="info-value">${goodReceipt.supplier.address}</div>
                           </div>
                         </div>
                       </div>

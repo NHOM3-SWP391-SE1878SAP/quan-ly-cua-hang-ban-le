@@ -26,6 +26,49 @@ public class DAOReturn extends DBConnect {
         super();
     }
 
+//    public Return getReturnByOrderId(int orderId) {
+//        Return returnOrder = null;
+//        
+//        String sql = "SELECT * FROM Returns WHERE OrdersID = ?";
+//        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+//
+//            stmt.setInt(1, orderId);
+//            ResultSet rs = stmt.executeQuery();
+//
+//            if (rs.next()) {
+//                returnOrder = new Return();
+//                returnOrder.setReturnID(rs.getInt("ID"));
+//                returnOrder.setOrderId(rs.getInt("OrdersID"));
+//                returnOrder.setReturnDate(rs.getDate("ReturnDate"));
+//                returnOrder.setRefundAmount(rs.getFloat("RefundAmount"));
+//            }
+//        } catch (SQLException e) {
+//            LOGGER.log(Level.SEVERE, "Error fetching return order", e);
+//        }
+//        return returnOrder;
+//    }
+    public List<Return> getReturnsByOrderId(int orderId) {
+    List<Return> returns = new ArrayList<>();
+    // Query the database to fetch all return orders for the given orderId
+    String query = "SELECT * FROM Returns WHERE OrdersID = ?";
+    try (Connection connection = getConnection();
+         PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setInt(1, orderId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Return returnOrder = new Return();
+            returnOrder.setReturnID(rs.getInt("ID"));
+            returnOrder.setOrderId(rs.getInt("OrdersID"));
+            returnOrder.setReturnDate(rs.getDate("ReturnDate"));
+            returnOrder.setRefundAmount(rs.getFloat("RefundAmount"));
+            // Populate other fields as necessary
+            returns.add(returnOrder);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // Handle exception
+    }
+    return returns;
+}
     /**
      * Get all returns from database
      * @return List containing all returns

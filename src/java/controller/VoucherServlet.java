@@ -65,9 +65,13 @@ public class VoucherServlet extends HttpServlet {
                 Date endDate = parseDate(request.getParameter("endDate"));
                 int usageLimit = Integer.parseInt(request.getParameter("usageLimit"));
                 boolean status = Boolean.parseBoolean(request.getParameter("status"));
-
+                if (discountRate >= 100) {
+                    session.setAttribute("message", "❌ Lỗi: Discount rate phải nhỏ hơn 100!");
+                    response.sendRedirect("VoucherServlet?page=1");
+                    return;
+                }
                 // Kiểm tra hợp lệ
-                if (startDate.after(endDate)) {
+                else if (startDate.after(endDate)) {
                     session.setAttribute("message", "❌ Ngày bắt đầu phải trước ngày kết thúc!");
                     response.sendRedirect("VoucherServlet?page=1");
                     return;
@@ -76,7 +80,7 @@ public class VoucherServlet extends HttpServlet {
                     response.sendRedirect("VoucherServlet?page=1");
                     return;
                 }
-
+                
                 // Tạo voucher mới (không cần code, DAO tự sinh)
                 Voucher voucher = new Voucher(0,"", minOrder, discountRate, maxValue, usageLimit, 0, status, startDate, endDate);
                 voucherDAO.addVoucher(voucher);
@@ -95,9 +99,13 @@ public class VoucherServlet extends HttpServlet {
                 int usageLimit = Integer.parseInt(request.getParameter("usageLimit"));
                 int usageCount = Integer.parseInt(request.getParameter("usageCount"));
                 boolean status = Boolean.parseBoolean(request.getParameter("status"));
-
+                 if (discountRate >= 100) {
+                    session.setAttribute("message", "❌ Lỗi: Discount rate phải nhỏ hơn 100!");
+                    response.sendRedirect("VoucherServlet?page=1");
+                    return;
+                }
                 // Kiểm tra mã trùng
-                if (voucherDAO.isCodeExistsForOtherVoucher(code, id)) {
+                 else if (voucherDAO.isCodeExistsForOtherVoucher(code, id)) {
                     session.setAttribute("message", "❌ Mã voucher đã tồn tại!");
                     response.sendRedirect("VoucherServlet?page=1");
                     return;

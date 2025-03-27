@@ -160,11 +160,40 @@ public class DAOCustomer extends DBConnect {
         }
     }
     
-    /**
-     * Update customer information
-     * @param customer Customer object to update
-     * @return true if successful, false if failed
-     */
+      public boolean addCustomerInSale(Customer customer) {
+        String sql = "INSERT INTO Customer (CustomerName, Phone, Address, Points) VALUES (?, ?, ?, ?)";
+        
+        // Ensure connection is open
+        if (getConnection() == null) {
+            LOGGER.severe("Error: Cannot connect to database!");
+            return false;
+        }
+        
+        PreparedStatement pst = null;
+        
+        try {
+            pst = conn.prepareStatement(sql);
+            
+            pst.setString(1, customer.getCustomerName());
+            pst.setString(2, customer.getPhone());
+            pst.setString(3, customer.getAddress());
+            pst.setInt(4, customer.getPoints());
+            
+            int rowsAffected = pst.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error adding new customer", ex);
+            return false;
+        } finally {
+            // Close PreparedStatement
+            try {
+                if (pst != null) pst.close();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Error closing PreparedStatement", ex);
+            }
+        }
+    }
+      
     public boolean updateCustomer(Customer customer) {
         String sql = "UPDATE Customer SET CustomerName = ?, Phone = ?, Address = ?, Points = ? WHERE ID = ?";
         

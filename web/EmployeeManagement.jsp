@@ -129,7 +129,7 @@
                                         <option value="1">Đang làm việc</option>
                                         <option value="0">Đã nghỉ việc</option>
                                     </select>
-                                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." onkeyup="searchEmployees()" style="width: 250px;">
+<!--                                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." onkeyup="searchEmployees()" style="width: 250px;">-->
                                 </div>
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
                                     <i class="bi bi-person-plus-fill me-1"></i>Thêm nhân viên

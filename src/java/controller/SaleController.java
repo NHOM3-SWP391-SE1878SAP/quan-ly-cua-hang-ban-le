@@ -34,6 +34,11 @@ import model.DAOVoucher;
 import entity.Voucher;
 import java.util.HashMap;
 import model.DAOProduct1;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.io.*;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Controller for the sales page
@@ -119,6 +124,9 @@ public class SaleController extends HttpServlet {
                 case "applyDiscountAjax":
                     applyDiscountCodeAjax(req, resp);
                     break;
+                case "exportInvoice":  // Thêm case mới
+                    exportInvoice(req, resp);
+                    break;
                 default:
                     resp.sendRedirect(req.getContextPath() + "/sale");
                     break;
@@ -127,6 +135,142 @@ public class SaleController extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Error processing POST request", e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Đã xảy ra lỗi khi xử lý yêu cầu: " + e.getMessage());
         }
+    }
+
+    public static String removeAccent(String str) {
+        String normalized = java.text.Normalizer.normalize(str, java.text.Normalizer.Form.NFD);
+        normalized = normalized.replaceAll("[^\\p{ASCII}]", ""); // Loại bỏ các ký tự không phải là ASCII (dấu)
+        return normalized;
+    }
+
+    private void exportInvoice(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            int nextOrderId = daoOrder.getMaxOrderId() + 1;
+            String invoiceCode = "HD" + String.format("%06d", nextOrderId);
+            // Lấy dữ liệu từ request
+            String cartItemsJson = req.getParameter("cartItems");
+            String customerName = req.getParameter("customerName");
+            String customerPhone = req.getParameter("customerPhone");
+            String totalAmount = req.getParameter("total");
+            String discountAmount = req.getParameter("discount");
+
+            // Lấy thông tin nhân viên từ session
+            HttpSession session = req.getSession();
+            Employee employee = (Employee) session.getAttribute("employee");
+            String employeeName = employee != null ? employee.getEmployeeName() : "Nhân viên";
+
+            // Parse JSON cart items
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Map<String, Object>>>() {
+            }.getType();
+            List<Map<String, Object>> cartItems = gson.fromJson(cartItemsJson, type);
+
+            // Tạo tài liệu PDF
+            Document document = new Document();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfWriter.getInstance(document, baos);
+
+            document.open();
+
+            // Thêm tiêu đề
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+            Paragraph title = new Paragraph("HOA DON BAN HANG", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+
+            // Thêm thông tin cửa hàng
+            Font shopFont = new Font(Font.FontFamily.HELVETICA, 10);
+            Paragraph shopInfo = new Paragraph("CUA HANG SLIM\nDia chi: HN\nĐT: 0888888888", shopFont);
+            shopInfo.setAlignment(Element.ALIGN_CENTER);
+            document.add(shopInfo);
+
+            document.add(Chunk.NEWLINE);
+// Thêm mã hóa đơn
+            Font invoiceCodeFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+            Paragraph invoiceCodePara = new Paragraph("Ma hoa don: " + invoiceCode, invoiceCodeFont);
+            invoiceCodePara.setAlignment(Element.ALIGN_RIGHT);
+            document.add(invoiceCodePara);
+            // Thêm thông tin đơn hàng
+            Font infoFont = new Font(Font.FontFamily.HELVETICA, 10);
+            document.add(new Paragraph("Ngay: " + new Date().toString(), infoFont));
+            document.add(new Paragraph("Nhan vien: " + removeAccent(employeeName), infoFont));
+            document.add(new Paragraph("Khach hang: " + (customerName != null ? removeAccent(customerName) : "Khách lẻ"), infoFont));
+
+            if (customerPhone != null && !customerPhone.isEmpty()) {
+                document.add(new Paragraph("Dien thoai: " + customerPhone, infoFont));
+            }
+
+            document.add(Chunk.NEWLINE);
+
+            // Tạo bảng sản phẩm
+            PdfPTable table = new PdfPTable(4);
+            table.setWidthPercentage(100);
+            table.setWidths(new float[]{4, 2, 1, 3});
+
+            // Thêm header bảng
+            Font headerFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+            table.addCell(createCell("San pham", headerFont, Element.ALIGN_LEFT));
+            table.addCell(createCell("Don gia", headerFont, Element.ALIGN_RIGHT));
+            table.addCell(createCell("SL", headerFont, Element.ALIGN_CENTER));
+            table.addCell(createCell("Thanh tien", headerFont, Element.ALIGN_RIGHT));
+
+            // Thêm sản phẩm vào bảng
+            Font productFont = new Font(Font.FontFamily.HELVETICA, 9);
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
+            for (Map<String, Object> item : cartItems) {
+                table.addCell(createCell(removeAccent((String) item.get("productName")), productFont, Element.ALIGN_LEFT));
+                table.addCell(createCell(currencyFormat.format(item.get("price")), productFont, Element.ALIGN_RIGHT));
+                table.addCell(createCell(item.get("quantity").toString(), productFont, Element.ALIGN_CENTER));
+                table.addCell(createCell(currencyFormat.format(item.get("total")), productFont, Element.ALIGN_RIGHT));
+            }
+
+            document.add(table);
+            document.add(Chunk.NEWLINE);
+
+            // Thêm tổng kết
+            Font totalFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+            double total = Double.parseDouble(totalAmount);
+            double discount = discountAmount != null ? Double.parseDouble(discountAmount) : 0;
+
+            if (discount > 0) {
+                document.add(new Paragraph("Tong tien: " + currencyFormat.format(total), totalFont));
+                document.add(new Paragraph("Giam gia: " + currencyFormat.format(discount), totalFont));
+            }
+
+            document.add(new Paragraph("Thanh tien: " + currencyFormat.format(total-discount), totalFont));
+
+            document.add(Chunk.NEWLINE);
+
+            // Thêm lời cảm ơn
+            Font thanksFont = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC);
+            Paragraph thanks = new Paragraph("Cam on quy khach!", thanksFont);
+            thanks.setAlignment(Element.ALIGN_CENTER);
+            document.add(thanks);
+
+            document.close();
+
+            // Thiết lập response để tải file
+            resp.setContentType("application/pdf");
+            resp.setHeader("Content-Disposition", "attachment; filename=hoa_don.pdf");
+            resp.setContentLength(baos.size());
+
+            // Ghi PDF vào response
+            OutputStream os = resp.getOutputStream();
+            baos.writeTo(os);
+            os.flush();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error generating invoice", e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi tạo hóa đơn: " + e.getMessage());
+        }
+    }
+
+    private PdfPCell createCell(String text, Font font, int alignment) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setHorizontalAlignment(alignment);
+        cell.setBorder(Rectangle.NO_BORDER);
+        return cell;
     }
 
     /**
@@ -587,6 +731,7 @@ public class SaleController extends HttpServlet {
             int voucherId = 0;
             boolean success = false;
 
+            
             if (voucher != null) {
                 // Tính số tiền giảm giá
                 discountAmount = daoVoucher.calculateDiscount(voucher, totalAmountInt);
@@ -598,14 +743,24 @@ public class SaleController extends HttpServlet {
                 Voucher invalidVoucher = daoVoucher.getVoucherByCode(discountCode);
                 if (invalidVoucher == null) {
                     message = "Mã giảm giá không tồn tại";
+                    success = true;
+                    discountAmount = 0;
                 } else if (!invalidVoucher.getStatus()) {
                     message = "Mã giảm giá đã bị vô hiệu hóa";
+                     success = true;
+                    discountAmount = 0;
                 } else if (invalidVoucher.getMinOrder() > totalAmountInt) {
                     message = "Đơn hàng chưa đạt giá trị tối thiểu " + invalidVoucher.getMinOrder() + " VNĐ để áp dụng mã này";
+                    success = true;
+                    discountAmount = 0;
                 } else if (invalidVoucher.getUsage_limit() > 0 && invalidVoucher.getUsage_count() >= invalidVoucher.getUsage_limit()) {
                     message = "Mã giảm giá đã hết lượt sử dụng";
+                    success = true;
+                    discountAmount = 0;
                 } else {
-                    message = "Mã giảm giá không hợp lệ hoặc đã hết hạn";
+                    message = "Mã giảm giá không hợp lệ. Giá trị đơn hàng sẽ không thay đổi.";
+                    success = true;
+                    discountAmount = 0;
                 }
             }
 

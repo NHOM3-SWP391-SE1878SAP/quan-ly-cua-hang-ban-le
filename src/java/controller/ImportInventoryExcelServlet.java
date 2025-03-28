@@ -190,17 +190,19 @@ public class ImportInventoryExcelServlet extends HttpServlet {
             workbook.close();
             
             // Chuyển hướng về trang danh sách phiếu nhập hàng
-            if (!errors.isEmpty()) {
-                request.setAttribute("errorMessages", errors);
+           if (!errors.isEmpty()) {
+                request.getSession().setAttribute("errorMessages", errors);
+                response.sendRedirect("inventory");
+            return;
             }
-            
-            request.setAttribute("successMessage", "Đã nhập hàng thành công từ file Excel. ID phiếu nhập: " + receiptId);
-            request.getRequestDispatcher("inventory").forward(request, response);
-            
+
+            request.getSession().setAttribute("successMessage", "Đã nhập hàng thành công từ file Excel");
+              response.sendRedirect("inventory");
+
         } catch (ServletException | IOException | IndexOutOfBoundsException | NumberFormatException | BiffException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Lỗi khi nhập hàng từ file Excel: " + e.getMessage());
-            request.getRequestDispatcher("inventory").forward(request, response);
+            response.sendRedirect("inventory");
         }
     }
 } 

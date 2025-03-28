@@ -60,7 +60,7 @@
 
         <!-- Bảng hiển thị danh sách khách hàng -->
         <div class="table-responsive">
-            <table class="table table-bordered text-center">
+            <table class="table table-hover datatable">
                 <thead class="table-primary">
                     <tr>
                         

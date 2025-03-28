@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Data Access Object for Account
@@ -371,7 +372,7 @@ public class DAOAccount extends DBConnect {
 
     public Employee getEmployeeByAccountID(int accountID) {
         Employee employee = null;
-        String sql = "SELECT * FROM Employees WHERE AccountsID = ?";
+        String sql = "SELECT * FROM Employees WHERE AccountsID = ? and isAvailable = 1";
         
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -434,11 +435,113 @@ public class DAOAccount extends DBConnect {
         return employee;
     }
     
+    public Account checkLogin1(String userName, String plainPassword) {
+    Account account = null;
+    String sql = "SELECT * FROM Accounts WHERE UserName = ?";
+    
+    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setString(1, userName);
+        
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                String storedHash = rs.getString("Password");
+                
+                // Thêm các kiểm tra an toàn
+                if (storedHash == null || storedHash.trim().isEmpty()) {
+                    LOGGER.warning("Empty password hash for user: " + userName);
+                    return null;
+                }
+                
+                try {
+                    if (BCrypt.checkpw(plainPassword, storedHash)) {
+                        account = extractAccountFromResultSet(rs);
+                    }
+                } catch (IllegalArgumentException e) {
+                    LOGGER.log(Level.SEVERE, "Invalid hash format for user: " + userName, e);
+                    return null;
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Database error during login", ex);
+    }
+    
+    return account;
+}
+// Trong DAOAccount.java
+public boolean updatePassword(int accountId, String newHashedPassword) {
+    String sql = "UPDATE Accounts SET Password = ? WHERE ID = ?";
+    
+    if (getConnection() == null) {
+        LOGGER.severe("Error: Cannot connect to database!");
+        return false;
+    }
+    
+    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setString(1, newHashedPassword);
+        pst.setInt(2, accountId);
+        int rowsAffected = pst.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Error updating password for account ID: " + accountId, ex);
+        return false;
+    }
+}
     /**
      * Main method to test the DAO
      */
-    public static void main(String[] args) {
-        DAOAccount daoAccount = new DAOAccount();
-        System.out.println(daoAccount.getEmployeeByAccountID(11));
+public static void main(String[] args) {
+    DAOAccount dao = new DAOAccount();
+    
+    // Test case 1: Đăng nhập đúng
+    Account acc1 = dao.checkLogin1("admin", "admin123");
+    System.out.println(acc1 != null ? "Đăng nhập thành công" : "Sai thông tin");
+    
+
+}
+
+public Account getUserByEmail(String email) {
+        String sql = "SELECT id, username, password, email, phone, address, RoleID " +
+                     "FROM Accounts WHERE email = ?;";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                // Tạo đối tượng Account và gán các giá trị từ ResultSet
+                Account account = new Account();
+                account.setId(rs.getInt("id"));
+                account.setUserName(rs.getString("username"));
+                account.setPassword(rs.getString("password"));
+                account.setEmail(rs.getString("email"));
+                account.setPhone(rs.getString("phone"));
+                account.setAddress(rs.getString("address"));
+
+                // Lấy RoleID và tìm role tương ứng
+                int roleId = rs.getInt("RoleID");
+                DAORole roleDAO = new DAORole();  // Truyền connection vào RoleDAO
+                Role role = roleDAO.getRoleById(roleId);  // Truy vấn để lấy Role từ RoleID
+                account.setRole(role);
+
+                return account;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi trong getUserByEmail: " + e.getMessage());
+        }
+
+        return null; // Trả về null nếu không tìm thấy user
+    }
+
+public void changePass(int id, String newPass) {
+        try {
+            String sql = "UPDATE Accounts SET password = ? WHERE id = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, newPass);
+            st.setInt(2, id);
+            st.executeUpdate();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 }

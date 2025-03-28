@@ -60,7 +60,7 @@
 
         <!-- Bảng hiển thị danh sách khách hàng -->
         <div class="table-responsive">
-            <table class="table table-bordered text-center">
+            <table class="table table-hover datatable">
                 <thead class="table-primary">
                     <tr>
                         
@@ -83,10 +83,10 @@
                         <td><%= c.getPoints() != null ? c.getPoints() : 0 %></td>
                         <td>
                             <div class="d-flex gap-2">
-                                <form action="CustomerServlet" method="post" onsubmit="return confirmDelete(this)">
+<!--                                <form action="CustomerServlet" method="post" onsubmit="return confirmDelete(this)">
                                     <input type="hidden" name="id" value="<%= c.getId() %>">
                                     <button type="submit" class="btn btn-danger btn-sm" name="action" value="delete">Xóa</button>
-                                </form>
+                                </form>-->
                                     <div>
                                 <button class="btn btn-warning btn-sm" 
                                         onclick="openEditForm('<%= c.getId() %>', '<%= c.getCustomerName() %>', 

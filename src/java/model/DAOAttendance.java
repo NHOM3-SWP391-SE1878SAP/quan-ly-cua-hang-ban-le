@@ -99,7 +99,7 @@ public class DAOAttendance extends DBConnect {
 //            System.out.println("Thêm điểm danh thất bại!");
 //        }
 //    }
-    
+//    
 public boolean isEmployeeScheduled(int employeeID, int shiftID, Date workDate) {
     String sql = "SELECT COUNT(*) FROM Attendance WHERE EmployeesID = ? AND ShiftsID = ? AND WorkDate = ?";
 
@@ -192,4 +192,61 @@ public static void main(String[] args) {
             System.out.println("Không có lịch sử điểm danh!");
         }
     }
+// Trong DAOAttendance.java
+public boolean markAttendance(int employeeID, int shiftID, boolean isPresent) {
+    String sql = "INSERT INTO Attendance (WorkDate, IsPresent, EmployeesID, ShiftsID) "
+               + "VALUES (GETDATE(), ?, ?, ?)";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setBoolean(1, isPresent);
+        pstmt.setInt(2, employeeID);
+        pstmt.setInt(3, shiftID);
+        return pstmt.executeUpdate() > 0;
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOAttendance.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
+}
+
+public Vector<Integer> getTodayAttendance() {
+    Vector<Integer> attendedEmployees = new Vector<>();
+    String sql = "SELECT EmployeesID FROM Attendance WHERE CONVERT(DATE, WorkDate) = CONVERT(DATE, GETDATE())";
+    
+    try (Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            attendedEmployees.add(rs.getInt("EmployeesID"));
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOAttendance.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return attendedEmployees;
+}
+
+// Kiểm tra trùng lặp trong DAOAttendance
+public boolean isAlreadyMarked(int employeeId, int shiftId) {
+    String sql = "SELECT COUNT(*) FROM Attendance WHERE EmployeesID = ? AND ShiftsID = ? AND CONVERT(DATE, WorkDate) = CONVERT(DATE, GETDATE())";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setInt(1, employeeId);
+        pstmt.setInt(2, shiftId);
+        ResultSet rs = pstmt.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOAttendance.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
+}
+public boolean updateAttendance(int attendanceId, boolean isPresent) {
+    String sql = "UPDATE Attendance SET IsPresent = ? WHERE ID = ?";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setBoolean(1, isPresent);
+        pstmt.setInt(2, attendanceId);
+        return pstmt.executeUpdate() > 0;
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOAttendance.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
+}
 }

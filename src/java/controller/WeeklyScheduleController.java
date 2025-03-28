@@ -1,6 +1,7 @@
 package controller;
 
 import entity.Attendance;
+import entity.AttendanceInfo;
 import entity.WeeklySchedule;
 import entity.Shift;
 import entity.WeekDay;
@@ -90,11 +91,57 @@ public class WeeklyScheduleController extends HttpServlet {
                 RequestDispatcher dispatcherHistory = request.getRequestDispatcher("AttendanceHistory.jsp");
                 dispatcherHistory.forward(request, response);
                 break;
-            case "attendanceForEmployee":
+            // Trong WeeklyScheduleController.java
+case "viewCurrentShift":
+    Vector<Employee> currentShiftEmployees = dao.getEmployeesInCurrentShift();
+    Vector<Shift> currentShifts = dao.getCurrentShifts();
     
+    // Lấy thông tin điểm danh
+    Vector<Integer> attendanceRecords = daoAttendance.getTodayAttendance();
+    
+    request.setAttribute("currentEmployees", currentShiftEmployees);
+    request.setAttribute("currentShifts", currentShifts);
+    request.setAttribute("attendanceRecords", attendanceRecords);
+    
+    request.getRequestDispatcher("CurrentShiftAttendance.jsp").forward(request, response);
+    break;
 
-                
-                
+
+case "markAttendance":
+    int employeeId = Integer.parseInt(request.getParameter("employeeId"));
+    int shiftId = Integer.parseInt(request.getParameter("shiftId"));
+    boolean isPresent = Boolean.parseBoolean(request.getParameter("isPresent"));
+    
+    boolean result = new DAOAttendance().markAttendance(employeeId, shiftId, isPresent);
+    
+    if(result) {
+        request.setAttribute("message", "Điểm danh thành công!");
+    } else {
+        request.setAttribute("error", "Lỗi khi điểm danh!");
+    }
+    response.sendRedirect("WeeklyScheduleController?service=getAllAttendanceHistory");
+    break;    // Trong WeeklyScheduleController.java
+    
+    // Add this to the switch statement in your WeeklyScheduleController
+case "updateAttendance":
+    int attendanceId = Integer.parseInt(request.getParameter("attendanceId"));
+    boolean newStatus = Boolean.parseBoolean(request.getParameter("isPresent"));
+    
+    boolean updateSuccess = new DAOAttendance().updateAttendance(attendanceId, newStatus);
+    
+    if (updateSuccess) {
+        request.setAttribute("message", "Cập nhật trạng thái thành công!");
+    } else {
+        request.setAttribute("error", "Cập nhật trạng thái thất bại!");
+    }
+    
+    // Load lại dữ liệu
+    Vector<Attendance> updatedList = new DAOAttendance().getAllAttendanceHistory();
+    request.setAttribute("attendanceList", updatedList);
+    
+    dispatcher = request.getRequestDispatcher("AttendanceHistory.jsp");
+    dispatcher.forward(request, response);
+    break;
         }
     }
 

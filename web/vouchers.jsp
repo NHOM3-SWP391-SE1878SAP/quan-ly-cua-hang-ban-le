@@ -29,18 +29,22 @@
             <div class="alert alert-info"><%= message %></div>
             <% } %>
             <div>
-            <!-- Search -->
+<!--             Search 
             <form action="VoucherServlet" method="get" class="d-flex mb-3">
                 <input class="form-control me-2" type="text" name="search" placeholder="Tìm kiếm mã voucher...">
                 <button class="btn btn-primary" type="submit">Tìm</button>
-            </form>
+            </form>-->
 
             <!-- Add Button -->
             <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addVoucherModal">Thêm Voucher</button>
             </div>
             <!-- Voucher Table -->
+                        <div class="row">
+
+             <div class="card">
+                        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered text-center">
+                <table class="table table-hover datatable">
                     <thead class="table-primary">
                         <tr>
                             <th>Code</th>
@@ -71,10 +75,10 @@
                             <td><%= v.getEndDate() %></td>
                             <td>
                                 <div class="d-flex gap-2 justify-content-center">
-                                    <form method="post" onsubmit="return confirm('Xóa voucher này?')">
+<!--                                    <form method="post" onsubmit="return confirm('Xóa voucher này?')">
                                         <input type="hidden" name="id" value="<%= v.getId() %>">
                                         <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">Xóa</button>
-                                    </form>
+                                    </form>-->
                                     <button class="btn btn-warning btn-sm" 
                                         onclick="openEditForm(
                                             '<%= v.getId() %>',
@@ -100,7 +104,9 @@
                     </tbody>
                 </table>
             </div>
-
+                        </div>
+             </div>
+                        </div>
             <!-- Pagination -->
             <ul class="pagination justify-content-center">
                 <% 
@@ -319,5 +325,17 @@
             return confirm("Xác nhận cập nhật voucher?");
         }
     </script>
+        <!-- Vendor JS Files -->
+    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js/chart.umd.js"></script>
+    <script src="assets/vendor/echarts/echarts.min.js"></script>
+    <script src="assets/vendor/quill/quill.js"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
 </body>
 </html>

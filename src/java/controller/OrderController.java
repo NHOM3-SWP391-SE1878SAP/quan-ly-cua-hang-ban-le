@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 @WebServlet(name = "OrderController", urlPatterns = { "/order" })
 public class OrderController extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(ReportController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrderController.class.getName());
     private static final int REPORTS_PER_PAGE = 10; // Số lượng báo cáo trên mỗi trang
 
     private DAOOrder daoOrder;
@@ -200,7 +200,14 @@ public class OrderController extends HttpServlet {
             if (order.getVoucherID() != null && order.getVoucherID() > 0) {
                 voucher = daoVoucher.getVoucherById(order.getVoucherID());
             }
-            
+                        List<Return> returnOrders = daoReturn.getReturnsByOrderId(orderId);
+            List<String> returnIds = new ArrayList<>();
+            if (returnOrders != null && !returnOrders.isEmpty()) {
+                for (Return returnOrder : returnOrders) {
+                    returnIds.add(String.valueOf(returnOrder.getReturnID())); // Lấy ID làm mã trả hàng
+                }
+            }
+
             // Đặt các thuộc tính vào request
             request.setAttribute("order", order);
             request.setAttribute("orderDetails", orderDetails);
@@ -209,6 +216,8 @@ public class OrderController extends HttpServlet {
             request.setAttribute("voucher", voucher);
             request.setAttribute("detailType", "SALE");
             request.setAttribute("daoProduct", daoProduct);
+            request.setAttribute("returnOrders", returnOrders); // Đặt thông tin các đơn trả hàng
+            request.setAttribute("returnIds", returnIds); // Đặt danh sách mã trả hàng
             
             // Chuyển hướng đến trang chi tiết
             request.getRequestDispatcher("/OrderDetailsManagement.jsp").forward(request, response);

@@ -1,11 +1,13 @@
 package model;
 
 import entity.OrderDetail;
+import entity.ReportOrderProduct;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -377,4 +379,35 @@ public class DAOOrderDetails extends DBConnect {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createOrderDetail'");
     }
+    public Vector<ReportOrderProduct> getTop5ProductsByRevenue(java.util.Date fromDate, java.util.Date toDate) {
+    Vector<ReportOrderProduct> report = new Vector<>();
+    String sql = "SELECT TOP 5 FORMAT(o.OrderDate, 'yyyy-MM') AS ReportDate, od.ProductsID, p.ProductName, "
+                + "SUM(od.Quantity) AS SoldQuantity, SUM(od.Quantity * od.Price) AS TotalRevenue "
+                + "FROM OrderDetails od "
+                + "JOIN Orders o ON od.OrdersID = o.ID "
+                + "JOIN Products p ON od.ProductsID = p.ID "
+                + "WHERE o.OrderDate BETWEEN ? AND ? "
+                + "GROUP BY od.ProductsID, p.ProductName, FORMAT(o.OrderDate, 'yyyy-MM') "
+                + "ORDER BY TotalRevenue DESC";
+
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setDate(1, new java.sql.Date(fromDate.getTime()));
+        pstmt.setDate(2, new java.sql.Date(toDate.getTime()));
+
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            ReportOrderProduct item = new ReportOrderProduct(
+                    rs.getInt("ProductsID"),
+                    rs.getString("ReportDate"),
+                    rs.getInt("TotalRevenue"),
+                    rs.getInt("SoldQuantity"),
+                    rs.getString("ProductName")
+            );
+            report.add(item);
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOOrderDetails.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return report;
+}
 }

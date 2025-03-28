@@ -42,6 +42,11 @@ String phoneNumber = (account != null) ? account.getPhone() : "Chưa đăng nh�
                         <li><a class="dropdown-item" href="/sale"><i class="bi bi-bag"></i> Bán hàng</a></li>
                         <li><a class="dropdown-item" href="/report"><i class="bi bi-clock-history"></i> Xem báo cáo cuối ngày</a></li>
                         <li><a class="dropdown-item" href="/order-return" ><i class="bi bi-arrow-left-right"></i> Chọn hóa đơn trả hàng</a></li>
+                         <li>
+                    <a class="dropdown-item" href="change-password.jsp">
+                        <i class="bi bi-question-circle"></i> Đổi mật khẩu
+                    </a>
+                </li>
                         <li><a class="dropdown-item" href="/Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
                     </ul>
                 </div>

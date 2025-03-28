@@ -78,7 +78,11 @@
                     <div class="col-12">
                       <button class="btn btn-primary w-100" type="submit">Login</button>
                     </div>
+                       <div class="field">
 
+
+                                                <a class="forgot" href="requestchangepass.jsp">Quên mật khẩu?</a> 
+                                            </div>
                   
 
                     <!-- Display error message if login fails -->

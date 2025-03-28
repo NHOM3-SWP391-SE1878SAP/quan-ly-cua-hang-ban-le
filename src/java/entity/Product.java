@@ -110,6 +110,10 @@ public class Product {
 
     public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
+        // Nếu stockQuantity bằng 0, thì set isAvailable là false
+        if (stockQuantity == 0) {
+            this.isAvailable = false;
+        }
     }
 
     public boolean isIsAvailable() {

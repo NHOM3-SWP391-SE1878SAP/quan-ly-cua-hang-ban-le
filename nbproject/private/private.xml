@@ -2,38 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/model/DAOProduct.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/web/SaleManagement.jsp</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Order.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/controller/LoginController.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Employee.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/model/DAOAccount.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/web/Login.jsp</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/web/OrderManagement.jsp</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/web/modal-add-supplier.jsp</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/SupplierDebt.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Customer.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/model/DBConnect.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Payment.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/EmployeePayroll.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/SupplierPayment.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/OrderDetail.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Payroll.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Return.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Voucher.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Account.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Product.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/web/EmployeeManagement.jsp</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/GoodReceipt.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/WorkSchedule.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Category.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/controller/ProductController.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Role.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/web/manage-supplier.jsp</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/GoodReceiptDetail.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/Supplier.java</file>
-            <file>file:/D:/FPT/Project-SWP/quan-ly-cua-hang-ban-le/src/java/entity/CartItem.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

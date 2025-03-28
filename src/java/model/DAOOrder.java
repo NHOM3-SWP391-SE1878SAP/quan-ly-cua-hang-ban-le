@@ -16,9 +16,9 @@ import java.sql.Statement;
  * Data Access Object for Order
  */
 public class DAOOrder extends DBConnect {
-    
+
     private static final Logger LOGGER = Logger.getLogger(DAOOrder.class.getName());
-    
+
     /**
      * Constructor
      */
@@ -28,11 +28,12 @@ public class DAOOrder extends DBConnect {
 
     /**
      * Get all orders from database
+     *
      * @return List containing all orders
      */
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
-        
+
         // Ensure connection is open
         if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
@@ -42,10 +43,10 @@ public class DAOOrder extends DBConnect {
         PreparedStatement pst = null;
         ResultSet rs = null;
         String sql = "SELECT * FROM Orders";
-        
+
         try {
             pst = conn.prepareStatement(sql);
-            
+
             rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -56,7 +57,7 @@ public class DAOOrder extends DBConnect {
                 Integer employeeId = rs.getInt("EmployeesID");
                 Integer paymentId = rs.getInt("PaymentsID");
                 Integer voucherId = rs.getInt("VouchersID");
-                
+
                 Order order = Order.builder()
                         .orderID(id)
                         .orderDate(orderDate)
@@ -66,7 +67,7 @@ public class DAOOrder extends DBConnect {
                         .paymentID(paymentId)
                         .voucherID(voucherId)
                         .build();
-                
+
                 orders.add(order);
             }
 
@@ -76,8 +77,12 @@ public class DAOOrder extends DBConnect {
         } finally {
             // Close ResultSet and PreparedStatement
             try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing ResultSet or PreparedStatement", ex);
             }
@@ -88,6 +93,7 @@ public class DAOOrder extends DBConnect {
 
     /**
      * Get order information by ID
+     *
      * @param orderId ID of the order to retrieve
      * @return Order object or null if not found
      */
@@ -103,11 +109,11 @@ public class DAOOrder extends DBConnect {
 
         PreparedStatement pst = null;
         ResultSet rs = null;
-        
+
         try {
             pst = conn.prepareStatement(sql);
             pst.setInt(1, orderId);  // Set parameter for PreparedStatement
-            
+
             rs = pst.executeQuery();
             if (rs.next()) {
                 Integer id = rs.getInt("ID");
@@ -117,7 +123,7 @@ public class DAOOrder extends DBConnect {
                 Integer employeeId = rs.getInt("EmployeesID");
                 Integer paymentId = rs.getInt("PaymentsID");
                 Integer voucherId = rs.getInt("VouchersID");
-                
+
                 order = Order.builder()
                         .orderID(id)
                         .orderDate(orderDate)
@@ -133,8 +139,12 @@ public class DAOOrder extends DBConnect {
         } finally {
             // Close ResultSet and PreparedStatement
             try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing ResultSet or PreparedStatement", ex);
             }
@@ -142,37 +152,38 @@ public class DAOOrder extends DBConnect {
 
         return order;
     }
-    
+
     /**
      * Add new order to database
+     *
      * @param order Order object to add
      * @return true if successful, false if failed
      */
     public boolean addOrder(Order order) {
         String sql = "INSERT INTO Orders (OrderDate, TotalAmount, CustomerID, EmployeesID, PaymentsID, VouchersID) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
-        
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
         // Ensure connection is open
         if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
-        
+
         PreparedStatement pst = null;
-        
+
         try {
             pst = conn.prepareStatement(sql);
-            
+
             // Convert java.util.Date to java.sql.Date
             java.sql.Date sqlDate = new java.sql.Date(order.getOrderDate().getTime());
-            
+
             pst.setDate(1, sqlDate);
             pst.setDouble(2, order.getTotalAmount());
             pst.setInt(3, order.getCustomerID());
             pst.setInt(4, order.getEmployeeID());
             pst.setInt(5, order.getPaymentID());
             pst.setInt(6, order.getVoucherID());
-            
+
             int rowsAffected = pst.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -181,36 +192,39 @@ public class DAOOrder extends DBConnect {
         } finally {
             // Close PreparedStatement
             try {
-                if (pst != null) pst.close();
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing PreparedStatement", ex);
             }
         }
     }
-    
+
     /**
      * Update order information
+     *
      * @param order Order object to update
      * @return true if successful, false if failed
      */
     public boolean updateOrder(Order order) {
         String sql = "UPDATE Orders SET OrderDate = ?, TotalAmount = ?, CustomerID = ?, "
-                   + "EmployeesID = ?, PaymentsID = ?, VouchersID = ? WHERE ID = ?";
-        
+                + "EmployeesID = ?, PaymentsID = ?, VouchersID = ? WHERE ID = ?";
+
         // Ensure connection is open
         if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
-        
+
         PreparedStatement pst = null;
-        
+
         try {
             pst = conn.prepareStatement(sql);
-            
+
             // Convert java.util.Date to java.sql.Date
             java.sql.Date sqlDate = new java.sql.Date(order.getOrderDate().getTime());
-            
+
             pst.setDate(1, sqlDate);
             pst.setDouble(2, order.getTotalAmount());
             pst.setInt(3, order.getCustomerID());
@@ -218,7 +232,7 @@ public class DAOOrder extends DBConnect {
             pst.setInt(5, order.getPaymentID());
             pst.setInt(6, order.getVoucherID());
             pst.setInt(7, order.getOrderID());
-            
+
             int rowsAffected = pst.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -227,33 +241,36 @@ public class DAOOrder extends DBConnect {
         } finally {
             // Close PreparedStatement
             try {
-                if (pst != null) pst.close();
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing PreparedStatement", ex);
             }
         }
     }
-    
+
     /**
      * Delete order from database
+     *
      * @param orderId ID of the order to delete
      * @return true if successful, false if failed
      */
     public boolean deleteOrder(Integer orderId) {
         String sql = "DELETE FROM Orders WHERE ID = ?";
-        
+
         // Ensure connection is open
         if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return false;
         }
-        
+
         PreparedStatement pst = null;
-        
+
         try {
             pst = conn.prepareStatement(sql);
             pst.setInt(1, orderId);
-            
+
             int rowsAffected = pst.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -262,37 +279,40 @@ public class DAOOrder extends DBConnect {
         } finally {
             // Close PreparedStatement
             try {
-                if (pst != null) pst.close();
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing PreparedStatement", ex);
             }
         }
     }
-    
+
     /**
      * Get orders by customer ID
+     *
      * @param customerId ID of the customer
      * @return List containing orders for the customer
      */
     public List<Order> getOrdersByCustomerId(Integer customerId) {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT * FROM Orders WHERE CustomerID = ?";
-        
+
         // Ensure connection is open
         if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return orders;
         }
-        
+
         PreparedStatement pst = null;
         ResultSet rs = null;
-        
+
         try {
             pst = conn.prepareStatement(sql);
             pst.setInt(1, customerId);
-            
+
             rs = pst.executeQuery();
-            
+
             while (rs.next()) {
                 Integer id = rs.getInt("ID");
                 Date orderDate = rs.getDate("OrderDate");
@@ -300,7 +320,7 @@ public class DAOOrder extends DBConnect {
                 Integer employeeId = rs.getInt("EmployeesID");
                 Integer paymentId = rs.getInt("PaymentsID");
                 Integer voucherId = rs.getInt("VouchersID");
-                
+
                 Order order = Order.builder()
                         .orderID(id)
                         .orderDate(orderDate)
@@ -310,23 +330,27 @@ public class DAOOrder extends DBConnect {
                         .paymentID(paymentId)
                         .voucherID(voucherId)
                         .build();
-                
+
                 orders.add(order);
             }
-            
+
             // LOGGER.info("Number of orders retrieved for customer ID " + customerId + ": " + orders.size());
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error retrieving orders for customer ID: " + customerId, ex);
         } finally {
             // Close ResultSet and PreparedStatement
             try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing ResultSet or PreparedStatement", ex);
             }
         }
-        
+
         return orders;
     }
 
@@ -348,10 +372,10 @@ public class DAOOrder extends DBConnect {
 
     public List<Order> getOrdersForReport(Date fromDate, Date toDate, String orderIdSearch, String customerSearch, String employeeSearch) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.* FROM Orders o " +
-                     "LEFT JOIN Customer c ON o.CustomerID = c.ID " +
-                     "LEFT JOIN Employees e ON o.EmployeesID = e.ID " +
-                     "WHERE 1=1 ";
+        String sql = "SELECT o.* FROM Orders o "
+                + "LEFT JOIN Customer c ON o.CustomerID = c.ID "
+                + "LEFT JOIN Employees e ON o.EmployeesID = e.ID "
+                + "WHERE 1=1 ";
 
         List<Object> params = new ArrayList<>();
 
@@ -385,9 +409,8 @@ public class DAOOrder extends DBConnect {
 
         sql += "ORDER BY o.OrderDate DESC";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             // Set các tham số cho câu query
             for (int i = 0; i < params.size(); i++) {
                 Object param = params.get(i);
@@ -421,8 +444,8 @@ public class DAOOrder extends DBConnect {
     public int addOrderAndGetId(Order order) {
         int generatedId = 0;
         String sql = "INSERT INTO Orders (OrderDate, TotalAmount, CustomerID, EmployeesID, PaymentsID, VouchersID) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
-        
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setObject(1, new java.sql.Date(order.getOrderDate().getTime()));
             ps.setObject(2, order.getTotalAmount());
@@ -430,9 +453,9 @@ public class DAOOrder extends DBConnect {
             ps.setObject(4, order.getEmployeeID());
             ps.setObject(5, order.getPaymentID());
             ps.setObject(6, order.getVoucherID());
-            
+
             int affectedRows = ps.executeUpdate();
-            
+
             if (affectedRows > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -444,50 +467,51 @@ public class DAOOrder extends DBConnect {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return generatedId;
     }
 
     /**
      * Insert order into database and return the generated ID
+     *
      * @param order Order object to insert
      * @return ID of the inserted order, or 0 if insertion failed
      */
     public int insertOrder(Order order) {
         int generatedId = 0;
         String sql = "INSERT INTO Orders (OrderDate, TotalAmount, CustomerID, EmployeesID, PaymentsID, VouchersID) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
-        
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
         // Ensure connection is open
         if (getConnection() == null) {
             LOGGER.severe("Error: Cannot connect to database!");
             return 0;
         }
-        
+
         PreparedStatement pst = null;
         ResultSet rs = null;
-        
+
         try {
             pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            
+
             // Convert java.util.Date to java.sql.Date
             java.sql.Date sqlDate = new java.sql.Date(order.getOrderDate().getTime());
-            
+
             pst.setDate(1, sqlDate);
             pst.setInt(2, order.getTotalAmount());
             pst.setInt(3, order.getCustomerID());
             pst.setInt(4, order.getEmployeeID());
             pst.setInt(5, order.getPaymentID());
-            
+
             // Handle null VoucherID
             if (order.getVoucherID() != null) {
                 pst.setInt(6, order.getVoucherID());
             } else {
                 pst.setNull(6, java.sql.Types.INTEGER);
             }
-            
+
             int affectedRows = pst.executeUpdate();
-            
+
             if (affectedRows > 0) {
                 rs = pst.getGeneratedKeys();
                 if (rs.next()) {
@@ -495,18 +519,49 @@ public class DAOOrder extends DBConnect {
                     order.setOrderID(generatedId);
                 }
             }
-            
+
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error inserting order", ex);
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error closing ResultSet or PreparedStatement", ex);
             }
         }
-        
+
         return generatedId;
+    }
+
+    public int getMaxOrderId() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int maxId = 0;
+
+        try {
+            conn = getConnection(); // Sử dụng connection từ DBConnect
+            if (conn == null) {
+                LOGGER.severe("Cannot connect to database!");
+                return 0;
+            }
+
+            String sql = "SELECT MAX(ID) as maxId FROM Orders"; // Sửa từ OrderID thành ID
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                maxId = rs.getInt("maxId");
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error getting max order ID", ex);
+        }
+
+        return maxId;
     }
 }

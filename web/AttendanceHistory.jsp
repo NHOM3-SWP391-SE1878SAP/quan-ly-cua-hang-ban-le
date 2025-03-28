@@ -37,64 +37,64 @@
 <%@include file="HeaderAdmin.jsp"%>
 
 <main id="main" class="main">
-    <div class="pagetitle">
-        <h1>Chấm Công</h1>
-    </div>
-
+    <!-- Phần tiêu đề giữ nguyên -->
+    
     <div class="container">
-        
+         <div class="d-flex mb-3">
+           
+      <a class="btn btn-primary ms-2" href="WeeklyScheduleController?service=viewCurrentShift" style="color: white; margin-top: 5px;">
+        <i class="bi bi-people-fill"></i>
+        <span>Điểm danh ca hiện tại</span>
+    </a>
+        </div>
 
-
-                <table class="table table-bordered attendance-table">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nhân viên</th>
-                            <th>Ca làm việc</th>
-                            <th>Ngày</th>
-                            <th>Thời gian làm</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% 
-                            Vector<Attendance> attendanceList = (Vector<Attendance>) request.getAttribute("attendanceList");
-                            Vector<Shift> shifts = (Vector<Shift>) request.getAttribute("shifts");
-
-                            if (attendanceList != null) {
-                                // Obtenez l'heure actuelle
-                                java.util.Date currentTime = new java.util.Date();
-                                for (Attendance attendance : attendanceList) {
-                                    Employee employee = attendance.getEmployeesID();  // Utilisation correcte du getter
-                                    Shift shift = attendance.getShiftsID();  // Utilisation correcte du getter
-                                    
-                                    // Vérifiez si le quart de travail est passé et l'état de la présence
-                                    String statusClass = "absent"; // Par défaut, absent
-                                    String statusText = "Vắng mặt";
-
-                                    if (attendance.isPresent()) {
-                                        statusClass = "present";
-                                        statusText = "Có mặt";
-                                    } else if (shift.getEndTime().before(currentTime)) {
-                                        statusText = "Vắng mặt";
-                                    }
-
-                        %>
-                        <tr>
-                            <td><%= employee.getEmployeeName() %></td>
-                            <td><%= shift.getShiftName() %></td>
-                            <td><%= attendance.getWorkDate() %></td>
-                            <td><%= shift.getStartTime() %> - <%= shift.getEndTime() %></td>
-                            <td>
-                                <span class="attendance-status <%= statusClass %>"><%= statusText %></span>
-                            </td>
-                        </tr>
-                        <% 
-                                }
-                            }
-                        %>
-                    </tbody>
-                </table>
-
+        <table class="table table-striped datatable">
+            <thead class="table-light">
+                <tr>
+                    <th>Nhân viên</th>
+                    <th>Ca làm việc</th>
+                    <th>Ngày</th>
+                    <th>Thời gian làm</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% 
+                    Vector<Attendance> attendanceList = (Vector<Attendance>) request.getAttribute("attendanceList");
+                    
+                    if (attendanceList != null) {
+                        for (Attendance attendance : attendanceList) {
+                            Employee employee = attendance.getEmployeesID();
+                            Shift shift = attendance.getShiftsID();
+                %>
+                <tr>
+                    <td><%= employee.getEmployeeName() %></td>
+                    <td><%= shift.getShiftName() %></td>
+                    <td><%= attendance.getWorkDate() %></td>
+                    <td><%= shift.getStartTime() %> - <%= shift.getEndTime() %></td>
+                    <td>
+                        <span class="attendance-status <%= attendance.isPresent() ? "present" : "absent" %>">
+                            <%= attendance.isPresent() ? "Có mặt" : "Vắng mặt" %>
+                        </span>
+                    </td>
+                    <td>
+                        <form action="WeeklyScheduleController" method="post">
+                            <input type="hidden" name="service" value="updateAttendance">
+                            <input type="hidden" name="attendanceId" value="<%= attendance.getId() %>">
+                            <input type="hidden" name="isPresent" value="<%= !attendance.isPresent() %>">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <% 
+                        }
+                    }
+                %>
+            </tbody>
+        </table>
     </div>
 </main>
 

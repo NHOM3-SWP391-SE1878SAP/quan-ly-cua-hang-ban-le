@@ -102,11 +102,11 @@
         <div class="search-bar d-flex justify-content-end align-items-center">
 
             <div class="header-icons">
-                            <% 
-    Account account = (Account) session.getAttribute("account");
-    String phoneNumber = (account != null) ? account.getPhone() : "Chưa đăng nhập";
-%>
-<span class="header-icon"><%= phoneNumber %></span>
+                <% 
+Account account = (Account) session.getAttribute("account");
+String phoneNumber = (account != null) ? account.getPhone() : "Chưa đăng nhập";
+                %>
+                <span class="header-icon"><%= phoneNumber %></span>
                 <div class="dropdown d-inline-block">
                     <a href="#" class="header-icon" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-list"></i>
@@ -265,11 +265,15 @@
                         <div class="payment-actions">
                             <a href="sale" class="btn btn-outline-secondary">HỦY</a>
                             <button type="submit" class="btn btn-primary">XÁC NHẬN THANH TOÁN</button>
+                            <button type="button" class="btn btn-outline-primary" id="exportInvoiceBtn">
+                                <i class="bi bi-file-earmark-pdf"></i> XUẤT HÓA ĐƠN
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+
 
         <!-- Thêm tham chiếu đến file JavaScript mới -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -277,6 +281,36 @@
 
         <!-- Thêm script để xử lý AJAX cho mã giảm giá -->
         <script>
+                        document.getElementById('exportInvoiceBtn').addEventListener('click', function () {
+                            // Lấy tất cả dữ liệu cần thiết
+                            const formData = {
+                                action: 'exportInvoice',
+                                cartItems: document.getElementById('cartItemsInput').value,
+                                customerName: document.getElementById('customerNameInput').value,
+                                customerPhone: document.getElementById('customerPhoneInput').value,
+                                total: document.getElementById('modalCartTotal').getAttribute('data-value'),
+                                discount: document.getElementById('modalDiscount').getAttribute('data-value')
+                            };
+
+                            // Tạo form ẩn để submit
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = 'sale';
+                            form.style.display = 'none';
+
+                            // Thêm các trường dữ liệu vào form
+                            for (const key in formData) {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = key;
+                                input.value = formData[key];
+                                form.appendChild(input);
+                            }
+
+                            // Submit form
+                            document.body.appendChild(form);
+                            form.submit();
+                        });
                         document.addEventListener('DOMContentLoaded', function () {
                             // Lưu trữ dữ liệu cartItems dưới dạng chuỗi JSON
                             var cartItemsJsonData = `<c:out value="${cartItemsJson}" escapeXml="false" />`;

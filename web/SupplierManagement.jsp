@@ -103,7 +103,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Lọc nhà cung cấp theo trạng thái</h5>
                                 <form action="SuppliersControllerURL" method="get" class="p-4 border rounded shadow-sm bg-light">
-                                <input type="hidden" name="service" value="listAll"> 
+                                    <input type="hidden" name="service" value="listAll"> 
 
                                     <div class="form-group mb-3">
                                         <label for="status" class="form-label">Trạng thái:</label>
@@ -149,7 +149,7 @@
                                             <th>Tên NCC</th>
                                             <th>Điện thoại</th>
                                             <th>Email</th>
-                                            <th>Nợ hiện tại (VNĐ)</th>
+                                            <!--                                            <th>Nợ hiện tại (VNĐ)</th>-->
                                             <th>Tổng mua (VNĐ)</th>
                                             <th>Trạng thái</th>
                                             <th>Thao tác</th>
@@ -157,12 +157,15 @@
                                     </thead>
                                     <tbody>
                                         <c:forEach items="${suppliers}" var="s">
-                                            <tr onclick="goToSupplierDetail('${s.id}')">
+                                            <tr onclick="showSupplierDetail('${s.supplierCode}', '${s.supplierName}', '${s.companyName}', '${s.taxCode}', 
+                                                        '${s.phone}', '${s.address}', '${s.email}', '${s.region}', '${s.ward}', 
+                                                        '${s.createdBy}', '${s.createdDate}', '${s.notes}', '${s.supplierGroup}', 
+                                                        '${s.totalPurchase}', '${s.currentDebt}', '${s.status}')">
                                                 <td>${s.supplierCode}</td>
                                                 <td>${s.supplierName}</td>
                                                 <td>${s.phone}</td>
                                                 <td>${s.email}</td>
-                                                <td>${s.currentDebt}</td>
+                                                <!--<td></td>-->
                                                 <td><fmt:formatNumber value="${s.totalPurchase}" type="number" groupingUsed="true" /> VNĐ</td>
                                                 <td>
                                                     <span class="badge ${s.status ? 'badge-active' : 'badge-inactive'}">
@@ -184,6 +187,85 @@
                 </div>
             </section>
         </main>
+        <!-- Modal Hiển thị thông tin nhà cung cấp -->
+        <div class="modal fade" id="supplierDetailModal" tabindex="-1" aria-labelledby="supplierDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="supplierDetailModalLabel">Thông tin Nhà Cung Cấp</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Mã NCC <a style="font-weight: bold; color: red">*</a></th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalSupplierCode"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tên NCC <a style="font-weight: bold; color: red">*</a></th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalSupplierName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Công ty </th><td style="text-align: center; font-weight: bold; font-style: italic;" id="modalCompanyName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Mã số thuế </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalTaxCode"></td>
+                                </tr>
+                                <tr>
+                                    <th>Điện thoại <a style="font-weight: bold; color: red">*</a></th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalPhone"></td>
+                                </tr>
+                                <tr>
+                                    <th>Địa chỉ </th><td style="text-align: center; font-weight: bold; font-style: italic;" id="modalAddress"></td>
+                                </tr>
+                                <tr>
+                                    <th>Email <a style="font-weight: bold; color: red">*</a></th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalEmail"></td>
+                                </tr>
+                                <tr>
+                                    <th>Khu vực </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalRegion"></td>
+                                </tr>
+                                <tr>
+                                    <th>Phường/Xã </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalWard"></td>
+                                </tr>
+                                <tr>
+                                    <th>Người tạo </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalCreatedBy"></td>
+                                </tr>
+                                <tr>
+                                    <th>Ngày tạo <a style="font-weight: bold; color: red">*</a></th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalCreatedDate"></td>
+                                </tr>
+                                <tr>
+                                    <th>Ghi chú </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalNotes"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nhóm NCC </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalSupplierGroup"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tổng mua <a style="font-weight: bold; color: red">*</a></th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalTotalPurchase"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nợ hiện tại </th>
+                                    <td style="text-align: center; font-weight: bold; font-style: italic;" id="modalCurrentDebt"></td>
+                                </tr>
+                                <tr>
+                                    <th>Trạng thái <a style="font-weight: bold; color: red">*</a>
+                                    </th><td style="text-align: center; font-weight: bold; font-style: italic; color: #0080ff" id="modalStatus"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Vendor JS Files -->
         <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
@@ -197,5 +279,30 @@
 
         <!-- Template Main JS File -->
         <script src="assets/js/main.js"></script>
+        <script>
+            function showSupplierDetail(supplierCode, supplierName, companyName, taxCode, phone, address, email, region, ward, createdBy, createdDate, notes, supplierGroup, totalPurchase, currentDebt, status) {
+            // Gán giá trị vào modal
+                document.getElementById("modalSupplierCode").textContent = supplierCode;
+                document.getElementById("modalSupplierName").textContent = supplierName;
+                document.getElementById("modalCompanyName").textContent = companyName || "Đang để trống";
+                document.getElementById("modalTaxCode").textContent = taxCode || "Đang để trống";
+                document.getElementById("modalPhone").textContent = phone;
+                document.getElementById("modalAddress").textContent = address || "Đang để trống";
+                document.getElementById("modalEmail").textContent = email;
+                document.getElementById("modalRegion").textContent = region || "Đang để trống";
+                document.getElementById("modalWard").textContent = ward || "Đang để trống";
+                document.getElementById("modalCreatedBy").textContent = createdBy || "Đang để trống";
+                document.getElementById("modalCreatedDate").textContent = createdDate || "Đang để trống";
+                document.getElementById("modalNotes").textContent = notes || "Đang để trống";
+                document.getElementById("modalSupplierGroup").textContent = supplierGroup || "Đang để trống";
+                document.getElementById("modalTotalPurchase").textContent = new Intl.NumberFormat('vi-VN').format(totalPurchase) + " VNĐ";
+                document.getElementById("modalCurrentDebt").textContent = new Intl.NumberFormat('vi-VN').format(currentDebt) + " VNĐ";
+                document.getElementById("modalStatus").textContent = status === "true" ? "Hoạt động" : "Ngưng hoạt động";
+
+                // Hiển thị modal
+                var supplierModal = new bootstrap.Modal(document.getElementById('supplierDetailModal'));
+                supplierModal.show();
+            }
+        </script>
     </body>
 </html>

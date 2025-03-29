@@ -11,12 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import model.DAOSupplier;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "SupplierController", urlPatterns = {"/supplier"})
 public class SupplierController extends HttpServlet {
@@ -24,12 +28,12 @@ public class SupplierController extends HttpServlet {
     DAOSupplier dao = new DAOSupplier();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ParseException {
         response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
 
         if (action == null || action.equals("list")) {
-            List<Supplier> suppliers = dao.getAllSuppliers();
+            List<Supplier> suppliers = dao.listAllSuppliers();
             request.setAttribute("suppliers", suppliers);
             RequestDispatcher dispatcher = request.getRequestDispatcher("manage-supplier.jsp");
             dispatcher.forward(request, response);
@@ -182,7 +186,7 @@ public class SupplierController extends HttpServlet {
     }
 
     private void addSupplier(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ParseException {
         String code = request.getParameter("supplierCode");
         String name = request.getParameter("supplierName");
         String companyName = request.getParameter("companyName");
@@ -199,7 +203,9 @@ public class SupplierController extends HttpServlet {
         String createdBy = "Admin";
 
         LocalDateTime now = LocalDateTime.now();
-        String createdDate = now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String createdDatea = now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date createdDate = sdf.parse(createdDatea);
 
         Supplier supplier = new Supplier();
         supplier.setSupplierCode(code);
@@ -286,12 +292,20 @@ public class SupplierController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(SupplierController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(SupplierController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

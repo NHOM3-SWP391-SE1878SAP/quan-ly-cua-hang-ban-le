@@ -103,7 +103,6 @@
     ) 
 %></td>
             <td><%= payroll.getPayDate() != null ? payroll.getPayDate() : "Chưa thanh toán" %></td>
-            <td><%= payroll.getPayDate() != null ? payroll.getPayDate() : "Chưa thanh toán" %></td>
             <td>
                 <% if (payroll.getPayDate() == null) { %>
                     <form method="POST" action="PayrollController">

@@ -72,7 +72,7 @@ public class DAOShift extends DBConnect {
             pstmt.setString(1, shift.getShiftName());
             pstmt.setTime(2, (Time) shift.getStartTime());
             pstmt.setTime(3, (Time) shift.getEndTime());
-            pstmt.setInt(4, shift.getId());
+            pstmt.setInt(4, shift.getShiftId());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();

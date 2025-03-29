@@ -1,6 +1,9 @@
 package entity;
 
+import java.util.Date;
+
 public class Supplier {
+
     private int id;
     private String supplierCode;
     private String supplierName;
@@ -12,20 +15,49 @@ public class Supplier {
     private String region;
     private String ward;
     private String createdBy;
-    private String createdDate;
+    private Date createdDate;
     private String notes;
     private boolean status;
     private String supplierGroup;
     private double totalPurchase;
     private double currentDebt;
-    
+    private GoodReceipt goodReceipt;
+
     public Supplier() {
+        
     }
 
-    public Supplier(int id, String supplierCode, String supplierName, String companyName, 
-            String taxCode, String phone, String address, String email, String region, 
-            String ward, String createdBy, String createdDate, String notes, 
-            boolean status, String supplierGroup, double totalPurchase, double currentDebt) {
+    public Supplier(int id, String supplierCode, String supplierName, String companyName, String taxCode, String phone, String address, String email, String region, String ward, String createdBy, Date createdDate, String notes, boolean status, String supplierGroup, double totalPurchase, double currentDebt, GoodReceipt goodReceipt) {
+        this.id = id;
+        this.supplierCode = supplierCode;
+        this.supplierName = supplierName;
+        this.companyName = companyName;
+        this.taxCode = taxCode;
+        this.phone = phone;
+        this.address = address;
+        this.email = email;
+        this.region = region;
+        this.ward = ward;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+        this.notes = notes;
+        this.status = status;
+        this.supplierGroup = supplierGroup;
+        this.totalPurchase = totalPurchase;
+        this.currentDebt = currentDebt;
+        this.goodReceipt = goodReceipt;
+    }
+    
+    public GoodReceipt getGoodReceipt() {
+        return goodReceipt;
+    }
+
+    public void setGoodReceipt(GoodReceipt goodReceipt) {
+        this.goodReceipt = goodReceipt;
+    }
+
+    
+    public Supplier(int id, String supplierCode, String supplierName, String companyName, String taxCode, String phone, String address, String email, String region, String ward, String createdBy, Date createdDate, String notes, boolean status, String supplierGroup, double totalPurchase, double currentDebt) {
         this.id = id;
         this.supplierCode = supplierCode;
         this.supplierName = supplierName;
@@ -45,7 +77,6 @@ public class Supplier {
         this.currentDebt = currentDebt;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -75,7 +106,7 @@ public class Supplier {
     }
 
     public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+        this.companyName = companyName == null ? null : companyName.trim();
     }
 
     public String getTaxCode() {
@@ -83,7 +114,7 @@ public class Supplier {
     }
 
     public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
+        this.taxCode = taxCode == null ? null : taxCode.trim();
     }
 
     public String getPhone() {
@@ -134,11 +165,11 @@ public class Supplier {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -184,12 +215,8 @@ public class Supplier {
 
     @Override
     public String toString() {
-        return "Supplier{" + "id=" + id + ", supplierCode=" + supplierCode + 
-               ", supplierName=" + supplierName + ", companyName=" + companyName + 
-               ", taxCode=" + taxCode + ", phone=" + phone + ", address=" + address + 
-               ", email=" + email + ", region=" + region + ", ward=" + ward + 
-               ", createdBy=" + createdBy + ", createdDate=" + createdDate + 
-               ", notes=" + notes + ", status=" + status + ", supplierGroup=" + supplierGroup + 
-               ", totalPurchase=" + totalPurchase + ", currentDebt=" + currentDebt + '}';
+        return "Supplier{" + "id=" + id + ", supplierName=" + supplierName
+                + ", companyName=" + companyName + ", totalPurchase=" + totalPurchase
+                + ", currentDebt=" + currentDebt + '}';
     }
 }

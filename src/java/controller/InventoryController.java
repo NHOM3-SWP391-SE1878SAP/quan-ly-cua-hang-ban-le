@@ -302,7 +302,11 @@ public class InventoryController extends HttpServlet {
                 goodReceipt.setTotalCost(totalCost);
                 goodReceiptDAO.updateGoodReceipt(goodReceipt);
             }
-            
+            if (isUpdate) {
+                request.getSession().setAttribute("successMessage", "Cập nhật phiếu nhập hàng thành công!");
+            } else {
+                request.getSession().setAttribute("successMessage", "Thêm phiếu nhập hàng thành công!");
+            }
             // Chuyển hướng đến trang danh sách phiếu nhập hàng
             response.sendRedirect("inventory");
         } catch (NumberFormatException | ParseException e) {

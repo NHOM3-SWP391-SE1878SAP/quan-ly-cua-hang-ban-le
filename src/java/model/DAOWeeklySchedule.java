@@ -7,6 +7,7 @@ import entity.WeekDay;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -295,5 +296,57 @@ public Vector<Shift> getCurrentShifts() {
         Logger.getLogger(DAOWeeklySchedule.class.getName()).log(Level.SEVERE, null, ex);
     }
     return shifts;
+}
+public boolean isEmployeeInCurrentShift(int employeeId) {
+    String sql = "SELECT COUNT(*) FROM WeeklySchedule ws " +
+                 "JOIN Shifts s ON ws.ShiftsID = s.ID " +
+                 "JOIN WeekDays wd ON ws.WeekDaysID = wd.ID " +
+                 "WHERE ws.EmployeesID = ? " +
+                 "AND wd.WeekDay = DATENAME(WEEKDAY, GETDATE()) " +
+                 "AND ((s.StartTime < s.EndTime AND CONVERT(TIME, GETDATE()) BETWEEN s.StartTime AND s.EndTime) " +
+                 "OR (s.StartTime > s.EndTime AND (CONVERT(TIME, GETDATE()) >= s.StartTime OR CONVERT(TIME, GETDATE()) < s.EndTime)))";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setInt(1, employeeId);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOWeeklySchedule.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return false;
+}
+
+public boolean createAutoShifts(int numShifts, Time startTime, Time endTime) {
+    try {
+        // Tính toán khoảng thời gian mỗi ca
+        long duration = endTime.getTime() - startTime.getTime();
+        long shiftDuration = duration / numShifts;
+        
+        // Tạo batch insert
+        String sql = "INSERT INTO Shifts (ShiftName, StartTime, EndTime) VALUES (?, ?, ?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(startTime.getTime());
+        
+        for(int i=1; i<=numShifts; i++) {
+            Time shiftStart = new Time(cal.getTimeInMillis());
+            cal.add(Calendar.MILLISECOND, (int)shiftDuration);
+            Time shiftEnd = new Time(cal.getTimeInMillis());
+            
+            pstmt.setString(1, "Ca " + i);
+            pstmt.setTime(2, shiftStart);
+            pstmt.setTime(3, shiftEnd);
+            pstmt.addBatch();
+        }
+        
+        int[] results = pstmt.executeBatch();
+        return Arrays.stream(results).allMatch(r -> r == 1);
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOWeeklySchedule.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
 }
 }

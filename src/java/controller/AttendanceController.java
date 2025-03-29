@@ -28,56 +28,54 @@ public class AttendanceController extends HttpServlet {
         
         HttpSession session = request.getSession();
         Employee employee = (Employee) session.getAttribute("employee");
+        Shift currentShift = (Shift) session.getAttribute("currentShift");
 
-        if (employee == null) {
+        if (employee == null || currentShift == null) {
             response.sendRedirect("Login.jsp");
             return;
         }
 
-        DAOWeeklySchedule daoWeeklySchedule = new DAOWeeklySchedule();
         DAOAttendance daoAttendance = new DAOAttendance();
-
         String action = request.getParameter("action");
 
         if ("markAttendance".equals(action)) {
-            int employeeID = employee.getEmployeeID();
-            LocalDate currentDate = LocalDate.now();
-            LocalTime currentTime = LocalTime.now();
-
-            // Xác định thứ trong tuần (1 = Monday, 7 = Sunday)
-            int currentWeekDayID = currentDate.getDayOfWeek().getValue(); 
-
-            // Lấy danh sách ca làm của nhân viên
-            Vector<WeeklySchedule> employeeSchedules = daoWeeklySchedule.getEmployeeSchedule(employeeID);
-            boolean isShiftValid = false;
-            int validShiftID = -1;
-
-            for (WeeklySchedule schedule : employeeSchedules) {
-                Shift shift = schedule.getShift();
-                WeekDay weekDay = schedule.getWeekDay();
-
-                if (weekDay.getId() == currentWeekDayID) {
-                    Time startTime = (Time) shift.getStartTime();
-                    Time endTime = (Time) shift.getEndTime();
-
-                    if (currentTime.isAfter(startTime.toLocalTime()) && currentTime.isBefore(endTime.toLocalTime())) {
-                        isShiftValid = true;
-                        validShiftID = shift.getShiftId();
-                        break;
+            try {
+                int employeeID = employee.getEmployeeID();
+                int shiftID = currentShift.getShiftId(); // Sử dụng shiftID từ session
+                LocalDate currentDate = LocalDate.now();
+                
+                // Kiểm tra xem đã chấm công chưa
+                boolean isAttendanceMarked = daoAttendance.isEmployeeScheduled(
+                    employeeID, 
+                    shiftID, 
+                    Date.valueOf(currentDate)
+                );
+                
+                if (isAttendanceMarked) {
+                    request.setAttribute("message", "Bạn đã chấm công ca này rồi.");
+                } else {
+                    // Chấm công (luôn là true vì đã bỏ checkbox)
+                    boolean success = daoAttendance.addAttendance(
+                        employeeID, 
+                        shiftID, 
+                        Date.valueOf(currentDate), 
+                        true
+                    );
+                    
+                    if (success) {
+                        request.setAttribute("message", "Chấm công thành công!");
+                        // Cập nhật trạng thái trong session
+                        session.setAttribute("attendanceMarked", true);
+                    } else {
+                        request.setAttribute("message", "Lỗi khi chấm công vào database.");
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("message", "Lỗi hệ thống khi chấm công: " + e.getMessage());
             }
-
-            if (isShiftValid) {
-                // Chấm công nếu đúng ca
-                boolean success = daoAttendance.addAttendance(employeeID, validShiftID, Date.valueOf(currentDate), true);
-                request.setAttribute("message", success ? "Chấm công thành công!" : "Lỗi khi chấm công.");
-            } else {
-                // Nếu không đúng ca, gửi thông báo lỗi
-                request.setAttribute("message", "Ca này không phải lịch của bạn hoặc không trong khung giờ làm việc.");
-            }
-
-            // Chuyển tiếp về trang điểm danh
+            
+            // Chuyển hướng về trang chấm công
             RequestDispatcher dispatcher = request.getRequestDispatcher("sale");
             dispatcher.forward(request, response);
         }

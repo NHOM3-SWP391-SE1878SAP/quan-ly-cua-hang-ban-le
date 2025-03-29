@@ -43,7 +43,7 @@ public class WeeklyScheduleController extends HttpServlet {
                 Vector<WeeklySchedule> allSchedules = dao.getAllEmployeeSchedule();
                 Vector<Shift> shifts = dao.getAllShifts();
                 Vector<WeekDay> weekDays = dao.getAllWeekDays();
-                Vector<Employee> employees = daoEmployee.getAllEmployees(); // Lấy danh sách nhân viên từ CSDL
+                Vector<Employee> employees = daoEmployee.getAllEmployeesAvailable(); // Lấy danh sách nhân viên từ CSDL
 
                 request.setAttribute("schedule", allSchedules);
                 request.setAttribute("shifts", shifts);
@@ -91,7 +91,6 @@ public class WeeklyScheduleController extends HttpServlet {
                 RequestDispatcher dispatcherHistory = request.getRequestDispatcher("AttendanceHistory.jsp");
                 dispatcherHistory.forward(request, response);
                 break;
-            // Trong WeeklyScheduleController.java
 case "viewCurrentShift":
     Vector<Employee> currentShiftEmployees = dao.getEmployeesInCurrentShift();
     Vector<Shift> currentShifts = dao.getCurrentShifts();
@@ -120,9 +119,8 @@ case "markAttendance":
         request.setAttribute("error", "Lỗi khi điểm danh!");
     }
     response.sendRedirect("WeeklyScheduleController?service=getAllAttendanceHistory");
-    break;    // Trong WeeklyScheduleController.java
+    break;    
     
-    // Add this to the switch statement in your WeeklyScheduleController
 case "updateAttendance":
     int attendanceId = Integer.parseInt(request.getParameter("attendanceId"));
     boolean newStatus = Boolean.parseBoolean(request.getParameter("isPresent"));
@@ -141,6 +139,23 @@ case "updateAttendance":
     
     dispatcher = request.getRequestDispatcher("AttendanceHistory.jsp");
     dispatcher.forward(request, response);
+    break;
+    
+    // Trong switch case của WeeklyScheduleController
+case "createShifts":
+    int numShifts = Integer.parseInt(request.getParameter("numShifts"));
+    Time startTime = Time.valueOf(request.getParameter("startTime") + ":00");
+    Time endTime = Time.valueOf(request.getParameter("endTime") + ":00");
+    
+    // Gọi phương thức tạo ca
+    boolean created = new DAOWeeklySchedule().createAutoShifts(numShifts, startTime, endTime);
+    
+    if(created) {
+        request.setAttribute("message", "Đã tạo thành công " + numShifts + " ca làm việc");
+    } else {
+        request.setAttribute("error", "Có lỗi xảy ra khi tạo ca");
+    }
+    response.sendRedirect("WeeklyScheduleController?service=getAllSchedules");
     break;
         }
     }

@@ -30,6 +30,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Danh sách sản phẩm</h5>
+                                                <a href="ExportSetPriceExcelServlet" class="btn btn-success mb-3">Xuất File Excel</a>
 
                         <form action="ProductsControllerURL?service=updatePriceBatch" method="post" onsubmit="convertFormattedPriceBeforeSubmit()">
                             <table class="table table-hover datatable mt-3">

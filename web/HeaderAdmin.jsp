@@ -353,7 +353,7 @@
             </a>
           </li>
           <li>
-            <a href="manage-supplier.jsp">
+            <a href="SuppliersControllerURL?service=listAll">
               <i class="bi bi-circle"></i><span>Nhà cung cấp</span>
             </a>
           </li>

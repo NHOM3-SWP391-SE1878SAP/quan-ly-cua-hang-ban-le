@@ -15,12 +15,13 @@
     }
 %>
 
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Chấm công nhân viên</title>
+  <title>Chấm công | Slim</title>
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
@@ -33,132 +34,146 @@
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
 
   <style>
-    /* Center the main content */
     body {
+      background-color: #f6f9ff;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      margin: 0;
-      background-color: #f8f9fa;
+      font-family: 'Nunito', sans-serif;
     }
-
-    .container {
-      max-width: 600px;
+    
+    .attendance-container {
+      max-width: 450px;
       width: 100%;
-    }
-
-    .section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 500px;
-      margin: auto;
-    }
-
-    .card-body {
       padding: 20px;
+    }
+    
+    .attendance-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 25px rgba(65, 84, 241, 0.1);
+      overflow: hidden;
       text-align: center;
+      padding: 30px;
     }
-
-    h5.card-title {
-      margin-bottom: 20px;
+    
+    .employee-name {
+      color: #4154f1;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 5px;
     }
-
-    form {
+    
+    .employee-role {
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+    
+    .shift-info {
+      background-color: #f6f9ff;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .shift-name {
+      font-weight: 600;
+      color: #4154f1;
+      margin-bottom: 5px;
+    }
+    
+    .shift-time {
+      color: #6c757d;
+    }
+    
+    .btn-attendance {
+      background-color: #4154f1;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
       margin-top: 20px;
+      transition: all 0.3s;
     }
-
-    .btn-primary {
-      width: 100%;
+    
+    .btn-attendance:hover {
+      background-color: #3143b5;
+      transform: translateY(-2px);
+    }
+    
+    .status-message {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+    
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    
+    .warning-message {
+      background-color: #fff3cd;
+      color: #856404;
     }
   </style>
 </head>
 
 <body>
-
-
-            <div class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
-
-              <div class="d-flex justify-content-center py-4">
-                <a href="index.html" class="logo d-flex align-items-center w-auto">
-                  <img src="assets/img/logo.png" alt="">
-                  <span class="d-none d-lg-block">Your Company</span>
-                </a>
-              </div><!-- End Logo -->
-
-              <div class="card mb-3">
-                <div class="card-body">
-
-                  <h5 class="card-title pb-0 fs-4">Chấm công nhân viên</h5>
-                  <p class="text-center small">Thông tin ca làm hiện tại của bạn</p>
-
-                  <div class="pt-4 pb-2">
-                    <h5 class="text-center">Chào <%= employee.getEmployeeName() %>, đây là ca làm hiện tại:</h5>
-                    <div class="col-12">
-                        <% if (currentShift != null) { %>
-                            <p><strong>Ca làm:</strong> <%= currentShift.getShiftName() %></p>
-                            <p><strong>Thời gian:</strong> <%= currentShift.getStartTime() %> - <%= currentShift.getEndTime() %></p>
-                        <% } else { %>
-                            <p><strong>Không có ca làm nào phù hợp với giờ hiện tại.</strong></p>
-                        <% } %>
-                    </div>
-
-                    <% if (shiftMessage != null) { %>
-                        <p style="color: red;"><%= shiftMessage %></p>
-                    <% } %>
-
-                    <% if (currentShift != null && "Bạn đang trong ca làm của mình.".equals(shiftMessage)) { %>
-                        <form action="AttendanceController" method="post">
-                            <input type="hidden" name="action" value="markAttendance">
-                            <input type="hidden" name="employeeID" value="<%= employee.getEmployeeID() %>">
-                            <input type="hidden" name="shiftID" value="<%= currentShift.getShiftId() %>">
-
-                            <label>Bạn có đi làm hôm nay không?</label><br>
-                            <input type="radio" name="isPresent" value="yes" checked> Có
-                            <input type="radio" name="isPresent" value="no"> Không
-
-                            <button class="btn btn-primary" type="submit">Chấm công</button>
-                        </form>
-                    <% } %>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-
-
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <div class="attendance-container">
+    <div class="attendance-card">
+      <div class="mb-4">
+        <i class="bi bi-calendar-check" style="font-size: 3rem; color: #4154f1;"></i>
+      </div>
+      
+      <h3 class="employee-name"><%= employee.getEmployeeName() %></h3>
+      <p class="employee-role">Nhân viên</p>
+      
+      <% if (currentShift != null) { %>
+        <div class="shift-info">
+          <div class="shift-name">CA <%= currentShift.getShiftName().toUpperCase() %></div>
+          <div class="shift-time">
+            <%= currentShift.getStartTime() %> - <%= currentShift.getEndTime() %>
+          </div>
+        </div>
+        
+        <form action="AttendanceController" method="post">
+          <input type="hidden" name="action" value="markAttendance">
+          <input type="hidden" name="employeeID" value="<%= employee.getEmployeeID() %>">
+          <input type="hidden" name="shiftID" value="<%= currentShift.getShiftId() %>">
+          <input type="hidden" name="isPresent" value="true">
+          
+          <button type="submit" class="btn btn-primary btn-attendance">
+            <i class="bi bi-check-circle"></i> CHẤM CÔNG
+          </button>
+        </form>
+      <% } else { %>
+        <div class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle"></i> 
+          Hiện không phải ca làm của bạn
+        </div>
+      <% } %>
+      
+      <% if (shiftMessage != null) { %>
+        <div class="status-message 
+            <%= shiftMessage.contains("thành công") ? "success-message" : 
+               shiftMessage.contains("lỗi") ? "error-message" : "warning-message" %>">
+          <%= shiftMessage %>
+        </div>
+      <% } %>
+    </div>
+  </div>
 
   <!-- Vendor JS Files -->
-  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/chart.js/chart.umd.js"></script>
-  <script src="assets/vendor/echarts/echarts.min.js"></script>
-  <script src="assets/vendor/quill/quill.js"></script>
-  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
-
-  <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
-
 </body>
-
 </html>

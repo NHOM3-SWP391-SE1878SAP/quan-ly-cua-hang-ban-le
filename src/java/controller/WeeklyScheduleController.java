@@ -91,7 +91,6 @@ public class WeeklyScheduleController extends HttpServlet {
                 RequestDispatcher dispatcherHistory = request.getRequestDispatcher("AttendanceHistory.jsp");
                 dispatcherHistory.forward(request, response);
                 break;
-            // Trong WeeklyScheduleController.java
 case "viewCurrentShift":
     Vector<Employee> currentShiftEmployees = dao.getEmployeesInCurrentShift();
     Vector<Shift> currentShifts = dao.getCurrentShifts();
@@ -120,9 +119,8 @@ case "markAttendance":
         request.setAttribute("error", "Lỗi khi điểm danh!");
     }
     response.sendRedirect("WeeklyScheduleController?service=getAllAttendanceHistory");
-    break;    // Trong WeeklyScheduleController.java
+    break;    
     
-    // Add this to the switch statement in your WeeklyScheduleController
 case "updateAttendance":
     int attendanceId = Integer.parseInt(request.getParameter("attendanceId"));
     boolean newStatus = Boolean.parseBoolean(request.getParameter("isPresent"));

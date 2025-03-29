@@ -8,6 +8,7 @@ import entity.Shift;
 import entity.WeekDay;
 import model.DAOAccount;
 import model.DAOWeeklySchedule;
+import model.DAOAttendance;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +20,6 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Vector;
-import model.DAOAttendance;
 
 @WebServlet(name = "LoginController", urlPatterns = {"/login"})
 public class LoginController extends HttpServlet {
@@ -30,11 +30,11 @@ public class LoginController extends HttpServlet {
         String userName = request.getParameter("username");
         String password = request.getParameter("password");
         
-        DAOAccount dao = new DAOAccount();
+        DAOAccount daoAccount = new DAOAccount();
         DAOWeeklySchedule daoWeeklySchedule = new DAOWeeklySchedule();
-        DAOAttendance daoAttendance = new DAOAttendance();  // DAO to check attendance
+        DAOAttendance daoAttendance = new DAOAttendance();
 
-        Account account = dao.checkLogin1(userName, password);
+        Account account = daoAccount.checkLogin1(userName, password);
         
         if (account != null) {
             HttpSession session = request.getSession();
@@ -46,67 +46,59 @@ public class LoginController extends HttpServlet {
                 if ("Admin".equalsIgnoreCase(roleName)) {
                     response.sendRedirect("SalesReport.jsp"); 
                 } else if ("Employee".equalsIgnoreCase(roleName)) {
-                    session.setAttribute("account", account);
-            
-                    Employee employee = dao.getEmployeeByAccountID(account.getId());
-                    session.setAttribute("employee", employee);
-                     // If no valid shift is found, display message and stay on current page
+                    Employee employee = daoAccount.getEmployeeByAccountID(account.getId());
+                    
                     if (employee == null) {
                         session.setAttribute("errorMessage", "Tài khoản hiện không hoạt động");
                         request.getRequestDispatcher("Login.jsp").forward(request, response);
-                        return;  // Exit the method and stay on the current page
+                        return;
                     }
-
-                    // Xác định ca làm hiện tại
+                    
+                    session.setAttribute("employee", employee);
+                    
+                    // Get current date and time
                     LocalDate currentDate = LocalDate.now();
                     LocalTime currentTime = LocalTime.now();
-                    int currentWeekDayID = currentDate.getDayOfWeek().getValue(); 
-
-                    Vector<WeeklySchedule> employeeSchedules = daoWeeklySchedule.getEmployeeSchedule(employee.getEmployeeID());
+                    
+                    // Get all employees in current shift
+                    Vector<Employee> currentShiftEmployees = daoWeeklySchedule.getEmployeesInCurrentShift();
+                    
+                    // Check if current employee is in the current shift
+                    boolean isInCurrentShift = false;
                     Shift currentShift = null;
-                    boolean isShiftValid = false;
-
-                    for (WeeklySchedule schedule : employeeSchedules) {
-                        Shift shift = schedule.getShift();
-                        WeekDay weekDay = schedule.getWeekDay();
-
-                        if (weekDay.getId() == currentWeekDayID) {
-                            Time startTime = (Time) shift.getStartTime();
-                            Time endTime = (Time) shift.getEndTime();
-
-                            if (currentTime.isAfter(startTime.toLocalTime()) && currentTime.isBefore(endTime.toLocalTime())) {
-                                isShiftValid = true;
-                                currentShift = shift;
-                                break;
+                    
+                    for (Employee emp : currentShiftEmployees) {
+                        if (emp.getEmployeeID() == employee.getEmployeeID()) {
+                            isInCurrentShift = true;
+                            // Get the current shift details
+                            Vector<Shift> currentShifts = daoWeeklySchedule.getCurrentShifts();
+                            if (!currentShifts.isEmpty()) {
+                                currentShift = currentShifts.get(0); // Assuming one shift per employee
                             }
+                            break;
                         }
                     }
-
-                    // If no valid shift is found, display message and stay on current page
-                    if (currentShift == null) {
+                    
+                    if (!isInCurrentShift || currentShift == null) {
                         session.setAttribute("errorMessage", "HIỆN KHÔNG PHẢI CA LÀM CỦA BẠN");
                         request.getRequestDispatcher("Login.jsp").forward(request, response);
-                        return;  // Exit the method and stay on the current page
+                        return;
                     }
-
-                    // Set currentShift if it's valid
+                    
                     session.setAttribute("currentShift", currentShift);
-
-                    if (isShiftValid) {
-                        session.setAttribute("shiftMessage", "Bạn đang trong ca làm của mình.");
-                    } else {
-                        session.setAttribute("shiftMessage", "Ca làm hiện tại không phải lịch của bạn.");
-                    }
-
+                    
                     // Check if attendance has been marked for today
-                    boolean isAttendanceMarked = daoAttendance.isEmployeeScheduled(employee.getEmployeeID(), currentShift.getShiftId(), java.sql.Date.valueOf(currentDate));
-
+                    boolean isAttendanceMarked = daoAttendance.isEmployeeScheduled(
+                            employee.getEmployeeID(), 
+                            currentShift.getShiftId(), 
+                            java.sql.Date.valueOf(currentDate));
+                    
                     if (isAttendanceMarked) {
                         response.sendRedirect("sale"); // Redirect to home if attendance is already marked
                     } else {
                         response.sendRedirect("attendance.jsp"); // Redirect to attendance page if not
                     }
-               } else {
+                } else {
                     response.sendRedirect("Login.jsp"); 
                 }
             } else {

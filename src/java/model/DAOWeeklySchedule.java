@@ -296,4 +296,24 @@ public Vector<Shift> getCurrentShifts() {
     }
     return shifts;
 }
+public boolean isEmployeeInCurrentShift(int employeeId) {
+    String sql = "SELECT COUNT(*) FROM WeeklySchedule ws " +
+                 "JOIN Shifts s ON ws.ShiftsID = s.ID " +
+                 "JOIN WeekDays wd ON ws.WeekDaysID = wd.ID " +
+                 "WHERE ws.EmployeesID = ? " +
+                 "AND wd.WeekDay = DATENAME(WEEKDAY, GETDATE()) " +
+                 "AND ((s.StartTime < s.EndTime AND CONVERT(TIME, GETDATE()) BETWEEN s.StartTime AND s.EndTime) " +
+                 "OR (s.StartTime > s.EndTime AND (CONVERT(TIME, GETDATE()) >= s.StartTime OR CONVERT(TIME, GETDATE()) < s.EndTime)))";
+    
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setInt(1, employeeId);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOWeeklySchedule.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return false;
+}
 }

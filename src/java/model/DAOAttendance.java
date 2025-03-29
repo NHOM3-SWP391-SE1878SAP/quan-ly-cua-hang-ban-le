@@ -249,4 +249,26 @@ public boolean updateAttendance(int attendanceId, boolean isPresent) {
         return false;
     }
 }
+// Kiểm tra xem nhân viên đã chấm công cho ca này trong ngày chưa
+    public boolean isAttendanceMarked(int employeeID, int shiftID, java.sql.Date date) {
+        String sql = "SELECT COUNT(*) AS count FROM Attendance "
+                   + "WHERE EmployeeID = ? AND ShiftID = ? AND AttendanceDate = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Set các tham số cho câu truy vấn
+            pstmt.setInt(1, employeeID);
+            pstmt.setInt(2, shiftID);
+            pstmt.setDate(3, date);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt("count");
+                    return count > 0; // Trả về true nếu có ít nhất 1 bản ghi
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOAttendance.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false; // Mặc định trả về false nếu có lỗi
+    }
 }

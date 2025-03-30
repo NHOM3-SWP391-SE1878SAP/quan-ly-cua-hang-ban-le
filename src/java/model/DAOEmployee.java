@@ -54,6 +54,44 @@ public Vector<Employee> getAllEmployees() {
     }
     return employees;
 }
+public Vector<Employee> getAllEmployeesAvailable() {
+    Vector<Employee> employees = new Vector<>();
+    String sql = "SELECT e.*, a.ID AS AccountID, a.UserName, a.Password, a.Email, a.Phone, a.Address " +
+                 "FROM Employees e " +
+                 "LEFT JOIN Accounts a ON e.AccountsID = a.ID WHERE e.IsAvailable = 1"; 
+
+    try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            // Tạo đối tượng Account nhưng không có Role
+            Account account = new Account(
+                    rs.getInt("AccountID"),
+                    rs.getString("UserName"),
+                    rs.getString("Password"),
+                    rs.getString("Email"),
+                    rs.getString("Phone"),
+                    rs.getString("Address"),
+                    null // Không cần gán Role
+            );
+
+            // Tạo đối tượng Employee và gán Account vào Employee
+            Employee emp = new Employee(
+                    rs.getInt("ID"),
+                    rs.getString("EmployeeName"),
+                    rs.getString("Avatar"),
+                    rs.getDate("DoB"),
+                    rs.getBoolean("Gender"),
+                    rs.getInt("Salary"),
+                    rs.getString("CCCD"),
+                    rs.getBoolean("IsAvailable"),
+                    account  // Gán account vào employee
+            );
+            employees.add(emp);
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(DAOEmployee.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return employees;
+}
 
 public boolean addEmployee(Employee emp) {
         String sqlAccount = "INSERT INTO Accounts (UserName, Password, Email, Phone, Address, RoleID) VALUES (?, ?, ?, ?, ?, ?)";

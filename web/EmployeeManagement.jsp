@@ -414,7 +414,7 @@
                         <div class="col-md-6">
                             <h6 class="fw-bold">Thông tin tài khoản</h6>
                             <p><strong>Tên đăng nhập:</strong> <span id="empUsername"></span></p>
-                            <p><strong>Mật khẩu:</strong> <span id="empPassword"></span></p>
+                            <p><strong>Mật khẩu:</strong> <span>...........</span></p>
                             <p><strong>Email:</strong> <span id="empEmail"></span></p>
                             <p><strong>Số điện thoại:</strong> <span id="empPhone"></span></p>
                             <p><strong>Địa chỉ:</strong> <span id="empAddress"></span></p>

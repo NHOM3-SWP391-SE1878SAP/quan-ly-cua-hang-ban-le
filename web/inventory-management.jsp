@@ -117,10 +117,10 @@
                                                 class="btn btn-sm btn-info">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="inventory?action=edit&id=${receipt.goodReceiptID}" 
+<!--                                            <a href="inventory?action=edit&id=${receipt.goodReceiptID}" 
                                                 class="btn btn-sm btn-warning">
                                                 <i class="bi bi-pencil"></i>
-                                            </a>
+                                            </a>-->
 <!--                                            <button onclick="confirmDelete(${receipt.goodReceiptID}, event)" 
                                                 class="btn btn-sm btn-danger">
                                                 <i class="bi bi-trash"></i>

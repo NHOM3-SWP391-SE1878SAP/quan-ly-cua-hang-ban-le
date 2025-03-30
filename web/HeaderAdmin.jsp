@@ -171,7 +171,8 @@
             </a>
           </li>
           <li>
-            <a href="supplier">
+            <a href="SuppliersControllerURL?service=listAll">
+<!--            <a href="supplier">-->
               <i class="bi bi-circle"></i><span>Nhà cung cấp</span>
             </a>
           </li>
